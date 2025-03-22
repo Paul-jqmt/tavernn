@@ -1,7 +1,7 @@
 
 
 
-# Configuration et Exécution du Projet Tavernn API dans IntelliJ IDEA
+# Configuration et exécution du projet Tavernn API dans IntelliJ IDEA
 
 Ce guide explique les étapes pour configurer et exécuter le projet Tavernn en utilisant IntelliJ IDEA.
 
@@ -14,7 +14,7 @@ Avant de commencer, assurez-vous d'avoir installé les éléments suivants :
 -   Serveur MySQL
 -   Git (optionnel, pour le contrôle de version)
 
-## Configuration du Projet
+## Configuration du projet
 
 ### 1. Cloner le Projet
 
@@ -34,7 +34,7 @@ IntelliJ devrait automatiquement détecter la configuration Maven à partir du f
     -   Cliquez droit sur le fichier `pom.xml`
     -   Sélectionnez **Maven → Reload Project**
 
-### 3. Configurer la Connexion à la Base de Données
+### 3. Configurer la connexion à la base de données
 
 1.  Configurez une base de données MySQL avec les identifiants appropriés
 2.  Créez un fichier `application.properties` ou `application.yml` dans le répertoire `src/main/resources` s'il n'est pas présent
@@ -49,7 +49,7 @@ spring.datasource.password=motDePasse
 spring.flyway.enabled=true spring.flyway.baseline-on-migrate=true 
 spring.jpa.hibernate.ddl-auto=validate spring.jpa.show-sql=true`
 
-### 4. Configurer l'Exécution
+### 4. Configurer l'exécution
 
 1.  Cliquez sur le bouton **Add Configuration** dans le coin supérieur droit
 2.  Cliquez sur le bouton **+** et sélectionnez **Spring Boot**
@@ -59,18 +59,18 @@ spring.jpa.hibernate.ddl-auto=validate spring.jpa.show-sql=true`
     -   Répertoire de travail : Sélectionnez le répertoire racine du projet
 4.  Cliquez sur **Apply** et **OK**
 
-## Exécution du Projet
+## Exécution du projet
 
-### 1. Compiler le Projet
+### 1. Compiler le projet
 
 1.  Sélectionnez **Build → Build Project** dans le menu supérieur
 
-### 2. Exécuter l'Application
+### 2. Exécuter l'application
 
 1.  Sélectionnez la configuration d'exécution que vous avez créée dans le menu déroulant en haut à droite
 2.  Cliquez sur le bouton vert **Run** (▶️)
 
-### 3. Vérifier que l'Application est en Cours d'Exécution
+### 3. Vérifier que l'application est en cours d'exécution
 
 1.  Surveillez la console IntelliJ pour voir les logs de démarrage de Spring Boot
 2.  Recherchez un message indiquant que l'application a démarré
