@@ -1,92 +1,77 @@
-# Groupe de jouand_l 1049409
 
 
 
-## Getting started
+# Configuration et Exécution du Projet Tavernn API dans IntelliJ IDEA
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+Ce guide explique les étapes pour configurer et exécuter le projet Tavernn en utilisant IntelliJ IDEA.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Prérequis
 
-## Add your files
+Avant de commencer, assurez-vous d'avoir installé les éléments suivants :
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+-   IntelliJ IDEA (Édition Community ou Ultimate)
+-   Kit de Développement Java (JDK) 17
+-   Serveur MySQL
+-   Git (optionnel, pour le contrôle de version)
 
-```
-cd existing_repo
-git remote add origin https://rendu-git.etna-alternance.net/module-9881/activity-52948/group-1049409.git
-git branch -M main
-git push -uf origin main
-```
+## Configuration du Projet
 
-## Integrate with your tools
+### 1. Cloner le Projet
 
-- [ ] [Set up project integrations](https://rendu-git.etna-alternance.net/module-9881/activity-52948/group-1049409/-/settings/integrations)
+#### Cloner avec GIT
 
-## Collaborate with your team
+1.  Depuis l'écran d'accueil d'IntelliJ, sélectionnez **Get from VCS**
+2.  Entrez l'URL du dépôt
+3.  Choisissez un emplacement de répertoire et cliquez sur **Clone**
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
 
-## Test and Deploy
+### 2. Configurer Maven
 
-Use the built-in continuous integration in GitLab.
+IntelliJ devrait automatiquement détecter la configuration Maven à partir du fichier `pom.xml` :
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+1.  Attendez qu'IntelliJ indexe le projet et télécharge les dépendances
+2.  Pour déclencher manuellement la synchronisation Maven :
+    -   Cliquez droit sur le fichier `pom.xml`
+    -   Sélectionnez **Maven → Reload Project**
 
-***
+### 3. Configurer la Connexion à la Base de Données
 
-# Editing this README
+1.  Configurez une base de données MySQL avec les identifiants appropriés
+2.  Créez un fichier `application.properties` ou `application.yml` dans le répertoire `src/main/resources` s'il n'est pas présent
+3.  Configurez la connexion à la base de données :
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+properties
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+Copier
 
-## Name
-Choose a self-explaining name for your project.
+`spring.datasource.url=jdbc:mysql://localhost:3306/tavernn_db spring.datasource.username=nomUTILISATEUR
+spring.datasource.password=motDePasse
+spring.flyway.enabled=true spring.flyway.baseline-on-migrate=true 
+spring.jpa.hibernate.ddl-auto=validate spring.jpa.show-sql=true`
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### 4. Configurer l'Exécution
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+1.  Cliquez sur le bouton **Add Configuration** dans le coin supérieur droit
+2.  Cliquez sur le bouton **+** et sélectionnez **Spring Boot**
+3.  Configurez les paramètres d'exécution :
+    -   Nom : `Tavernn`
+    -   Classe principale : `api.tavernn.main` (comme spécifié dans pom.xml)
+    -   Répertoire de travail : Sélectionnez le répertoire racine du projet
+4.  Cliquez sur **Apply** et **OK**
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## Exécution du Projet
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+### 1. Compiler le Projet
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+1.  Sélectionnez **Build → Build Project** dans le menu supérieur
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+### 2. Exécuter l'Application
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+1.  Sélectionnez la configuration d'exécution que vous avez créée dans le menu déroulant en haut à droite
+2.  Cliquez sur le bouton vert **Run** (▶️)
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+### 3. Vérifier que l'Application est en Cours d'Exécution
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+1.  Surveillez la console IntelliJ pour voir les logs de démarrage de Spring Boot
+2.  Recherchez un message indiquant que l'application a démarré
+3.  Par défaut, l'application devrait être accessible à l'adresse `http://localhost:8080`
