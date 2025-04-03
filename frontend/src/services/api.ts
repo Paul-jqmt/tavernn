@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, {AxiosInstance} from 'axios';
 
 const API_URL = import.meta.env.API_URL
 
@@ -7,18 +7,7 @@ const api: AxiosInstance = axios.create({
     headers: {
         'Content-Type': 'application/json',
     },
+    withCredentials: true
 });
-
-// Request interceptor for adding auth token
-api.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-        return config;
-    },
-    (error) => Promise.reject(error)
-);
 
 export default api;
