@@ -1,8 +1,7 @@
 package etna.tavernn.club.model;
 
-
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
+import java.util.Date;
 
 @Entity
 @Table(name = "clubs")
@@ -33,5 +32,24 @@ public class ClubEntity {
     @Column(name = "max_members", nullable = false)
     private int maxMembers;
 
-}
+    // Constructeur vide requis par JPA
+    public ClubEntity() {
+    }
 
+    // Getters et setters basiques
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}

@@ -1,4 +1,4 @@
 package etna.tavernn.club.dto;
 
-public class test {
+public class ClubDTO {
 }
