@@ -22,8 +22,7 @@ public class ClubController {
     // Route GET simple pour récupérer tous les clubs
     @GetMapping
     public ResponseEntity<List<ClubEntity>> getAllClubs() {
-        List<ClubEntity> clubs = clubService.getAllClubs();
-        return ResponseEntity.ok(clubs);
+        return ResponseEntity.status(200).body(clubService.getAllClubs());
     }
 
     // Route GET simple pour récupérer un club spécifique par ID
@@ -31,13 +30,32 @@ public class ClubController {
     public ResponseEntity<ClubEntity> getClubById(@PathVariable String id) {
         return clubService.getClubById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.status(404).build());
     }
 
     @PostMapping
     public ResponseEntity<ClubEntity> createClub(@RequestBody ClubEntity club) {
-        ClubEntity savedClub = clubService.saveClub(club);
-        return ResponseEntity.status(201).body(savedClub);
+        return ResponseEntity.status(201).body(clubService.saveClub(club));
+
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClubEntity> updateClub(@PathVariable String id, @RequestBody ClubEntity club) {
+        return clubService.getClubById(id).map(existingClub -> {
+            club.setId(id);
+            club.setCreation_date(existingClub.getCreation_date());
+            return ResponseEntity.status(200).body(clubService.saveClub(club));
+        }).orElseGet(() -> ResponseEntity.status(404).build());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ClubEntity> deleteClub(@PathVariable String id) {
+        if(clubService.getClubById(id).isPresent()) {
+            clubService.deleteClubById(id);
+            return ResponseEntity.status(204).build();
+        } else {
+            return ResponseEntity.status(404).build();
+        }
 
     }
 }
