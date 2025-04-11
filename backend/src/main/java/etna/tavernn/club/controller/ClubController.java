@@ -1,10 +1,8 @@
 package etna.tavernn.club.controller;
 
-import etna.tavernn.club.dto.ClubDTO;
-import etna.tavernn.club.model.ClubType;
+import etna.tavernn.club.model.ClubEntity;
 import etna.tavernn.club.service.ClubService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,43 +19,25 @@ public class ClubController {
         this.clubService = clubService;
     }
 
+    // Route GET simple pour récupérer tous les clubs
     @GetMapping
-    public ResponseEntity<List<ClubDTO>> getAllClubs() {
-        List<ClubDTO> clubs = clubService.getAllClubs();
+    public ResponseEntity<List<ClubEntity>> getAllClubs() {
+        List<ClubEntity> clubs = clubService.getAllClubs();
         return ResponseEntity.ok(clubs);
     }
 
+    // Route GET simple pour récupérer un club spécifique par ID
     @GetMapping("/{id}")
-    public ResponseEntity<ClubDTO> getClubById(@PathVariable String id) {
+    public ResponseEntity<ClubEntity> getClubById(@PathVariable String id) {
         return clubService.getClubById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/type/{type}")
-    public ResponseEntity<List<ClubDTO>> getClubsByType(@PathVariable ClubType type) {
-        List<ClubDTO> clubs = clubService.getClubsByType(type);
-        return ResponseEntity.ok(clubs);
-    }
-
     @PostMapping
-    public ResponseEntity<ClubDTO> createClub(@RequestBody ClubDTO clubDTO) {
-        ClubDTO createdClub = clubService.createClub(clubDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdClub);
-    }
+    public ResponseEntity<ClubEntity> createClub(@RequestBody ClubEntity club) {
+        ClubEntity savedClub = clubService.saveClub(club);
+        return ResponseEntity.status(201).body(savedClub);
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ClubDTO> updateClub(@PathVariable String id, @RequestBody ClubDTO clubDTO) {
-        return clubService.updateClub(id, clubDTO)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteClub(@PathVariable String id) {
-        if (clubService.deleteClub(id)) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
     }
 }

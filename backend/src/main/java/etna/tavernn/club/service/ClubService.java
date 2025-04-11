@@ -1,55 +1,40 @@
-package etna.tavernn.club.model;
+package etna.tavernn.club.service;
 
-import jakarta.persistence.*;
-import java.util.Date;
+import etna.tavernn.club.model.ClubEntity;
+import etna.tavernn.club.repository.ClubRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-@Entity
-@Table(name = "clubs")
-public class ClubEntity {
+import java.util.List;
+import java.util.Optional;
 
-    @Id
-    private String id;
+@Service
+public class ClubService {
 
-    @Column(nullable = false)
-    private String name;
+    private final ClubRepository clubRepository;
 
-    @Column
-    private String description;
-
-    @Column
-    private String logo;
-
-    @Column(name = "creation_date", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date creationDate;
-
-    @Column(nullable = false)
-    private String type;
-
-    @Column(name = "nr_members", nullable = false)
-    private int nrMembers;
-
-    @Column(name = "max_members", nullable = false)
-    private int maxMembers;
-
-    // Constructeur vide requis par JPA
-    public ClubEntity() {
+    @Autowired
+    public ClubService(ClubRepository clubRepository) {
+        this.clubRepository = clubRepository;
     }
 
-    // Getters et setters basiques
-    public String getId() {
-        return id;
+    // Obtenir tous les clubs
+    public List<ClubEntity> getAllClubs() {
+        return clubRepository.findAll();
     }
 
-    public void setId(String id) {
-        this.id = id;
+    // Obtenir un club par son ID
+    public Optional<ClubEntity> getClubById(String id) {
+        return clubRepository.findById(id);
     }
 
-    public String getName() {
-        return name;
+    // Ajouter ou modifier un club
+    public ClubEntity saveClub(ClubEntity club) {
+        return clubRepository.save(club);
     }
 
-    public void setName(String name) {
-        this.name = name;
+    // Supprimer un club par son ID
+    public void deleteClubById(String id) {
+        clubRepository.deleteById(id);
     }
 }
