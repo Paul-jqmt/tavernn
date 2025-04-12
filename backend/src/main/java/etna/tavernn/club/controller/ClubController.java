@@ -19,17 +19,15 @@ public class ClubController {
         this.clubService = clubService;
     }
 
-    // Route GET simple pour récupérer tous les clubs
     @GetMapping
     public ResponseEntity<List<ClubEntity>> getAllClubs() {
         return ResponseEntity.status(200).body(clubService.getAllClubs());
     }
 
-    // Route GET simple pour récupérer un club spécifique par ID
     @GetMapping("/{id}")
     public ResponseEntity<ClubEntity> getClubById(@PathVariable String id) {
         return clubService.getClubById(id)
-                .map(ResponseEntity::ok)
+                .map(club -> ResponseEntity.status(200).body(club))
                 .orElse(ResponseEntity.status(404).build());
     }
 

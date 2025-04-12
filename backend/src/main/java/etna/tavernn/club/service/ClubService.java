@@ -18,22 +18,18 @@ public class ClubService {
         this.clubRepository = clubRepository;
     }
 
-    // Obtenir tous les clubs
     public List<ClubEntity> getAllClubs() {
         return clubRepository.findAll();
     }
 
-    // Obtenir un club par son ID
     public Optional<ClubEntity> getClubById(String id) {
         return clubRepository.findById(id);
     }
 
-    // Ajouter ou modifier un club
     public ClubEntity saveClub(ClubEntity club) {
         return clubRepository.save(club);
     }
 
-    // Supprimer un club par son ID
     public void deleteClubById(String id) {
         clubRepository.deleteById(id);
     }
