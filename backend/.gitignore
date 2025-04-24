@@ -2,3 +2,4 @@ backend/src/main/resources/application.properties
 /target
 .idea
 .iml
+application.properties
