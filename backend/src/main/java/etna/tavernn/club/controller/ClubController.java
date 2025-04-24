@@ -1,7 +1,7 @@
 package etna.tavernn.club.controller;
-
 import etna.tavernn.club.model.ClubEntity;
 import etna.tavernn.club.service.ClubService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,38 +21,37 @@ public class ClubController {
 
     @GetMapping
     public ResponseEntity<List<ClubEntity>> getAllClubs() {
-        return ResponseEntity.status(200).body(clubService.getAllClubs());
+        return ResponseEntity.ok(clubService.getAllClubs());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ClubEntity> getClubById(@PathVariable String id) {
         return clubService.getClubById(id)
-                .map(club -> ResponseEntity.status(200).body(club))
-                .orElse(ResponseEntity.status(404).build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<ClubEntity> createClub(@RequestBody ClubEntity club) {
-        return ResponseEntity.status(201).body(clubService.saveClub(club));
-
+    public ResponseEntity<ClubEntity> createClub(@Valid @RequestBody ClubEntity club) {
+        return ResponseEntity.ok(clubService.saveClub(club));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClubEntity> updateClub(@PathVariable String id, @RequestBody ClubEntity club) {
+    public ResponseEntity<ClubEntity> updateClub(@PathVariable String id, @Valid @RequestBody ClubEntity club) {
         return clubService.getClubById(id).map(existingClub -> {
             club.setId(id);
             club.setCreation_date(existingClub.getCreation_date());
-            return ResponseEntity.status(200).body(clubService.saveClub(club));
-        }).orElseGet(() -> ResponseEntity.status(404).build());
+            return ResponseEntity.ok(clubService.saveClub(club));
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ClubEntity> deleteClub(@PathVariable String id) {
         if(clubService.getClubById(id).isPresent()) {
             clubService.deleteClubById(id);
-            return ResponseEntity.status(204).build();
+            return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.status(404).build();
+            return ResponseEntity.notFound().build();
         }
 
     }

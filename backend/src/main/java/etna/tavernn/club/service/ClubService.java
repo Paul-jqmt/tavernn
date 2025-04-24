@@ -4,7 +4,6 @@ import etna.tavernn.club.model.ClubEntity;
 import etna.tavernn.club.repository.ClubRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
