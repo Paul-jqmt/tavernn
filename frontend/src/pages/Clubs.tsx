@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import Navbar from '../components/Navbar'
 
 type Club = {
     id: string
@@ -77,4 +76,3 @@ export default function Clubs() {
                 </div>
             </div>
         </div>
-    )}
