@@ -95,7 +95,7 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                    <mainClass>api.tavernn.main</mainClass>
+                    <mainClass>etna.tavernn.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
