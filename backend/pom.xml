@@ -8,11 +8,11 @@
         <version>3.2.4</version>
         <relativePath/>
     </parent>
-    <groupId>api.tavernn</groupId>
+    <groupId>etna.tavernn</groupId>
     <artifactId>tavernn</artifactId>
     <version>1.0</version>
     <name>tavernn</name>
-    <description>tavernn api</description>
+    <description>tavernn backend</description>
 
     <properties>
         <java.version>17</java.version>
@@ -95,7 +95,7 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
-                    <mainClass>api.tavernn.main</mainClass>
+                    <mainClass>etna.tavernn.Main</mainClass>
                 </configuration>
             </plugin>
         </plugins>
