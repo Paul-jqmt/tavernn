@@ -1,7 +1,8 @@
 version: '3.8'
 
 services:
-  app:
+
+  backend:
     build:
       context: ./backend
     ports:
@@ -12,6 +13,22 @@ services:
       - SPRING_DATASOURCE_PASSWORD=password
     depends_on:
       - db
+    networks:
+      - tavernn-network
+
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_URL=http://backend:8080
+    depends_on:
+      - backend
     networks:
       - tavernn-network
 
