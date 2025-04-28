@@ -4,7 +4,6 @@ import Clubs from './pages/Clubs'
 import Landing from './pages/Landing'
 import CreateClub from "./pages/CreateClub"
 
-
 function App() {
     return (
         <Routes>
