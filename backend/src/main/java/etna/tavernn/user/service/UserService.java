@@ -26,7 +26,7 @@ public class UserService {
 
     public User createUser(User user) {
 
-        User newUser = User.createNew();
+        User newUser = new User();
 
         newUser.setEmail(user.getEmail());
         newUser.setUsername(user.getUsername());

@@ -16,7 +16,6 @@ services:
     networks:
       - tavernn-network
 
-
   frontend:
     build:
       context: ./frontend

@@ -1,16 +1,13 @@
 package etna.tavernn.user.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -21,6 +18,9 @@ import java.util.UUID;
 public class User {
 
     @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "id", nullable = false, updatable = false, length = 36)
     private String id;
 
     @Column(nullable = false)
@@ -49,12 +49,4 @@ public class User {
     @Column(name = "looking_for_team")
     private Boolean lookingForTeam;
 
-
-    public static User createNew() {
-        User user = new User();
-        user.setId(UUID.randomUUID().toString());
-        user.setRegistrationDate(LocalDateTime.now());
-        user.setLookingForTeam(false);
-        return user;
-    }
 }
