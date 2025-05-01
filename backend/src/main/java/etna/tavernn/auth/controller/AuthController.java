@@ -30,6 +30,7 @@ public class AuthController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private static final int bearerPrefixLength = 7;
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
@@ -108,8 +109,7 @@ public class AuthController {
         }
 
         try {
-            String token = authHeader.substring(7);
-
+            String token = authHeader.substring(bearerPrefixLength);
             String userEmail = jwtService.extractUsername(token);
             if (userEmail == null) {
                 ErrorResponse error = new ErrorResponse("Invalid token");
