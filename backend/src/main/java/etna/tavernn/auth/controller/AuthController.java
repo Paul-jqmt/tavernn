@@ -4,7 +4,7 @@ import etna.tavernn.auth.dto.AuthResponse;
 import etna.tavernn.auth.dto.ErrorResponse;
 import etna.tavernn.auth.dto.LoginRequest;
 import etna.tavernn.auth.dto.RegisterRequest;
-import etna.tavernn.security.JwtService;
+import etna.tavernn.auth.service.JwtService;
 import etna.tavernn.user.model.User;
 import etna.tavernn.user.repository.UserRepository;
 import etna.tavernn.user.service.UserService;
@@ -84,19 +84,17 @@ public class AuthController {
             role = "USER"; //@todo update later on project with the right roles if needed
         }
 
-        User user = User.builder()
-                .email(registerRequest.getEmail())
-                .password(registerRequest.getPassword()) // check if it's encoded no raw password shall leave the backend
-                .username(registerRequest.getUsername())
-                .role(role)
-                .registrationDate(LocalDateTime.now())
-                .discord(registerRequest.getDiscord())
-                .level(registerRequest.getLevel())
-                .availableTime(registerRequest.getAvailableTime())
-                .experience(registerRequest.getExperience())
-                .lookingForTeam(registerRequest.getLookingForTeam())
-                .build();
-
+        User user = new User();
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(registerRequest.getPassword());
+        user.setUsername(registerRequest.getUsername());
+        user.setRole(role);
+        user.setRegistrationDate(LocalDateTime.now());
+        user.setDiscord(registerRequest.getDiscord());
+        user.setLevel(registerRequest.getLevel());
+        user.setAvailableTime(registerRequest.getAvailableTime());
+        user.setExperience(registerRequest.getExperience());
+        user.setLookingForTeam(registerRequest.getLookingForTeam());
         User createdUser = userService.createUser(user);
 
         UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
@@ -108,7 +106,6 @@ public class AuthController {
         AuthResponse response = createTokenResponse(userDetails, createdUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
 
     private AuthResponse createTokenResponse(UserDetails userDetails, User user) {
         String jwt = jwtService.generateToken(userDetails);

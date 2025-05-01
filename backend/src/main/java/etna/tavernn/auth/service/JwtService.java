@@ -1,4 +1,4 @@
-package etna.tavernn.security;
+package etna.tavernn.auth.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
