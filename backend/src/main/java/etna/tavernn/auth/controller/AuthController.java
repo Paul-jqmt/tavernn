@@ -1,5 +1,9 @@
 package etna.tavernn.auth.controller;
 
+import etna.tavernn.auth.dto.AuthResponse;
+import etna.tavernn.auth.dto.ErrorResponse;
+import etna.tavernn.auth.dto.LoginRequest;
+import etna.tavernn.auth.dto.RegisterRequest;
 import etna.tavernn.security.JwtService;
 import etna.tavernn.user.model.User;
 import etna.tavernn.user.repository.UserRepository;
@@ -17,8 +21,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -32,12 +35,14 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User loginRequest) {
+    public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
         try {
             Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
 
             if (userOptional.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("Invalid credentials"));
             }
 
             Authentication authentication = authenticationManager.authenticate(
@@ -52,35 +57,47 @@ public class AuthController {
 
             User user = userOptional.get();
 
-            String jwt = jwtService.generateToken(userDetails);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", jwt);
-            response.put("id", user.getId());
-            response.put("email", user.getEmail());
-            response.put("username", user.getUsername());
-            response.put("role", user.getRole());
-
+            AuthResponse response = createTokenResponse(userDetails, user);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse("Invalid credentials"));
         }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User registerRequest) {
+    public ResponseEntity<Object> register(@RequestBody RegisterRequest registerRequest) {
         if (userService.existsByEmail(registerRequest.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already in use");
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse("Email already in use"));
         }
         if (userService.existsByUsername(registerRequest.getUsername())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already in use");
+            return ResponseEntity
+                    .status(HttpStatus.CONFLICT)
+                    .body(new ErrorResponse("Username already in use"));
         }
 
-        if (registerRequest.getRole() == null) {
-            registerRequest.setRole("USER");
+        String role = registerRequest.getRole();
+        if (role == null) {
+            role = "USER"; //@todo update later on project with the right roles if needed
         }
 
-        User createdUser = userService.createUser(registerRequest);
+        User user = User.builder()
+                .email(registerRequest.getEmail())
+                .password(registerRequest.getPassword()) // check if it's encoded no raw password shall leave the backend
+                .username(registerRequest.getUsername())
+                .role(role)
+                .registrationDate(LocalDateTime.now())
+                .discord(registerRequest.getDiscord())
+                .level(registerRequest.getLevel())
+                .availableTime(registerRequest.getAvailableTime())
+                .experience(registerRequest.getExperience())
+                .lookingForTeam(registerRequest.getLookingForTeam())
+                .build();
+
+        User createdUser = userService.createUser(user);
 
         UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
                 .username(createdUser.getEmail())
@@ -88,15 +105,21 @@ public class AuthController {
                 .authorities("ROLE_" + (createdUser.getRole() != null ? createdUser.getRole() : "USER"))
                 .build();
 
+        AuthResponse response = createTokenResponse(userDetails, createdUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+
+    private AuthResponse createTokenResponse(UserDetails userDetails, User user) {
         String jwt = jwtService.generateToken(userDetails);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", jwt);
-        response.put("id", createdUser.getId());
-        response.put("email", createdUser.getEmail());
-        response.put("username", createdUser.getUsername());
-        response.put("role", createdUser.getRole());
+        AuthResponse response = new AuthResponse();
+        response.setToken(jwt);
+        response.setId(user.getId());
+        response.setEmail(user.getEmail());
+        response.setUsername(user.getUsername());
+        response.setRole(user.getRole());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        return response;
     }
 }
