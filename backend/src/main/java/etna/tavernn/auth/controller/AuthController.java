@@ -16,10 +16,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -57,7 +54,7 @@ public class AuthController {
 
             User user = userOptional.get();
 
-            AuthResponse response = createTokenResponse(userDetails, user);
+            AuthResponse response = jwtService.createTokenResponse(userDetails, user);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity
@@ -81,12 +78,12 @@ public class AuthController {
 
         String role = registerRequest.getRole();
         if (role == null) {
-            role = "USER"; //@todo update later on project with the right roles if needed
+            role = "USER"; //@todo update later on project
         }
 
         User user = new User();
         user.setEmail(registerRequest.getEmail());
-        user.setPassword(registerRequest.getPassword());
+        user.setPassword(registerRequest.getPassword()); // check if it's hashed properly
         user.setUsername(registerRequest.getUsername());
         user.setRole(role);
         user.setRegistrationDate(LocalDateTime.now());
@@ -95,28 +92,57 @@ public class AuthController {
         user.setAvailableTime(registerRequest.getAvailableTime());
         user.setExperience(registerRequest.getExperience());
         user.setLookingForTeam(registerRequest.getLookingForTeam());
+
         User createdUser = userService.createUser(user);
 
-        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                .username(createdUser.getEmail())
-                .password(createdUser.getPassword())
-                .authorities("ROLE_" + (createdUser.getRole() != null ? createdUser.getRole() : "USER"))
-                .build();
+        UserDetails userDetails = jwtService.createUserDetails(createdUser);
 
-        AuthResponse response = createTokenResponse(userDetails, createdUser);
+        AuthResponse response = jwtService.createTokenResponse(userDetails, createdUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    private AuthResponse createTokenResponse(UserDetails userDetails, User user) {
-        String jwt = jwtService.generateToken(userDetails);
+    @PostMapping("/refresh")
+    public ResponseEntity<Object> refreshToken(@RequestHeader("Authorization") String authHeader) {
+        try {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("Invalid token format"));
+            }
 
-        AuthResponse response = new AuthResponse();
-        response.setToken(jwt);
-        response.setId(user.getId());
-        response.setEmail(user.getEmail());
-        response.setUsername(user.getUsername());
-        response.setRole(user.getRole());
+            String token = authHeader.substring(7);
 
-        return response;
+            String userEmail = jwtService.extractUsername(token);
+            if (userEmail == null) {
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("Invalid token"));
+            }
+
+            Optional<User> userOptional = userRepository.findByEmail(userEmail);
+            if (userOptional.isEmpty()) {
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("User not found"));
+            }
+
+            User user = userOptional.get();
+
+            UserDetails userDetails = jwtService.createUserDetails(user);
+
+            if (!jwtService.isTokenValid(token, userDetails)) {
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new ErrorResponse("Token expired or invalid"));
+            }
+
+            AuthResponse response = jwtService.createTokenResponse(userDetails, user);
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(new ErrorResponse("Token refresh failed: " + e.getMessage()));
+        }
     }
 }

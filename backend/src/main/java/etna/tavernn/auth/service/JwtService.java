@@ -1,17 +1,22 @@
 package etna.tavernn.auth.service;
 
+import etna.tavernn.auth.dto.AuthResponse;
+import etna.tavernn.user.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -84,5 +89,30 @@ public class JwtService {
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+
+    public UserDetails createUserDetails(User user) {
+        String authority = "ROLE_" + (user.getRole() != null ? user.getRole() : "USER");
+        List<SimpleGrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority(authority));
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                user.getPassword(),
+                authorities
+        );
+    }
+
+    public AuthResponse createTokenResponse(UserDetails userDetails, User user) {
+        String jwt = generateToken(userDetails);
+
+        AuthResponse response = new AuthResponse();
+        response.setToken(jwt);
+        response.setId(user.getId());
+        response.setEmail(user.getEmail());
+        response.setUsername(user.getUsername());
+        response.setRole(user.getRole());
+
+        return response;
     }
 }
