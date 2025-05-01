@@ -31,7 +31,6 @@ public class AuthController {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    // Login endpoint
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
 
@@ -49,13 +48,9 @@ public class AuthController {
             );
 
             Authentication authentication = authenticationManager.authenticate(authToken);
-
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
             User user = userOptional.get();
-
             AuthResponse response = jwtService.createTokenResponse(userDetails, user);
 
             return ResponseEntity.ok(response);
@@ -66,7 +61,6 @@ public class AuthController {
         }
     }
 
-    // Register endpoint
     @PostMapping("/register")
     public ResponseEntity<Object> register(@RequestBody RegisterRequest registerRequest) {
 
@@ -99,11 +93,8 @@ public class AuthController {
         user.setLookingForTeam(registerRequest.getLookingForTeam());
 
         User createdUser = userService.createUser(user);
-
         UserDetails userDetails = jwtService.createUserDetails(createdUser);
-
         AuthResponse response = jwtService.createTokenResponse(userDetails, createdUser);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -132,7 +123,6 @@ public class AuthController {
             }
 
             User user = userOptional.get();
-
             UserDetails userDetails = jwtService.createUserDetails(user);
 
             if (!jwtService.isTokenValid(token, userDetails)) {
@@ -141,7 +131,6 @@ public class AuthController {
             }
 
             AuthResponse response = jwtService.createTokenResponse(userDetails, user);
-
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             ErrorResponse error = new ErrorResponse("Token refresh failed: " + e.getMessage());
