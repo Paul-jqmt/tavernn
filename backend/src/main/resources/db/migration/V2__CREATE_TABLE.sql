@@ -112,17 +112,6 @@ CREATE TABLE IF NOT EXISTS team_join_requests (
       ON UPDATE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS user_notifications (
-    id VARCHAR(36) PRIMARY KEY,
-    user_id VARCHAR(36) NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    message TEXT NOT NULL,
-    date DATE NOT NULL DEFAULT (CURRENT_DATE),
-    FOREIGN KEY (user_id) REFERENCES users(id)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
-);
-
 CREATE TABLE IF NOT EXISTS club_post (
     id VARCHAR(36) PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
