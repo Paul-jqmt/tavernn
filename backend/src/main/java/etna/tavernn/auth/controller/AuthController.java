@@ -1,6 +1,10 @@
 package etna.tavernn.auth.controller;
 
-import etna.tavernn.security.JwtService;
+import etna.tavernn.auth.dto.AuthResponse;
+import etna.tavernn.auth.dto.ErrorResponse;
+import etna.tavernn.auth.dto.LoginRequest;
+import etna.tavernn.auth.dto.RegisterRequest;
+import etna.tavernn.auth.service.JwtService;
 import etna.tavernn.user.model.User;
 import etna.tavernn.user.repository.UserRepository;
 import etna.tavernn.user.service.UserService;
@@ -12,13 +16,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -30,73 +30,111 @@ public class AuthController {
     private final UserService userService;
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private static final int bearerPrefixLength = 7;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody User loginRequest) {
+    public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
+
+        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+
+        if (userOptional.isEmpty()) {
+            ErrorResponse error = new ErrorResponse("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+
         try {
-            Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
-
-            if (userOptional.isEmpty()) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-            }
-
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
-                            loginRequest.getPassword()
-                    )
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                    loginRequest.getEmail(),
+                    loginRequest.getPassword()
             );
 
+            Authentication authentication = authenticationManager.authenticate(authToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
             User user = userOptional.get();
-
-            String jwt = jwtService.generateToken(userDetails);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("token", jwt);
-            response.put("id", user.getId());
-            response.put("email", user.getEmail());
-            response.put("username", user.getUsername());
-            response.put("role", user.getRole());
+            AuthResponse response = jwtService.createTokenResponse(userDetails, user);
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+
+            ErrorResponse error = new ErrorResponse("Invalid credentials");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User registerRequest) {
+    public ResponseEntity<Object> register(@RequestBody RegisterRequest registerRequest) {
+
         if (userService.existsByEmail(registerRequest.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already in use");
+            ErrorResponse error = new ErrorResponse("Email already in use");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
+
         if (userService.existsByUsername(registerRequest.getUsername())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username already in use");
+            ErrorResponse error = new ErrorResponse("Username already in use");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
 
-        if (registerRequest.getRole() == null) {
-            registerRequest.setRole("USER");
+        String role = registerRequest.getRole();
+        if (role == null) {
+            role = "USER";
         }
 
-        User createdUser = userService.createUser(registerRequest);
+        User user = new User();
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(registerRequest.getPassword());
+        user.setUsername(registerRequest.getUsername());
+        user.setRole(role);
+        user.setRegistrationDate(LocalDateTime.now());
 
-        UserDetails userDetails = org.springframework.security.core.userdetails.User.builder()
-                .username(createdUser.getEmail())
-                .password(createdUser.getPassword())
-                .authorities("ROLE_" + (createdUser.getRole() != null ? createdUser.getRole() : "USER"))
-                .build();
+        user.setDiscord(registerRequest.getDiscord());
+        user.setLevel(registerRequest.getLevel());
+        user.setAvailableTime(registerRequest.getAvailableTime());
+        user.setExperience(registerRequest.getExperience());
+        user.setLookingForTeam(registerRequest.getLookingForTeam());
 
-        String jwt = jwtService.generateToken(userDetails);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("token", jwt);
-        response.put("id", createdUser.getId());
-        response.put("email", createdUser.getEmail());
-        response.put("username", createdUser.getUsername());
-        response.put("role", createdUser.getRole());
-
+        User createdUser = userService.createUser(user);
+        UserDetails userDetails = jwtService.createUserDetails(createdUser);
+        AuthResponse response = jwtService.createTokenResponse(userDetails, createdUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+
+    @PostMapping("/refresh")
+    public ResponseEntity<Object> refreshToken(@RequestHeader("Authorization") String authHeader) {
+
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            ErrorResponse error = new ErrorResponse("Invalid token format");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
+
+        try {
+            String token = authHeader.substring(bearerPrefixLength);
+            String userEmail = jwtService.extractUsername(token);
+            if (userEmail == null) {
+                ErrorResponse error = new ErrorResponse("Invalid token");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            }
+
+            Optional<User> userOptional = userRepository.findByEmail(userEmail);
+            if (userOptional.isEmpty()) {
+                ErrorResponse error = new ErrorResponse("User not found");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            }
+
+            User user = userOptional.get();
+            UserDetails userDetails = jwtService.createUserDetails(user);
+
+            if (!jwtService.isTokenValid(token, userDetails)) {
+                ErrorResponse error = new ErrorResponse("Token expired or invalid");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+            }
+
+            AuthResponse response = jwtService.createTokenResponse(userDetails, user);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ErrorResponse error = new ErrorResponse("Token refresh failed: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+        }
     }
 }
