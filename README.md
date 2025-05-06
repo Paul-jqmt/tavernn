@@ -63,14 +63,9 @@ To reset containers (optional) :
 docker-compose down --volumes --remove-orphans
 ```
 
-### Prerequisites
-
-
 ## Authentication
 ## Clubs
-
 ## Teams
-
 ## Games
 ## Events
 ## Contributors
