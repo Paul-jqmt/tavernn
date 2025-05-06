@@ -48,8 +48,8 @@ This will :
 * Start a MySQL database
 
 ### 4. Access the App
-**Frontend** : http://localhost:5173\
-**Backend API** : http://localhost:8080\
+**Frontend** : http://localhost:5173 \
+**Backend API** : http://localhost:8080 \
 **MySQL** : localhost:3306 (user and password from `.env`)
 
 ### 5. Stopping the App
