@@ -99,8 +99,6 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<Object> refreshToken() {
-        System.out.println("=== Refresh Token Endpoint Hit ===");
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails userDetails)) {
