@@ -6,6 +6,7 @@ import etna.tavernn.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -39,4 +40,24 @@ public class AuthService {
             return null;
         }
     }
+
+    public AuthResponse refreshToken(Authentication authentication) {
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+
+        String email = authentication.getName();
+
+        User user = userRepository.findByEmail(email)
+                .orElse(null);
+
+        if (user == null) {
+            return null;
+        }
+
+        UserDetails userDetails = jwtService.createUserDetails(user);
+        return jwtService.createTokenResponse(userDetails, user);
+    }
+
+
 }
