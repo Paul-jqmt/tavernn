@@ -74,9 +74,8 @@ public class JwtService {
     }
 
     public UserDetails createUserDetails(User user) {
-        String authority = "ROLE_" + (user.getRole() != null ? user.getRole() : "USER");
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority(authority)
+                new SimpleGrantedAuthority("ROLE_USER")
         );
 
         return new org.springframework.security.core.userdetails.User(
@@ -94,7 +93,6 @@ public class JwtService {
         response.setId(user.getId());
         response.setEmail(user.getEmail());
         response.setUsername(user.getUsername());
-        response.setRole(user.getRole());
 
         return response;
     }

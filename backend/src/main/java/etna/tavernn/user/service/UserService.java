@@ -4,19 +4,35 @@ import etna.tavernn.auth.dto.RegisterRequest;
 import etna.tavernn.user.model.User;
 import etna.tavernn.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+
+    // affreuse méthode nécéssaire pour que spring ne boucle pas à l'infini
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
+
+        return org.springframework.security.core.userdetails.User.builder()
+                .username(user.getEmail())
+                .password(user.getPassword())
+                .authorities("ROLE_USER")
+                .build();
+    }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -31,15 +47,15 @@ public class UserService {
         user.setEmail(registerRequest.getEmail());
         user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
         user.setUsername(registerRequest.getUsername());
-        user.setRole("USER");
-        user.setRegistrationDate(LocalDateTime.now());
-
-        //optionel ?
+        user.setRegistrationDate(LocalDate.now());
         user.setDiscord(registerRequest.getDiscord());
-        user.setLevel(registerRequest.getLevel());
-        user.setAvailableTime(registerRequest.getAvailableTime());
-        user.setExperience(registerRequest.getExperience());
-        user.setLookingForTeam(registerRequest.getLookingForTeam());
+        user.setProfilePicture(registerRequest.getProfilePicture());
+
+        if (registerRequest.getOpenAtInvite() != null) {
+            user.setOpenAtInvite(registerRequest.getOpenAtInvite());
+        } else {
+            user.setOpenAtInvite(true);
+        }
 
         return userRepository.save(user);
     }
@@ -56,24 +72,6 @@ public class UserService {
                     }
                     if (userDetails.getPassword() != null) {
                         existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
-                    }
-                    if (userDetails.getRole() != null) {
-                        existingUser.setRole(userDetails.getRole());
-                    }
-                    if (userDetails.getDiscord() != null) {
-                        existingUser.setDiscord(userDetails.getDiscord());
-                    }
-                    if (userDetails.getLevel() != null) {
-                        existingUser.setLevel(userDetails.getLevel());
-                    }
-                    if (userDetails.getAvailableTime() != null) {
-                        existingUser.setAvailableTime(userDetails.getAvailableTime());
-                    }
-                    if (userDetails.getExperience() != null) {
-                        existingUser.setExperience(userDetails.getExperience());
-                    }
-                    if (userDetails.getLookingForTeam() != null) {
-                        existingUser.setLookingForTeam(userDetails.getLookingForTeam());
                     }
 
                     return userRepository.save(existingUser);
