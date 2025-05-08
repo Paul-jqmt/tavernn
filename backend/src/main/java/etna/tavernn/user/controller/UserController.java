@@ -30,20 +30,20 @@ public class UserController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
-    @PostMapping
-    public ResponseEntity<User> createUser(@RequestBody User user) {
-        if (userService.existsByEmail(user.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
-        if (userService.existsByUsername(user.getUsername())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
-
-        User createdUser = userService.createUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-    }
+//     @todo replaced with /register
+//    @PostMapping
+//    public ResponseEntity<User> createUser(@RequestBody User user) {
+//        if (userService.existsByEmail(user.getEmail())) {
+//            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+//        }
+//
+//        if (userService.existsByUsername(user.getUsername())) {
+//            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+//        }
+//
+//        User createdUser = userService.createUser(user);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+//    }
 
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user) {
