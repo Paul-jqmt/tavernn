@@ -46,14 +46,14 @@ public class UserController {
 //    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody User user) {
+    public ResponseEntity<User> updateUser(@PathVariable("id") String id, @RequestBody User user) {
         return userService.updateUser(id, user)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") String id) {
         boolean deleted = userService.deleteUser(id);
 
         if (deleted) {
