@@ -49,11 +49,13 @@ public class AuthController {
     public ResponseEntity<Object> register(@RequestBody RegisterRequest registerRequest) {
         if (userService.existsByEmail(registerRequest.getEmail())) {
             ErrorResponse error = new ErrorResponse("Email already in use");
+
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
 
         if (userService.existsByUsername(registerRequest.getUsername())) {
             ErrorResponse error = new ErrorResponse("Username already in use");
+
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
 
