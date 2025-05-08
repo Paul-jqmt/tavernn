@@ -34,7 +34,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
-        AuthResponse response = authService.authenticateAndCreateToken(
+        AuthResponse response = authService.authenticateUser(
                 loginRequest.getEmail(),
                 loginRequest.getPassword()
         );
@@ -62,6 +62,7 @@ public class AuthController {
         User createdUser = userService.createUser(registerRequest);
         UserDetails userDetails = jwtService.createUserDetails(createdUser);
         AuthResponse response = jwtService.createTokenResponse(userDetails, createdUser);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
