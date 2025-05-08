@@ -4,6 +4,7 @@ import etna.tavernn.auth.dto.AuthResponse;
 import etna.tavernn.auth.dto.ErrorResponse;
 import etna.tavernn.auth.dto.LoginRequest;
 import etna.tavernn.auth.dto.RegisterRequest;
+import etna.tavernn.auth.service.AuthService;
 import etna.tavernn.auth.service.JwtService;
 import etna.tavernn.user.model.User;
 import etna.tavernn.user.repository.UserRepository;
@@ -11,8 +12,6 @@ import etna.tavernn.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,39 +27,24 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
     private final UserService userService;
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final AuthService authService;
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody LoginRequest loginRequest) {
-        Optional<User> userOptional = userRepository.findByEmail(loginRequest.getEmail());
+        AuthResponse response = authService.authenticateAndCreateToken(
+                loginRequest.getEmail(),
+                loginRequest.getPassword()
+        );
 
-        if (userOptional.isEmpty()) {
+        if (response == null) {
             ErrorResponse error = new ErrorResponse("Invalid credentials");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
 
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.getEmail(),
-                            loginRequest.getPassword()
-                    )
-            );
-
-            User user = userOptional.get();
-            UserDetails userDetails = jwtService.createUserDetails(user);
-            AuthResponse response = jwtService.createTokenResponse(userDetails, user);
-
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            ErrorResponse error = new ErrorResponse("Invalid credentials");
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
-        }
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register")
