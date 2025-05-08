@@ -1,5 +1,6 @@
 package etna.tavernn.user.controller;
 
+import etna.tavernn.user.dto.UserResponse;
 import etna.tavernn.user.model.User;
 import etna.tavernn.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +22,14 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsersDTO());
     }
 
     // "::" c'est comme = .map(user -> ResponseEntity.ok(user))
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable("id") String id) {
-        return userService.getUserById(id)
+    public ResponseEntity<UserResponse> getUserById(@PathVariable("id") String id) {
+        return userService.getUserByIdDTO(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

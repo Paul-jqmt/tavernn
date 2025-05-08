@@ -1,6 +1,7 @@
 package etna.tavernn.user.service;
 
 import etna.tavernn.auth.dto.RegisterRequest;
+import etna.tavernn.user.dto.UserResponse;
 import etna.tavernn.user.model.User;
 import etna.tavernn.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +24,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // affreuse méthode nécéssaire pour que spring ne boucle pas à l'infini
+    //méthode nécéssaire pour que spring ne boucle pas à l'infini
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username)
@@ -35,13 +37,17 @@ public class UserService implements UserDetailsService {
                 .build();
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getAllUsersDTO() {
+        return userRepository.findAll().stream()
+                .map(this::toUserResponseDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<User> getUserById(String id) {
-        return userRepository.findById(id);
+    public Optional<UserResponse> getUserByIdDTO(String id) {
+        return userRepository.findById(id)
+                .map(this::toUserResponseDTO);
     }
+
 
     public User createUser(RegisterRequest registerRequest) {
         User user = new User();
@@ -105,5 +111,18 @@ public class UserService implements UserDetailsService {
 
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
+    }
+
+
+    private UserResponse toUserResponseDTO(User user) {
+        return UserResponse.builder()
+                .id(user.getId())
+                .email(user.getEmail())
+                .username(user.getUsername())
+                .registrationDate(user.getRegistrationDate())
+                .discord(user.getDiscord())
+                .profilePicture(user.getProfilePicture())
+                .openAtInvite(user.getOpenAtInvite())
+                .build();
     }
 }
