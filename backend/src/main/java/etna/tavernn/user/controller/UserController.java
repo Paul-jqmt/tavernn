@@ -23,9 +23,9 @@ public class UserController {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
-// "::" c'est comme = .map(user -> ResponseEntity.ok(user))
+    // "::" c'est comme = .map(user -> ResponseEntity.ok(user))
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable String id) {
+    public ResponseEntity<User> getUserById(@PathVariable("id") String id) {
         return userService.getUserById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

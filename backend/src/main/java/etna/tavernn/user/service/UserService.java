@@ -73,7 +73,6 @@ public class UserService implements UserDetailsService {
                     if (userDetails.getPassword() != null) {
                         existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
                     }
-
                     return userRepository.save(existingUser);
                 });
     }

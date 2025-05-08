@@ -75,7 +75,7 @@ public class JwtService {
 
     public UserDetails createUserDetails(User user) {
         List<SimpleGrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_USER")
+                new SimpleGrantedAuthority("ROLE_USER") //@todo verify if it's necessary
         );
 
         return new org.springframework.security.core.userdetails.User(
