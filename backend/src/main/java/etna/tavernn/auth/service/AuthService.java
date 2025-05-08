@@ -60,6 +60,4 @@ public class AuthService {
         UserDetails userDetails = jwtService.createUserDetails(user);
         return jwtService.createTokenResponse(userDetails, user);
     }
-
-
 }
