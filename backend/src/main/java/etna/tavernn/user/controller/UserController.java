@@ -34,10 +34,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(
-            @PathVariable("id") String id,
-            @RequestBody User user,
-            Principal principal) {
+    public ResponseEntity<User> updateUser(@PathVariable("id") String id, @RequestBody User user, Principal principal) {
         try {
             return userService.updateUser(id, user, principal.getName())
                     .map(ResponseEntity::ok)
@@ -48,9 +45,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(
-            @PathVariable("id") String id,
-            Principal principal) {
+    public ResponseEntity<Void> deleteUser(@PathVariable("id") String id, Principal principal) {
         try {
             boolean deleted = userService.deleteUser(id, principal.getName());
             return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
