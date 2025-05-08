@@ -16,9 +16,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @RestController
@@ -73,25 +75,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
         }
 
-        String role = registerRequest.getRole();
-        if (role == null) {
-            role = "USER";
-        }
-
-        User user = new User();
-        user.setEmail(registerRequest.getEmail());
-        user.setPassword(registerRequest.getPassword());
-        user.setUsername(registerRequest.getUsername());
-        user.setRole(role);
-        user.setRegistrationDate(LocalDateTime.now());
-
-        user.setDiscord(registerRequest.getDiscord());
-        user.setLevel(registerRequest.getLevel());
-        user.setAvailableTime(registerRequest.getAvailableTime());
-        user.setExperience(registerRequest.getExperience());
-        user.setLookingForTeam(registerRequest.getLookingForTeam());
-
-        User createdUser = userService.createUser(user);
+        User createdUser = userService.createUser(registerRequest);
         UserDetails userDetails = jwtService.createUserDetails(createdUser);
         AuthResponse response = jwtService.createTokenResponse(userDetails, createdUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);

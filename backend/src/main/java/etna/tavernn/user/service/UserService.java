@@ -1,11 +1,13 @@
 package etna.tavernn.user.service;
 
+import etna.tavernn.auth.dto.RegisterRequest;
 import etna.tavernn.user.model.User;
 import etna.tavernn.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,22 +26,22 @@ public class UserService {
         return userRepository.findById(id);
     }
 
-    public User createUser(User user) {
+    public User createUser(RegisterRequest registerRequest) {
+        User user = new User();
+        user.setEmail(registerRequest.getEmail());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+        user.setUsername(registerRequest.getUsername());
+        user.setRole("USER");
+        user.setRegistrationDate(LocalDateTime.now());
 
-        User newUser = new User();
+        //optionel ?
+        user.setDiscord(registerRequest.getDiscord());
+        user.setLevel(registerRequest.getLevel());
+        user.setAvailableTime(registerRequest.getAvailableTime());
+        user.setExperience(registerRequest.getExperience());
+        user.setLookingForTeam(registerRequest.getLookingForTeam());
 
-        newUser.setEmail(user.getEmail());
-        newUser.setUsername(user.getUsername());
-
-        newUser.setPassword(passwordEncoder.encode(user.getPassword()));
-        newUser.setRole(user.getRole());
-        newUser.setDiscord(user.getDiscord());
-        newUser.setLevel(user.getLevel());
-        newUser.setAvailableTime(user.getAvailableTime());
-        newUser.setExperience(user.getExperience());
-        newUser.setLookingForTeam(user.getLookingForTeam() != null ? user.getLookingForTeam() : false);
-
-        return userRepository.save(newUser);
+        return userRepository.save(user);
     }
 
     // @Todo improve to less ifs
