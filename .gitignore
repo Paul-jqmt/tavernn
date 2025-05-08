@@ -1,1 +1,5 @@
 .env
+*.iml
+target/
+package-lock.json
+*.idea
