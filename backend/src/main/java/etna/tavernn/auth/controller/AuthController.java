@@ -20,8 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -70,20 +68,13 @@ public class AuthController {
     public ResponseEntity<Object> refreshToken() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserDetails userDetails)) {
-            ErrorResponse error = new ErrorResponse("No valid authentication");
+        AuthResponse response = authService.refreshToken(authentication);
+
+        if (response == null) {
+            ErrorResponse error = new ErrorResponse("Invalid or expired token");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
         }
 
-        Optional<User> userOptional = userRepository.findByEmail(userDetails.getUsername());
-
-        if (userOptional.isEmpty()) {
-            ErrorResponse error = new ErrorResponse("User not found");
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
-        }
-
-        User user = userOptional.get();
-        AuthResponse response = jwtService.createTokenResponse(userDetails, user);
         return ResponseEntity.ok(response);
     }
 }
