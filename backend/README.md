@@ -75,3 +75,7 @@ spring.jpa.hibernate.ddl-auto=validate spring.jpa.show-sql=true`
 1.  Surveillez la console IntelliJ pour voir les logs de démarrage de Spring Boot
 2.  Recherchez un message indiquant que l'application a démarré
 3.  Par défaut, l'application devrait être accessible à l'adresse `http://localhost:8080`
+
+## NOTES POUR LES DEVELOPPEURS 
+
+Pensez à ajouter vos routes public dans SecutiryConfig
