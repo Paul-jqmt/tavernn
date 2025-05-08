@@ -5,8 +5,10 @@ import etna.tavernn.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 //@TODO ADD EXCEPTION HANDLING
@@ -30,36 +32,30 @@ public class UserController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-//     @todo replaced with /register
-//    @PostMapping
-//    public ResponseEntity<User> createUser(@RequestBody User user) {
-//        if (userService.existsByEmail(user.getEmail())) {
-//            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-//        }
-//
-//        if (userService.existsByUsername(user.getUsername())) {
-//            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-//        }
-//
-//        User createdUser = userService.createUser(user);
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
-//    }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable("id") String id, @RequestBody User user) {
-        return userService.updateUser(id, user)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<User> updateUser(
+            @PathVariable("id") String id,
+            @RequestBody User user,
+            Principal principal) {
+        try {
+            return userService.updateUser(id, user, principal.getName())
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable("id") String id) {
-        boolean deleted = userService.deleteUser(id);
-
-        if (deleted) {
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteUser(
+            @PathVariable("id") String id,
+            Principal principal) {
+        try {
+            boolean deleted = userService.deleteUser(id, principal.getName());
+            return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 }

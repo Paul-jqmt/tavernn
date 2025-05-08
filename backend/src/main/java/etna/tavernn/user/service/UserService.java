@@ -4,6 +4,7 @@ import etna.tavernn.auth.dto.RegisterRequest;
 import etna.tavernn.user.model.User;
 import etna.tavernn.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -61,26 +62,38 @@ public class UserService implements UserDetailsService {
     }
 
     // @Todo improve to less ifs
-    public Optional<User> updateUser(String id, User userDetails) {
+    public Optional<User> updateUser(String id, User userDetails, String authenticatedEmail) {
         return userRepository.findById(id)
                 .map(existingUser -> {
-                    if (userDetails.getEmail() != null) {
-                        existingUser.setEmail(userDetails.getEmail());
+                    if (!existingUser.getEmail().equals(authenticatedEmail)) {
+                        throw new AccessDeniedException("You can only update your own profile");
                     }
+
                     if (userDetails.getUsername() != null) {
                         existingUser.setUsername(userDetails.getUsername());
                     }
-                    if (userDetails.getPassword() != null) {
-                        existingUser.setPassword(passwordEncoder.encode(userDetails.getPassword()));
+                    if (userDetails.getDiscord() != null) {
+                        existingUser.setDiscord(userDetails.getDiscord());
+                    }
+                    if (userDetails.getProfilePicture() != null) {
+                        existingUser.setProfilePicture(userDetails.getProfilePicture());
+                    }
+                    if (userDetails.getOpenAtInvite() != null) {
+                        existingUser.setOpenAtInvite(userDetails.getOpenAtInvite());
                     }
                     return userRepository.save(existingUser);
                 });
     }
 
-    public boolean deleteUser(String id) {
+
+    public boolean deleteUser(String id, String authenticatedEmail) {
         return userRepository.findById(id)
-                .map(user -> {
-                    userRepository.delete(user);
+                .map(userToDelete -> {
+                    if (!userToDelete.getEmail().equals(authenticatedEmail)) {
+                        throw new AccessDeniedException("You can only delete your own account");
+                    }
+
+                    userRepository.delete(userToDelete);
                     return true;
                 })
                 .orElse(false);
