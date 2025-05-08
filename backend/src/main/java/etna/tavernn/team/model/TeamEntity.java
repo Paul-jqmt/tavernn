@@ -1,13 +1,13 @@
 package etna.tavernn.team.model;
 
-import etna.tavernn.club.model.ClubEntity;
+import etna.tavernn.club.model.Club;
 import etna.tavernn.games.model.GamesEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 @Entity
@@ -25,7 +25,7 @@ public class TeamEntity {
     @NotNull(message = "Le club est requis")
     @ManyToOne
     @JoinColumn(name = "club_id", nullable = false)
-    private ClubEntity club_id;
+    private Club club_id;
 
     @NotNull(message = "Le nom est requis")
     @Size(min = 1, max = 100, message = "Le nom doit faire entre 1 et 100 caractères")
