@@ -19,7 +19,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
 
-    public AuthResponse authenticateAndCreateToken(String email, String password) {
+    public AuthResponse authenticateUser(String email, String password) {
 
         Optional<User> userOptional = userRepository.findByEmail(email);
         if (userOptional.isEmpty()) {
