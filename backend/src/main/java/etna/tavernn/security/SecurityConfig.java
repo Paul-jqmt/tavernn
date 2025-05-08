@@ -36,11 +36,19 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )//add protected route bellow
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/api-docs",
+                                "/api-docs/**",
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/public/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         .requestMatchers("/api/auth/refresh").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/users/{id}","/api/users").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/users/{id}", "/api/users").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
