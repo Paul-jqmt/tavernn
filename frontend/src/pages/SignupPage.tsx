@@ -6,6 +6,8 @@ import { z } from "zod";
 import {useForm} from "react-hook-form";
 import { zodResolver} from "@hookform/resolvers/zod";
 import logo from "@/assets/logo.svg";
+import wavy_ligne from "@/assets/wavy-ligne.svg";
+import {Link} from "react-router-dom";
 
 const formSchema = z.object({
     email: z.string().email(),
@@ -119,15 +121,21 @@ export default function SignupPage() {
                             </Button>
                         </form>
                     </Form>
+                    <p className="text-sm text-white font-light mt-4 text-center">
+                        Already have an account?{" "}
+                        <Link to="/login" className="text-mid-orange hover:underline font-medium">
+                            Sign in to join your team.
+                        </Link>
+                    </p>
                 </div>
             </div>
 
             {/*   RIGHT COLUMN: WELCOME TEXT FOR LARGE SCREEN   */}
-            <div className="hidden lg:flex w-1/2 flex-col items-start justify-center px-8 py-16 bg-light-purple text-white bg-light-purple">
-                <img src={logo} alt="Tavernn Logo" className="h-30 w-30 object-contain" />
-                <h2 className="text-4xl font-bold"> Welcome to <br /> Tavernn.</h2>
-                <div className="w-24 h-2 bg-brand-light_orange rounded-full mx-auto my-4" />
-                <p className="text-lg">
+            <div className="hidden lg:flex w-1/2 flex-col items-start justify-center px-30 bg-light-purple text-white bg-light-purple">
+                <img src={logo} alt="Tavernn Logo" className="h-30 w-30 object-contain mb-10" />
+                <h2 className="text-6xl font-bold"> Welcome to <br /> Tavernn.</h2>
+                <img src={wavy_ligne} alt={"text decoration"}/>
+                <p className="text-lg mt-8">
                     Where teams are forged<br />and victories claimed.
                 </p>
             </div>
