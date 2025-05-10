@@ -1,7 +1,7 @@
 package etna.tavernn.team.model;
 
 import etna.tavernn.club.model.Club;
-import etna.tavernn.games.model.GamesEntity;
+import etna.tavernn.game.model.Game;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +30,7 @@ public class Team {
 
     @ManyToOne
     @JoinColumn(name = "game_id", nullable = false)
-    private GamesEntity game;
+    private Game game;
 
     @Column(name = "nr_members", nullable = false)
     private Integer nrMembers = 0;
