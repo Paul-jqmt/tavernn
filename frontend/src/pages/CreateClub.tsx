@@ -1,7 +1,7 @@
 // src/pages/CreateClub.tsx
 import {ChangeEvent, FormEvent, useState} from 'react'
 import axios from 'axios'
-import Navbar from '../components/Navbar'
+import Navbar from '@/components/common/layout/Navbar.tsx'
 import {useNavigate} from 'react-router-dom'
 import {FaQuestionCircle} from 'react-icons/fa'
 
