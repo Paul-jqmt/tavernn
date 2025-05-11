@@ -1,4 +1,4 @@
-import LandingNavbar from "../components/HomeNavbar.tsx";
+import LandingNavbar from "@/components/common/layout/HomeNavbar.tsx";
 
 export default function HomePage() {
     return (

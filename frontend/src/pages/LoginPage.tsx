@@ -1,4 +1,4 @@
-import {useState, FormEvent, ChangeEvent} from "react";
+import {ChangeEvent, FormEvent, useState} from "react";
 import {Link} from "react-router-dom";
 import logo from "@/assets/logo.svg";
 import wavy_ligne from "@/assets/wavy-ligne.svg";
