@@ -1,9 +1,9 @@
 // src/pages/CreateClub.tsx
-import { useState, ChangeEvent, FormEvent } from 'react'
+import {ChangeEvent, FormEvent, useState} from 'react'
 import axios from 'axios'
 import Navbar from '../components/Navbar'
-import { useNavigate } from 'react-router-dom'
-import { FaQuestionCircle } from 'react-icons/fa'
+import {useNavigate} from 'react-router-dom'
+import {FaQuestionCircle} from 'react-icons/fa'
 
 type AdmissionType = 'open' | 'closed' | 'invite_only'
 
@@ -52,7 +52,7 @@ export default function CreateClub() {
 
         try {
             await axios.post('http://localhost:8080/api/clubs', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' }
+                headers: {'Content-Type': 'multipart/form-data'}
             })
             // redirige vers la liste des clubs
             navigate('/clubs')
@@ -64,7 +64,7 @@ export default function CreateClub() {
 
     return (
         <div className="min-h-screen bg-gradient-to-r from-indigo-900 to-purple-600 text-white">
-            <Navbar />
+            <Navbar/>
 
             <div className="px-10 py-16 max-w-4xl mx-auto">
                 <h1 className="text-4xl font-extrabold mb-8">
@@ -102,7 +102,7 @@ export default function CreateClub() {
                             <div>
                                 <label className="block mb-1" htmlFor="type">
                                     Admission type <span className="text-orange-500">*</span>
-                                    <FaQuestionCircle className="inline ml-2 text-white/50" />
+                                    <FaQuestionCircle className="inline ml-2 text-white/50"/>
                                 </label>
                                 <select
                                     id="type"
@@ -154,7 +154,7 @@ export default function CreateClub() {
                                 className="w-32 h-32 bg-orange-500 rounded-full flex items-center justify-center mb-4"
                             >
                                 {logoPreview ? (
-                                    <img src={logoPreview} className="w-full h-full object-cover rounded-full" />
+                                    <img src={logoPreview} className="w-full h-full object-cover rounded-full"/>
                                 ) : (
                                     <span className="text-black font-bold">LOGO</span>
                                 )}

@@ -1,4 +1,4 @@
-import axios, {AxiosInstance, InternalAxiosRequestConfig, AxiosResponse, AxiosError} from 'axios';
+import axios, {AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
 
 const API_URL = import.meta.env.API_URL
 
@@ -38,7 +38,7 @@ api.interceptors.response.use(
             try {
                 const refreshResponse = await axios.post(
                     `${API_URL}/auth/refresh`,
-                    { refreshToken: localStorage.getItem('refreshToken') },
+                    {refreshToken: localStorage.getItem('refreshToken')},
                     {withCredentials: true}
                 );
 

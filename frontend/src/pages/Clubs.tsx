@@ -1,6 +1,8 @@
-import { useEffect, useState } from 'react'
+import {useEffect, useState} from 'react'
 import axios from 'axios'
 
+
+//c'est interdit
 type Club = {
     id: string
     name: string
