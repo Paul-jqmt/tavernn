@@ -32,17 +32,16 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col lg:flex-row bg-deep-purple">
+        <div className="min-h-screen flex flex-col lg:flex-row">
             {/* LEFT COLUMN : LOGIN FORM */}
-            <div
-                className="w-full lg:w-1/2 flex items-center justify-center bg-deep-purple py-6 lg:min-h-0 min-h-screen">
+            <div className="w-full lg:w-1/2 flex items-center justify-center bg-brand-deep_purple py-12">
                 <div className="space-y-10 w-full max-w-md px-10">
-                    <h1 className="text-3xl font-bold text-mid-orange text-center">Login</h1>
+                    <h1 className="text-3xl font-bold text-brand-mid_orange text-center">Login</h1>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {/* EMAIL */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-white">
+                            <label className="text-sm font-medium text-brand-white">
                                 Email
                             </label>
                             <input
@@ -59,7 +58,7 @@ export default function LoginPage() {
 
                         {/* PASSWORD */}
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-white">
+                            <label className="text-sm font-medium text-brand-white">
                                 Password
                             </label>
                             <input
@@ -77,15 +76,15 @@ export default function LoginPage() {
                         <button
                             type="submit"
                             disabled={!email || !password}
-                            className="w-full bg-mid-orange disabled:opacity-50 disabled:cursor-not-allowed text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-opacity"
+                            className="w-full bg-brand-mid_orange disabled:opacity-50 disabled:cursor-not-allowed text-brand-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-opacity"
                         >
                             Login
                         </button>
                     </form>
 
-                    <p className="text-sm text-white font-light mt-4 text-center">
+                    <p className="text-sm text-brand-white font-light mt-4 text-center">
                         New to Tavernn?{" "}
-                        <Link to="/signup" className="text-mid-orange hover:underline font-medium">
+                        <Link to="/signup" className="text-brand-mid_orange hover:underline font-medium">
                             Sign up to new adventures.
                         </Link>
                     </p>
@@ -93,13 +92,13 @@ export default function LoginPage() {
             </div>
 
             {/* RIGHT COLUMN: WELCOME TEXT FOR LARGE SCREEN */}
-            <div className="hidden lg:flex w-1/2 flex-col items-start justify-center px-30 bg-light-purple text-white">
-                <img src={logo} alt="Tavernn Logo" className="h-30 w-30 object-contain mb-10"/>
-                <h2 className="text-6xl font-bold">
+            <div className="hidden lg:flex w-full lg:w-1/2 flex-col items-start justify-center px-12 bg-brand-light_purple text-brand-white">
+                <img src={logo} alt="Tavernn Logo" className="h-24 w-24 object-contain mb-8"/>
+                <h2 className="text-5xl font-bold">
                     Welcome to <br/> Tavernn.
                 </h2>
-                <img src={wavy_ligne} alt="text decoration"/>
-                <p className="text-lg mt-8">
+                <img src={wavy_ligne} alt="text decoration" className="my-4"/>
+                <p className="text-lg mt-4">
                     Where teams are forged<br/>and victories claimed.
                 </p>
             </div>
