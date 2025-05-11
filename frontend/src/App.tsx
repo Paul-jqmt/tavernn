@@ -1,13 +1,13 @@
 import './App.css'
-import { Routes, Route } from 'react-router-dom'
-import LandingPage from './pages/LandingPage.tsx'
+import {Route, Routes} from 'react-router-dom'
+import HomePage from './pages/HomePage.tsx'
 import SignupPage from "@/pages/SignupPage.tsx";
 import LoginPage from "@/pages/LoginPage.tsx";
 
 function App() {
     return (
         <Routes>
-            <Route path="/" element={<LandingPage />} />
+            <Route path="/" element={<HomePage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/login" element={<LoginPage />} />
         </Routes>

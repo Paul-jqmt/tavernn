@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 import {Button} from "@/components/ui/button";
 import logo from "@/assets/logo.svg";
 
-export default function LandingNavbar() {
+export default function HomeNavbar() {
     return (
         <header className="fixed w-full top-0 left-0 z-50 backdrop-blur-md bg-transparent text-white">
             <div className="px-10 py-10 flex items-center justify-between max-w-7x1 mx-auto">
