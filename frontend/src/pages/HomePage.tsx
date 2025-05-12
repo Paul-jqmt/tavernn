@@ -1,9 +1,10 @@
-import LandingNavbar from "@/components/common/layout/HomeNavbar.tsx";
+import HomeNavbar from "@/components/HomeNavbar.tsx";
 
 export default function HomePage() {
     return (
         <>
-            <LandingNavbar/>
+            <HomeNavbar />
+
             <div className="min-h-screen px-10 pt-20 text-white">
                 <div className="max-w-4xl mx-auto mt-20 text-left">
                     <h1 className="text-4xl md:text-5xl font-bold leading-tight">

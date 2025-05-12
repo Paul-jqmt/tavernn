@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
-import {Button} from "@/components/common/ui/button.tsx";
-import logo from "@/assets/logo.svg";
+import {Button} from "@/components/ui/button";
+import logo from '../assets/logo.svg';
 
 export default function HomeNavbar() {
     return (
@@ -16,7 +16,7 @@ export default function HomeNavbar() {
                     <Link className="hover:underline active:text-mid-purple text-sm font-semibold"
                           to="/help ">Help</Link>
                     <Button className="px-8" variant="default" asChild>
-                        <Link to={"/login"}>Login</Link>
+                        <Link to={"/auth"}>Login</Link>
                     </Button>
                 </nav>
             </div>

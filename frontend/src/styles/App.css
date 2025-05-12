@@ -1,10 +1,4 @@
 @import url('https://fonts.googleapis.com/css2?family=Geologica:wght@100..900&display=swap');
-@import './fonts.css';
-@import 'tailwindcss';
-
-@custom-variant dark (&:is(.dark *));
-
-body {
-    @apply bg-gradient-to-br from-[#7678ed] to-[#2d2769];
-    font-family: 'Geologica', sans-serif;
-}
+@import "./fonts.css";
+@import "tailwindcss";
+@tailwind utilities;
