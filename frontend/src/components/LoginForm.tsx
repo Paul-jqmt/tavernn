@@ -29,7 +29,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
 
     return (
         <div className="space-y-10 w-full max-w-md px-10">
-            <h1 className="text-3xl font-bold text-mid-orange text-center">Login</h1>
+            <h1 className="text-5xl font-extrabold text-mid-orange text-center">Login</h1>
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -65,7 +65,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
 
                     <Button
                         type='submit'
-                        className="w-full bg-mid-orange disabled:opacity-50 disabled:cursor-not-allowed">
+                        className="w-full bg-mid-orange disabled:opacity-50 disabled:cursor-not-allowed text-lg font-semibold">
                         Login
                     </Button>
                 </form>

@@ -7,7 +7,6 @@
 
 body {
     @apply bg-gradient-to-br from-[#7678ed] to-[#2d2769];
-    @apply font-sans;
 }
 
 @theme inline {
@@ -144,6 +143,9 @@ body {
         box-sizing: border-box;
     }
     html {
-        font-family: "Geologica", sans-serif;
+        @apply scroll-smooth;
+    }
+    body {
+        font-family: 'Geologica', sans-serif;
     }
 }

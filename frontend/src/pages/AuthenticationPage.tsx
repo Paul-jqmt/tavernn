@@ -16,7 +16,7 @@ export default function AuthenticationPage() {
                 <img src={logo} alt="Tavernn Logo" className="h-30 w-30 object-contain mb-10" />
                 <h2 className="text-6xl font-bold"> Welcome to <br /> Tavernn.</h2>
                 <img src={wavy_ligne} alt={"text decoration"}/>
-                <p className="text-lg mt-8">
+                <p className="text-3xl mt-8 font-extralight">
                     Where teams are forged<br />and victories claimed.
                 </p>
             </div>
