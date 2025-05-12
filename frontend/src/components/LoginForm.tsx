@@ -1,30 +1,63 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {Form, FormField, FormLabel, FormMessage, FormItem, FormControl} from "@/components/ui/form";
-import { z } from "zod";
-import {useForm} from "react-hook-form";
-import { zodResolver} from "@hookform/resolvers/zod";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react"
+import { Form, FormField, FormLabel, FormMessage, FormItem, FormControl } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import {LoginFormValues, loginSchema} from "@/schemas/loginSchema.ts";
+import api from "@/services/api";
+import { useState } from "react";
 
 type AuthFormProps = {
     onSwitch: () => void;
 };
 
-const formSchema = z.object({
-    email: z.string().email(),
-    password: z.string().min(8),
-})
-
 export default function LoginForm({ onSwitch }: AuthFormProps) {
-    const form = useForm({
-        resolver: zodResolver(formSchema),
+    const [error, setError] = useState<{ title: string; message: string } | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const handleSwitch = () => {
+        setError(null);
+        form.reset();
+        onSwitch();
+    };
+
+    const form = useForm<LoginFormValues>({
+        resolver: zodResolver(loginSchema),
         defaultValues: {
-            email: "",
-            password: "",
+            email: '',
+            password: '',
         },
     });
 
-    const onSubmit = (data: any) => {
-        console.log("Login data:", data);
+    const onSubmit = async (data: LoginFormValues) => {
+        setLoading(true);
+
+        try {
+            const response = await api.post("/api/auth/login", data);
+            const { accessToken, refreshToken } = response.data;
+            localStorage.setItem('accessToken', accessToken);
+            localStorage.setItem('refreshToken', refreshToken);
+
+        } catch (error: any) {
+            let errorTitle = 'Error';
+            let errorMessage = 'Something went wrong';
+
+            if (error.response && error.response.data?.message) {
+                errorMessage = error.response.data.message;
+            } else if (error.message === 'Network Error') {
+                errorTitle = 'Network Error';
+                errorMessage = 'Unable to connect to server. Please check your internet or try again later.';
+            } else if (error.message) {
+                errorTitle = 'Login Error';
+            }
+
+            setError({ title: errorTitle, message: errorMessage });
+            console.error('Login failed:', errorMessage);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -33,6 +66,14 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    {error && (
+                        <Alert variant="destructive">
+                            <AlertCircle className="h-4 w-4" />
+                            <AlertTitle>{error.title}</AlertTitle>
+                            <AlertDescription>{error.message}</AlertDescription>
+                        </Alert>
+                    )}
+
                     {/*   USERNAME   */}
                     <FormField
                         control={form.control}
@@ -43,7 +84,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
                                 <FormControl>
                                     <Input type="email" placeholder="example@mail.com" {...field} />
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className= 'text-white'/>
                             </FormItem>
                         )}
                     />
@@ -56,25 +97,26 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
                             <FormItem>
                                 <FormLabel>Password</FormLabel>
                                 <FormControl>
-                                    <Input type='password' placeholder='Enter password' {...field}/>
+                                    <Input type='password' placeholder='Enter your password' {...field}/>
                                 </FormControl>
-                                <FormMessage />
+                                <FormMessage className='text-white'/>
                             </FormItem>
                         )}
                     />
 
                     <Button
                         type='submit'
+                        disabled={loading}
                         className="w-full bg-mid-orange disabled:opacity-50 disabled:cursor-not-allowed text-lg font-semibold">
-                        Login
+                        {loading ? 'Logging in ...' : 'Login'}
                     </Button>
                 </form>
             </Form>
             <p className="text-sm text-white font-light mt-4 text-center">
-                New to Tavernn?{" "}
-                <button onClick={onSwitch} className="font-semibold text-mid-orange hover:underline hover:cursor-pointer">
+                New to Tavernn? {' '}
+                <Button onClick={handleSwitch} variant='link' className="p-0 font-semibold text-mid-orange hover:cursor-pointer">
                     Sign up to new adventures.
-                </button>
+                </Button>
             </p>
         </div>
     );
