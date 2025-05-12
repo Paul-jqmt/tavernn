@@ -1,6 +1,6 @@
 import {useState} from "react";
 import LoginForm from "@/components/LoginForm";
-import SignupForm from "@/components/SignupForm";
+import RegisterForm from "@/components/RegisterForm.tsx";
 import logo from "@/assets/logo.svg";
 import wavy_ligne from "@/assets/wavy-ligne.svg";
 import clsx from "clsx";
@@ -27,7 +27,7 @@ export default function AuthenticationPage() {
                 {/*   LEFT COLUMN: REGISTER FORM   */}
                 <div className={clsx("absolute w-full lg:w-1/2 h-full top-0 left-0 flex items-center justify-center transition-opacity duration-500 px-8",
                     mode === "login" ? "opacity-0 pointer-events-none" : "opacity-100")}>
-                    <SignupForm onSwitch={() => setMode("login")} />
+                    <RegisterForm onSwitch={() => setMode("login")} />
                 </div>
 
                 {/*   RIGHT COLUMN: LOGIN FORM   */}
