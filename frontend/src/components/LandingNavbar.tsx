@@ -14,7 +14,7 @@ export default function LandingNavbar() {
                     <Link className="hover:underline active:text-mid-purple text-sm font-semibold" to="/discover">Discover</Link>
                     <Link className="hover:underline active:text-mid-purple text-sm font-semibold" to="/help ">Help</Link>
                     <Button className="px-8" variant="default" asChild>
-                        <Link to={"/login"}>Login</Link>
+                        <Link to={"/auth"}>Login</Link>
                     </Button>
                 </nav>
             </div>
