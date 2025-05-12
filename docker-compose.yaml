@@ -24,10 +24,14 @@ services:
       - "5173:5173"
     environment:
       - VITE_API_URL=${VITE_API_URL}
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       - backend
     networks:
       - tavernn-network
+
 
   db:
     image: mysql:8.0

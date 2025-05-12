@@ -7,7 +7,6 @@ import etna.tavernn.auth.dto.RegisterRequest;
 import etna.tavernn.auth.service.AuthService;
 import etna.tavernn.auth.service.JwtService;
 import etna.tavernn.user.model.User;
-import etna.tavernn.user.repository.UserRepository;
 import etna.tavernn.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
