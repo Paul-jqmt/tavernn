@@ -1,33 +1,31 @@
 package etna.tavernn.club.service;
 
+import etna.tavernn.club.dto.ClubRequest;
 import etna.tavernn.club.dto.ClubResponse;
-import etna.tavernn.club.dto.CreateAndJoinRequest;
 import etna.tavernn.club.model.Club;
-import etna.tavernn.club.model.ClubType;
+import etna.tavernn.club.model.ClubMember;
 import etna.tavernn.club.repository.ClubMemberRepository;
 import etna.tavernn.club.repository.ClubRepository;
-import etna.tavernn.user.repository.UserRepository;
 import etna.tavernn.user.model.User;
-import etna.tavernn.club.model.ClubMember;
+import etna.tavernn.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ClubService {
 
-    private final static boolean is_admin = true;
-    private final static boolean is_owner = true;
-
     private final ClubRepository clubRepository;
-    private final UserRepository userRepository;
     private final ClubMemberRepository clubMemberRepository;
+    private final UserRepository userRepository;
 
     public List<ClubResponse> getAllClubs() {
         return clubRepository.findAll().stream()
@@ -40,23 +38,35 @@ public class ClubService {
                 .map(this::toClubResponseDTO);
     }
 
-    public Club saveClub(Club club) {
-        return clubRepository.save(club);
-    }
+    @Transactional
+    public ClubResponse createClub(ClubRequest clubRequest, String userEmail) {
+        User creator = userRepository.findByEmail(userEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    public ClubResponse CreateAndJoinRequest(CreateAndJoinRequest request, String creatorUserId) {
-        Club club = new Club();
-        club.setName(request.getName());
-        club.setDescription(request.getDescription());
-        club.setClubType(request.getClubType());
-        club.setMaxMembers(request.getMaxMembers());
-        club.setCreationDate(LocalDate.now());
+        Club club = Club.builder()
+                .id(UUID.randomUUID().toString())
+                .name(clubRequest.getName())
+                .description(clubRequest.getDescription())
+                .creationDate(LocalDate.now())
+                .logo(clubRequest.getLogo())
+                .clubType(clubRequest.getClubType())
+                .nrMembers(1)
+                .maxMembers(clubRequest.getMaxMembers())
+                .build();
+
         club = clubRepository.save(club);
 
-        User user = userRepository.findById(creatorUserId)
-                .orElseThrow(() -> new UsernameNotFoundException("Aucun user trouvé"));
-        ClubMember membership = new ClubMember(club, user, is_admin, is_owner);
-        clubMemberRepository.save(membership);
+        ClubMember.ClubMemberId memberId = new ClubMember.ClubMemberId(club.getId(), creator.getId());
+        ClubMember ownerMember = ClubMember.builder()
+                .id(memberId)
+                .club(club)
+                .user(creator)
+                .isOwner(true)
+                .isAdmin(true)
+                .build();
+
+        clubMemberRepository.save(ownerMember);
+
         return toClubResponseDTO(club);
     }
 
