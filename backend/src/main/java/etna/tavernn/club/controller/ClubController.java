@@ -1,5 +1,6 @@
 package etna.tavernn.club.controller;
 
+import etna.tavernn.club.dto.ClubMemberResponse;
 import etna.tavernn.club.dto.ClubRequest;
 import etna.tavernn.club.dto.ClubResponse;
 import etna.tavernn.club.service.ClubService;
@@ -46,6 +47,24 @@ public class ClubController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteClub(@PathVariable String id) {
         clubService.deleteClubById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/join")
+    public ResponseEntity<ClubMemberResponse> joinClub(@PathVariable String id, Authentication authentication) {
+
+        String userEmail = authentication.getName();
+
+        ClubMemberResponse memberResponse = clubService.joinClub(id, userEmail);
+        return ResponseEntity.ok(memberResponse);
+    }
+
+    @PostMapping("/{id}/leave")
+    public ResponseEntity<Void> leaveClub(@PathVariable String id, Authentication authentication) {
+
+        String userEmail = authentication.getName();
+
+        clubService.leaveClub(id, userEmail);
         return ResponseEntity.noContent().build();
     }
 }

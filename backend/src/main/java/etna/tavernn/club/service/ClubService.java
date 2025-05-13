@@ -1,9 +1,12 @@
 package etna.tavernn.club.service;
 
+import etna.tavernn.club.dto.ClubMapper;
+import etna.tavernn.club.dto.ClubMemberResponse;
 import etna.tavernn.club.dto.ClubRequest;
 import etna.tavernn.club.dto.ClubResponse;
 import etna.tavernn.club.model.Club;
 import etna.tavernn.club.model.ClubMember;
+import etna.tavernn.club.model.ClubType;
 import etna.tavernn.club.repository.ClubMemberRepository;
 import etna.tavernn.club.repository.ClubRepository;
 import etna.tavernn.user.model.User;
@@ -26,13 +29,14 @@ public class ClubService {
     private final ClubRepository clubRepository;
     private final ClubMemberRepository clubMemberRepository;
     private final UserRepository userRepository;
+    private final ClubMapper clubMapper;
 
     public List<ClubResponse> getAllClubs() {
         List<Club> clubs = clubRepository.findAll();
 
         List<ClubResponse> responses = new ArrayList<>();
         for (Club club : clubs) {
-            ClubResponse response = convertToResponse(club);
+            ClubResponse response = clubMapper.toClubResponse(club);
             responses.add(response);
         }
 
@@ -44,7 +48,7 @@ public class ClubService {
 
         if (clubOptional.isPresent()) {
             Club club = clubOptional.get();
-            ClubResponse response = convertToResponse(club);
+            ClubResponse response = clubMapper.toClubResponse(club);
             return Optional.of(response);
         }
 
@@ -84,24 +88,94 @@ public class ClubService {
 
         clubMemberRepository.save(ownerMember);
 
-        return convertToResponse(club);
+        return clubMapper.toClubResponse(club);
     }
 
     public void deleteClubById(String id) {
         clubRepository.deleteById(id);
     }
 
-    private ClubResponse convertToResponse(Club club) {
-        ClubResponse response = new ClubResponse();
-        response.setId(club.getId());
-        response.setName(club.getName());
-        response.setDescription(club.getDescription());
-        response.setCreationDate(club.getCreationDate());
-        response.setLogo(club.getLogo());
-        response.setClubType(club.getClubType());
-        response.setNrMembers(club.getNrMembers());
-        response.setMaxMembers(club.getMaxMembers());
+    @Transactional
+    public ClubMemberResponse joinClub(String clubId, String userEmail) {
+        // Find existing user
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        User user = userOptional.get();
 
-        return response;
+        // Find existing club
+        Optional<Club> clubOptional = clubRepository.findById(clubId);
+        if (clubOptional.isEmpty()) {
+            throw new RuntimeException("Club not found");
+        }
+        Club club = clubOptional.get();
+
+        // is user already a member ?
+        ClubMember.ClubMemberId memberId = new ClubMember.ClubMemberId();
+        memberId.setClubId(clubId);
+        memberId.setUserId(user.getId());
+
+        Optional<ClubMember> existingMember = clubMemberRepository.findById(memberId);
+        if (existingMember.isPresent()) {
+            throw new RuntimeException("User is already a member of this club");
+        }
+
+        // is club full ?
+        if (club.getNrMembers() >= club.getMaxMembers()) {
+            throw new RuntimeException("Club is full");
+        }
+
+        //is club open ?
+        if (club.getClubType() != ClubType.open) {
+            throw new RuntimeException("This club requires approval to join");
+        }
+
+        ClubMember newMember = new ClubMember();
+        newMember.setId(memberId);
+        newMember.setClub(club);
+        newMember.setUser(user);
+        newMember.setIsOwner(false);
+        newMember.setIsAdmin(false);
+
+        clubMemberRepository.save(newMember);
+        club.setNrMembers(club.getNrMembers() + 1);
+        clubRepository.save(club);
+
+        return clubMapper.toClubMemberResponse(newMember);
+    }
+
+    @Transactional
+    public void leaveClub(String clubId, String userEmail) {
+        // Find user
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        User user = userOptional.get();
+
+        ClubMember.ClubMemberId memberId = new ClubMember.ClubMemberId();
+        memberId.setClubId(clubId);
+        memberId.setUserId(user.getId());
+
+        Optional<ClubMember> memberOptional = clubMemberRepository.findById(memberId);
+        if (memberOptional.isEmpty()) {
+            throw new RuntimeException("User is not a member of this club");
+        }
+
+        ClubMember member = memberOptional.get();
+
+        if (member.getIsOwner()) {
+            throw new RuntimeException("Club owner cannot leave the club");
+        }
+
+        clubMemberRepository.delete(member);
+
+        Optional<Club> clubOptional = clubRepository.findById(clubId);
+        if (clubOptional.isPresent()) {
+            Club club = clubOptional.get();
+            club.setNrMembers(club.getNrMembers() - 1);
+            clubRepository.save(club);
+        }
     }
 }
