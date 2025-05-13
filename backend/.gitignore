@@ -4,3 +4,4 @@ backend/src/main/resources/application.properties
 .iml
 application.properties
 application-local.properties
+pom.xml

@@ -37,13 +37,19 @@ public class JwtService {
         return claims.getSubject();
     }
 
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(UserDetails userDetails, User user) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("userId", user.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String extractUserId(String token) {
+        Claims claims = getClaims(token);
+        return claims.get("userId", String.class);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
@@ -86,7 +92,7 @@ public class JwtService {
     }
 
     public AuthResponse createTokenResponse(UserDetails userDetails, User user) {
-        String jwt = generateToken(userDetails);
+        String jwt = generateToken(userDetails, user);
 
         AuthResponse response = new AuthResponse();
         response.setToken(jwt);
