@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {LoginFormValues, loginSchema} from "@/schemas/loginSchema.ts";
 import api from "@/services/api";
 import { useState } from "react";
+import {useNavigate} from "react-router-dom";
 
 type AuthFormProps = {
     onSwitch: () => void;
@@ -16,6 +17,7 @@ type AuthFormProps = {
 export default function LoginForm({ onSwitch }: AuthFormProps) {
     const [error, setError] = useState<{ title: string; message: string } | null>(null);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const handleSwitch = () => {
         setError(null);
@@ -36,14 +38,14 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
 
         try {
             const response = await api.post("/api/auth/login", data);
-            const { accessToken, refreshToken } = response.data;
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
-
+            const { token } = response.data;
+            localStorage.setItem('accessToken', token);
+            navigate('/profile');
         } catch (error: any) {
             let errorTitle = 'Error';
             let errorMessage = 'Something went wrong';
 
+            console.log('response: ', error);
             if (error.response && error.response.data?.message) {
                 errorMessage = error.response.data.message;
             } else if (error.message === 'Network Error') {
