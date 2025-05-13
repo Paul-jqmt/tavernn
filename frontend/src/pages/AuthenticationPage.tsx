@@ -1,6 +1,6 @@
 import {useState} from "react";
 import LoginForm from "@/components/LoginForm";
-import RegisterForm from "@/components/SignupForm.tsx";
+import RegisterForm from "@/components/RegisterForm.tsx";
 import logo from "@/assets/logo.svg";
 import wavy_ligne from "@/assets/wavy-ligne.svg";
 import clsx from "clsx";

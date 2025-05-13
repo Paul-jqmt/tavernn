@@ -11,11 +11,11 @@ export default function Navbar() {
                 </Link>
                 <nav className="flex items-center gap-8 md:gap-18">
                     <Link className="hover:underline active:text-mid-purple text-sm font-semibold"
-                          to="/discover">Home</Link>
+                          to="/home">Home</Link>
                     <Link className="hover:underline active:text-mid-purple text-sm font-semibold"
-                          to="/help ">Club</Link>
+                          to="/club">Club</Link>
                     <Link className="hover:underline active:text-mid-purple text-sm font-semibold"
-                          to="/help ">Profile</Link>
+                          to="/profile">Profile</Link>
                 </nav>
             </div>
         </header>
