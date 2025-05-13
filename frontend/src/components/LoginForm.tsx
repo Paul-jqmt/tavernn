@@ -8,7 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {LoginFormValues, loginSchema} from "@/schemas/loginSchema.ts";
 import api from "@/services/api";
 import { useState } from "react";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type AuthFormProps = {
     onSwitch: () => void;

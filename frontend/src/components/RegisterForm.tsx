@@ -9,6 +9,7 @@ import api from "@/services/api";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert.tsx";
 import {AlertCircle} from "lucide-react";
 import {useState} from "react";
+import { useNavigate } from "react-router-dom";
 
 type AuthFormProps = {
     onSwitch: () => void;
@@ -17,6 +18,7 @@ type AuthFormProps = {
 export default function RegisterForm({ onSwitch }: AuthFormProps) {
     const [error, setError] = useState<{ title: string; message: string } | null>(null);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
 
     const form = useForm<RegisterFormValues>({
         resolver: zodResolver(registerSchema),
@@ -43,9 +45,10 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
 
         try {
             const response = await api.post("/api/auth/register", payload);
-            const { accessToken, refreshToken } = response.data;
-            localStorage.setItem('accessToken', accessToken);
-            localStorage.setItem('refreshToken', refreshToken);
+            const { accessToken } = response.data;
+            localStorage.setItem('token', accessToken);
+
+            navigate('/profile');
         } catch (error: any) {
             let errorTitle = 'Error';
             let errorMessage = 'Something went wrong';
