@@ -14,10 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,62 +28,80 @@ public class ClubService {
     private final UserRepository userRepository;
 
     public List<ClubResponse> getAllClubs() {
-        return clubRepository.findAll().stream()
-                .map(this::toClubResponseDTO)
-                .collect(Collectors.toList());
+        List<Club> clubs = clubRepository.findAll();
+
+        List<ClubResponse> responses = new ArrayList<>();
+        for (Club club : clubs) {
+            ClubResponse response = convertToResponse(club);
+            responses.add(response);
+        }
+
+        return responses;
     }
 
     public Optional<ClubResponse> getClubById(String id) {
-        return clubRepository.findById(id)
-                .map(this::toClubResponseDTO);
+        Optional<Club> clubOptional = clubRepository.findById(id);
+
+        if (clubOptional.isPresent()) {
+            Club club = clubOptional.get();
+            ClubResponse response = convertToResponse(club);
+            return Optional.of(response);
+        }
+
+        return Optional.empty();
     }
 
     @Transactional
     public ClubResponse createClub(ClubRequest clubRequest, String userEmail) {
-        User creator = userRepository.findByEmail(userEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        Optional<User> userOptional = userRepository.findByEmail(userEmail);
+        if (userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        User creator = userOptional.get();
 
-        Club club = Club.builder()
-                .id(UUID.randomUUID().toString())
-                .name(clubRequest.getName())
-                .description(clubRequest.getDescription())
-                .creationDate(LocalDate.now())
-                .logo(clubRequest.getLogo())
-                .clubType(clubRequest.getClubType())
-                .nrMembers(1)
-                .maxMembers(clubRequest.getMaxMembers())
-                .build();
+        Club club = new Club();
+        club.setId(UUID.randomUUID().toString());
+        club.setName(clubRequest.getName());
+        club.setDescription(clubRequest.getDescription());
+        club.setCreationDate(LocalDate.now());
+        club.setLogo(clubRequest.getLogo());
+        club.setClubType(clubRequest.getClubType());
+        club.setNrMembers(1);
+        club.setMaxMembers(clubRequest.getMaxMembers());
 
         club = clubRepository.save(club);
 
-        ClubMember.ClubMemberId memberId = new ClubMember.ClubMemberId(club.getId(), creator.getId());
-        ClubMember ownerMember = ClubMember.builder()
-                .id(memberId)
-                .club(club)
-                .user(creator)
-                .isOwner(true)
-                .isAdmin(true)
-                .build();
+        ClubMember.ClubMemberId memberId = new ClubMember.ClubMemberId();
+        memberId.setClubId(club.getId());
+        memberId.setUserId(creator.getId());
+
+        ClubMember ownerMember = new ClubMember();
+        ownerMember.setId(memberId);
+        ownerMember.setClub(club);
+        ownerMember.setUser(creator);
+        ownerMember.setIsOwner(true);
+        ownerMember.setIsAdmin(true);
 
         clubMemberRepository.save(ownerMember);
 
-        return toClubResponseDTO(club);
+        return convertToResponse(club);
     }
 
     public void deleteClubById(String id) {
         clubRepository.deleteById(id);
     }
 
-    private ClubResponse toClubResponseDTO(Club club) {
-        return ClubResponse.builder()
-                .id(club.getId())
-                .name(club.getName())
-                .description(club.getDescription())
-                .creationDate(club.getCreationDate())
-                .logo(club.getLogo())
-                .clubType(club.getClubType())
-                .nrMembers(club.getNrMembers())
-                .maxMembers(club.getMaxMembers())
-                .build();
+    private ClubResponse convertToResponse(Club club) {
+        ClubResponse response = new ClubResponse();
+        response.setId(club.getId());
+        response.setName(club.getName());
+        response.setDescription(club.getDescription());
+        response.setCreationDate(club.getCreationDate());
+        response.setLogo(club.getLogo());
+        response.setClubType(club.getClubType());
+        response.setNrMembers(club.getNrMembers());
+        response.setMaxMembers(club.getMaxMembers());
+
+        return response;
     }
 }
