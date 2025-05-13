@@ -92,7 +92,7 @@ public class JwtService {
     }
 
     public AuthResponse createTokenResponse(UserDetails userDetails, User user) {
-        String jwt = generateToken(userDetails, user);  // Pass user object too
+        String jwt = generateToken(userDetails, user);
 
         AuthResponse response = new AuthResponse();
         response.setToken(jwt);
