@@ -3,6 +3,8 @@ package etna.tavernn.club.model;
 import etna.tavernn.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "club_members")
@@ -20,6 +22,7 @@ public class ClubMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("clubId")
     @JoinColumn(name = "club_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Club club;
 
     @ManyToOne(fetch = FetchType.LAZY)

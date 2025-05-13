@@ -4,13 +4,13 @@
     import etna.tavernn.club.dto.CreateAndJoinRequest;
     import etna.tavernn.club.model.Club;
     import etna.tavernn.club.service.ClubService;
+    import etna.tavernn.security.CustomUserPrincipal;
     import lombok.RequiredArgsConstructor;
     import org.springframework.http.HttpStatus;
     import org.springframework.http.ResponseEntity;
-    import org.springframework.security.core.annotation.AuthenticationPrincipal;
+    import org.springframework.security.core.Authentication;
     import org.springframework.web.bind.annotation.*;
 
-    import java.nio.file.attribute.UserPrincipal;
     import java.util.List;
 
     @RestController
@@ -33,8 +33,9 @@
         }
 
         @PostMapping
-        public ResponseEntity<ClubResponse> createAndJoinClub(@RequestBody CreateAndJoinRequest request, @AuthenticationPrincipal UserPrincipal currentUser) {
-            ClubResponse dto = clubService.CreateAndJoinRequest(request, currentUser.getId());
+        public ResponseEntity<ClubResponse> createAndJoinClub(@RequestBody CreateAndJoinRequest request, Authentication authentication) {
+            CustomUserPrincipal principal = (CustomUserPrincipal) authentication.getPrincipal();
+            ClubResponse dto = clubService.CreateAndJoinRequest(request, principal.getUserId());
             return ResponseEntity.status(HttpStatus.CREATED).body(dto);
         }
 

@@ -36,6 +36,7 @@ public class Club {
 
     @Column(name = "max_members")
     private Integer maxMembers;
+
 }
 
 
