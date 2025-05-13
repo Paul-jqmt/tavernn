@@ -1,4 +1,4 @@
-package etna.tavernn.auth.controller;
+    package etna.tavernn.auth.controller;
 
 import etna.tavernn.auth.dto.AuthResponse;
 import etna.tavernn.auth.dto.ErrorResponse;

@@ -1,6 +1,5 @@
 package etna.tavernn.club.model;
 
-
 import jakarta.persistence.*;
 import lombok.Data;
 
