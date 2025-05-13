@@ -1,35 +1,25 @@
 package etna.tavernn.club.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.io.Serializable;
-import java.util.Objects;
 
 @Embeddable
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
 public class ClubMemberId implements Serializable {
 
+    @Column(name = "club_id")
     private String clubId;
+
+    @Column(name = "user_id")
     private String userId;
-
-    public ClubMemberId() {}
-
-    public ClubMemberId(String clubId, String userId) {
-        this.clubId = clubId;
-        this.userId = userId;
-    }
-
-    // getters & setters
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ClubMemberId)) return false;
-        ClubMemberId that = (ClubMemberId) o;
-        return Objects.equals(clubId, that.clubId) &&
-                Objects.equals(userId, that.userId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(clubId, userId);
-    }
 }

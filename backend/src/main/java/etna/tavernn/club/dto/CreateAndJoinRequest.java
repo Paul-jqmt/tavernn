@@ -13,7 +13,7 @@ public class CreateAndJoinRequest {
 
     private String description;
 
-    private ClubType clubType;     // camelCase
+    private ClubType clubType;
 
-    private Integer maxMembers;  // camelCase
+    private Integer maxMembers;
 }
