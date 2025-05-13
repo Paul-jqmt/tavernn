@@ -97,14 +97,14 @@ public class ClubService {
 
     @Transactional
     public ClubMemberResponse joinClub(String clubId, String userEmail) {
-        // Find existing user
+        // find existing user
         Optional<User> userOptional = userRepository.findByEmail(userEmail);
         if (userOptional.isEmpty()) {
             throw new UsernameNotFoundException("User not found");
         }
         User user = userOptional.get();
 
-        // Find existing club
+        // find existing club
         Optional<Club> clubOptional = clubRepository.findById(clubId);
         if (clubOptional.isEmpty()) {
             throw new RuntimeException("Club not found");
@@ -147,7 +147,7 @@ public class ClubService {
 
     @Transactional
     public void leaveClub(String clubId, String userEmail) {
-        // Find user
+        // find user
         Optional<User> userOptional = userRepository.findByEmail(userEmail);
         if (userOptional.isEmpty()) {
             throw new UsernameNotFoundException("User not found");

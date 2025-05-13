@@ -1,5 +1,7 @@
 package etna.tavernn.club.service;
 
+import etna.tavernn.club.dto.ClubMapper;
+import etna.tavernn.club.dto.ClubMemberResponse;
 import etna.tavernn.club.dto.ClubRequest;
 import etna.tavernn.club.dto.ClubResponse;
 import etna.tavernn.club.model.Club;
@@ -38,15 +40,21 @@ class ClubServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private ClubMapper clubMapper;
+
     @InjectMocks
     private ClubService clubService;
 
     private Club testClub;
     private User testUser;
     private ClubRequest clubRequest;
+    private ClubMember testMember;
+    private ClubMemberResponse memberResponse;
 
     @BeforeEach
     void setUp() {
+        // Set up test data
         testClub = new Club();
         testClub.setId("test-club-id");
         testClub.setName("Test Club");
@@ -69,6 +77,23 @@ class ClubServiceTest {
         clubRequest.setLogo("new-logo.png");
         clubRequest.setClubType(ClubType.open);
         clubRequest.setMaxMembers(100);
+
+        testMember = new ClubMember();
+        ClubMember.ClubMemberId memberId = new ClubMember.ClubMemberId();
+        memberId.setClubId(testClub.getId());
+        memberId.setUserId(testUser.getId());
+        testMember.setId(memberId);
+        testMember.setClub(testClub);
+        testMember.setUser(testUser);
+        testMember.setIsOwner(false);
+        testMember.setIsAdmin(false);
+
+        memberResponse = new ClubMemberResponse();
+        memberResponse.setUserId(testUser.getId());
+        memberResponse.setUsername(testUser.getUsername());
+        memberResponse.setEmail(testUser.getEmail());
+        memberResponse.setIsOwner(false);
+        memberResponse.setIsAdmin(false);
     }
 
     @Test
@@ -157,5 +182,169 @@ class ClubServiceTest {
         clubService.createClub(clubRequest, "test@example.com");
 
         verify(clubMemberRepository, times(1)).save(any(ClubMember.class));
+    }
+
+    @Test
+    void testJoinClub_Success() {
+        // Mock repository calls
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(clubRepository.findById("test-club-id")).thenReturn(Optional.of(testClub));
+        when(clubMemberRepository.findById(any())).thenReturn(Optional.empty());
+        when(clubMemberRepository.save(any(ClubMember.class))).thenReturn(testMember);
+        when(clubMapper.toClubMemberResponse(any(ClubMember.class))).thenReturn(memberResponse);
+
+        ClubMemberResponse result = clubService.joinClub("test-club-id", "test@example.com");
+
+        assertNotNull(result);
+        assertEquals("test-user-id", result.getUserId());
+        assertEquals("testuser", result.getUsername());
+        assertFalse(result.getIsOwner());
+        assertFalse(result.getIsAdmin());
+
+        verify(userRepository, times(1)).findByEmail("test@example.com");
+        verify(clubRepository, times(1)).findById("test-club-id");
+        verify(clubMemberRepository, times(1)).save(any(ClubMember.class));
+        verify(clubRepository, times(1)).save(any(Club.class));
+    }
+
+    @Test
+    void testJoinClub_UserNotFound() {
+        when(userRepository.findByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
+        assertThrows(UsernameNotFoundException.class, () -> {
+            clubService.joinClub("test-club-id", "nonexistent@example.com");
+        });
+        verify(clubRepository, never()).findById(any());
+        verify(clubMemberRepository, never()).save(any());
+    }
+
+    @Test
+    void testJoinClub_ClubNotFound() {
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(clubRepository.findById("nonexistent-club")).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            clubService.joinClub("nonexistent-club", "test@example.com");
+        });
+
+        assertEquals("Club not found", exception.getMessage());
+        verify(clubMemberRepository, never()).save(any());
+    }
+
+    @Test
+    void testJoinClub_UserAlreadyMember() {
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(clubRepository.findById("test-club-id")).thenReturn(Optional.of(testClub));
+        when(clubMemberRepository.findById(any())).thenReturn(Optional.of(testMember));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            clubService.joinClub("test-club-id", "test@example.com");
+        });
+
+        assertEquals("User is already a member of this club", exception.getMessage());
+        verify(clubMemberRepository, never()).save(any());
+    }
+
+    @Test
+    void testJoinClub_ClubFull() {
+        testClub.setMaxMembers(1);
+        testClub.setNrMembers(1);
+
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(clubRepository.findById("test-club-id")).thenReturn(Optional.of(testClub));
+        when(clubMemberRepository.findById(any())).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            clubService.joinClub("test-club-id", "test@example.com");
+        });
+
+        assertEquals("Club is full", exception.getMessage());
+        verify(clubMemberRepository, never()).save(any());
+    }
+
+    @Test
+    void testJoinClub_RequiresApproval() {
+        testClub.setClubType(ClubType.closed);
+
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(clubRepository.findById("test-club-id")).thenReturn(Optional.of(testClub));
+        when(clubMemberRepository.findById(any())).thenReturn(Optional.empty());
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            clubService.joinClub("test-club-id", "test@example.com");
+        });
+        assertEquals("This club requires approval to join", exception.getMessage());
+        verify(clubMemberRepository, never()).save(any());
+    }
+
+    @Test
+    void testLeaveClub_Success() {
+        // Mock repository
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(clubMemberRepository.findById(any())).thenReturn(Optional.of(testMember));
+        when(clubRepository.findById("test-club-id")).thenReturn(Optional.of(testClub));
+        assertDoesNotThrow(() -> {
+            clubService.leaveClub("test-club-id", "test@example.com");
+        });
+        verify(clubMemberRepository, times(1)).delete(testMember);
+        verify(clubRepository, times(1)).save(any(Club.class));
+
+        verify(clubRepository).save(argThat(club ->
+                club.getNrMembers() == 0
+        ));
+    }
+
+    @Test
+    void testLeaveClub_UserNotFound() {
+        when(userRepository.findByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
+
+        assertThrows(UsernameNotFoundException.class, () -> {
+            clubService.leaveClub("test-club-id", "nonexistent@example.com");
+        });
+
+        verify(clubMemberRepository, never()).delete(any());
+    }
+
+    @Test
+    void testLeaveClub_UserNotMember() {
+        // Mock repository
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(clubMemberRepository.findById(any())).thenReturn(Optional.empty());
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            clubService.leaveClub("test-club-id", "test@example.com");
+        });
+
+        assertEquals("User is not a member of this club", exception.getMessage());
+        verify(clubMemberRepository, never()).delete(any());
+    }
+
+    @Test
+    void testLeaveClub_OwnerCannotLeave() {
+        testMember.setIsOwner(true);
+
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(clubMemberRepository.findById(any())).thenReturn(Optional.of(testMember));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            clubService.leaveClub("test-club-id", "test@example.com");
+        });
+
+        assertEquals("Club owner cannot leave the club", exception.getMessage());
+        verify(clubMemberRepository, never()).delete(any());
+    }
+
+    @Test
+    void testJoinClub_UpdatesMemberCount() {
+        // Mock repository calls
+        when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(testUser));
+        when(clubRepository.findById("test-club-id")).thenReturn(Optional.of(testClub));
+        when(clubMemberRepository.findById(any())).thenReturn(Optional.empty());
+        when(clubMemberRepository.save(any(ClubMember.class))).thenReturn(testMember);
+        when(clubMapper.toClubMemberResponse(any(ClubMember.class))).thenReturn(memberResponse);
+
+        clubService.joinClub("test-club-id", "test@example.com");
+
+        verify(clubRepository).save(argThat(club ->
+                club.getNrMembers() == 2  // Was 1, now 2
+        ));
     }
 }
