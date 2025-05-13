@@ -52,8 +52,6 @@ public class JwtService {
         return claims.get("userId", String.class);
     }
 
-
-
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             String username = extractUsername(token);
@@ -104,5 +102,4 @@ public class JwtService {
 
         return response;
     }
-
 }

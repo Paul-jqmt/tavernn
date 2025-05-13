@@ -22,6 +22,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ClubService {
 
+    private final static boolean is_admin = true;
+    private final static boolean is_owner = true;
+
     private final ClubRepository clubRepository;
     private final UserRepository userRepository;
     private final ClubMemberRepository clubMemberRepository;
@@ -52,7 +55,7 @@ public class ClubService {
 
         User user = userRepository.findById(creatorUserId)
                 .orElseThrow(() -> new UsernameNotFoundException("Aucun user trouvé"));
-        ClubMember membership = new ClubMember(club, user, true, true);
+        ClubMember membership = new ClubMember(club, user, is_admin, is_owner);
         clubMemberRepository.save(membership);
         return toClubResponseDTO(club);
     }
