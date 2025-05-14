@@ -1,15 +1,17 @@
 package etna.tavernn.team.controller;
 
+import etna.tavernn.team.dto.TeamMemberResponse;
+import etna.tavernn.team.dto.TeamRequest;
 import etna.tavernn.team.dto.TeamResponse;
-import etna.tavernn.team.model.Team;
 import etna.tavernn.team.service.TeamService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-//@TODO ADD EXCEPTION HANDLING
 
 @RestController
 @RequestMapping("/api/team")
@@ -20,34 +22,53 @@ public class TeamController {
 
     @GetMapping
     public ResponseEntity<List<TeamResponse>> getAllTeams() {
-        return ResponseEntity.ok(teamService.getAllTeamsDTO());
+        List<TeamResponse> teams = teamService.getAllTeamsDTO();
+        return ResponseEntity.ok(teams);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TeamResponse> getTeamById(@PathVariable("id") String id) {
+    public ResponseEntity<TeamResponse> getTeamById(@PathVariable String id) {
         return teamService.getTeamByIdDTO(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Team> createTeam(@RequestBody Team team) {
-        return ResponseEntity.ok(teamService.saveTeam(team));
+    public ResponseEntity<TeamResponse> createTeam(@Valid @RequestBody TeamRequest teamRequest, Authentication authentication) {
+
+        String userEmail = authentication.getName();
+
+        TeamResponse createdTeam = teamService.createTeam(teamRequest, userEmail);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdTeam);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Team> updateTeam(@PathVariable("id") String id, @RequestBody Team team) {
-        return teamService.updateTeam(id, team)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    @PostMapping("/{id}/join")
+    public ResponseEntity<TeamMemberResponse> joinTeam(@PathVariable String id, Authentication authentication) {
+
+        String userEmail = authentication.getName();
+
+        TeamMemberResponse memberResponse = teamService.joinTeam(id, userEmail);
+        return ResponseEntity.ok(memberResponse);
+    }
+
+    @PostMapping("/{id}/leave")
+    public ResponseEntity<Void> leaveTeam(@PathVariable String id, Authentication authentication) {
+
+        String userEmail = authentication.getName();
+
+        teamService.leaveTeam(id, userEmail);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/members")
+    public ResponseEntity<List<TeamMemberResponse>> getTeamMembers(@PathVariable String id) {
+        List<TeamMemberResponse> members = teamService.getTeamMembers(id);
+        return ResponseEntity.ok(members);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTeam(@PathVariable("id") String id) {
-        if (teamService.getTeamById(id).isPresent()) {
-            teamService.deleteTeamById(id);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteTeam(@PathVariable String id) {
+        teamService.deleteTeamById(id);
+        return ResponseEntity.noContent().build();
     }
 }

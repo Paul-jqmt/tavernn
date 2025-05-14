@@ -76,16 +76,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         UserDetails userDetails = jwtService.createUserDetails(user);
 
         if (jwtService.isTokenValid(token, userDetails)) {
-
-            CustomUserPrincipal principal = new CustomUserPrincipal(user.getId(), userDetails);
-
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
-                            principal,
+                            userDetails,
                             null,
                             userDetails.getAuthorities()
                     );
-
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
     }

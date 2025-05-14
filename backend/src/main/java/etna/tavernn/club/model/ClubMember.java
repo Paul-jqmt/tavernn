@@ -2,45 +2,49 @@ package etna.tavernn.club.model;
 
 import etna.tavernn.user.model.User;
 import jakarta.persistence.*;
-import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Entity
 @Table(name = "club_members")
-@Getter @Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ClubMember {
 
     @EmbeddedId
-    @EqualsAndHashCode.Include
     private ClubMemberId id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @MapsId("clubId")
     @JoinColumn(name = "club_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Club club;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @MapsId("userId")
     @JoinColumn(name = "user_id")
     private User user;
 
     @Column(name = "is_owner", nullable = false)
-    private boolean owner;
+    private Boolean isOwner = false;
 
     @Column(name = "is_admin", nullable = false)
-    private boolean admin;
+    private Boolean isAdmin = false;
 
-    public ClubMember(Club club, User user, boolean owner, boolean admin) {
-        this.club = club;
-        this.user = user;
-        this.id   = new ClubMemberId(club.getId(), user.getId());
-        this.owner = owner;
-        this.admin = admin;
+    @Embeddable
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class ClubMemberId implements Serializable {
+        @Column(name = "club_id")
+        private String clubId;
+
+        @Column(name = "user_id")
+        private String userId;
     }
 }
