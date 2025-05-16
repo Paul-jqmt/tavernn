@@ -1,12 +1,12 @@
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle } from "lucide-react"
-import { Form, FormField, FormLabel, FormMessage, FormItem, FormControl } from "@/components/ui/form";
+import { Input } from "@/components/ui/input.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert.tsx";
+import {AlertCircle, Loader2} from "lucide-react"
+import { Form, FormField, FormLabel, FormMessage, FormItem, FormControl } from "@/components/ui/form.tsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {LoginFormValues, loginSchema} from "@/schemas/loginSchema.ts";
-import api from "@/services/api";
+import api from "@/services/api.ts";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -109,8 +109,10 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
                     <Button
                         type='submit'
                         disabled={loading}
-                        className="w-full bg-mid-orange disabled:opacity-50 disabled:cursor-not-allowed text-lg font-semibold">
-                        {loading ? 'Logging in ...' : 'Login'}
+                        className="w-full bg-mid-orange disabled:opacity-50 disabled:cursor-not-allowed text-lg font-semibold"
+                    >
+                        {loading && <Loader2 className="animate-spin"/>}
+                        {loading ? 'Logging in' : 'Login'}
                     </Button>
                 </form>
             </Form>

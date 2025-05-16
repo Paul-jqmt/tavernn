@@ -1,8 +1,8 @@
 import {useState} from "react";
-import LoginForm from "@/components/LoginForm";
-import RegisterForm from "@/components/RegisterForm.tsx";
-import logo from "@/assets/logo.svg";
-import wavy_ligne from "@/assets/wavy-ligne.svg";
+import LoginForm from "@/components/common/LoginForm.tsx";
+import RegisterForm from "@/components/common/RegisterForm.tsx";
+import logo from "@/assets/icons/logo.svg";
+import wavy_ligne from "@/assets/icons/wavy-ligne.svg";
 import clsx from "clsx";
 
 export default function AuthenticationPage() {

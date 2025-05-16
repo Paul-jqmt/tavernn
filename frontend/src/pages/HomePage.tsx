@@ -1,4 +1,4 @@
-import HomeNavbar from "@/components/HomeNavbar.tsx";
+import HomeNavbar from "@/components/common/HomeNavbar.tsx";
 
 export default function HomePage() {
     return (
