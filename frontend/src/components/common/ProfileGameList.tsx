@@ -4,7 +4,8 @@ import { useState } from "react";
 import valorantLogo from "@/assets/icons/valorant-logo.svg";
 import fortniteLogo from "@/assets/icons/fortnite-logo.svg";
 import stardewValleyLogo from "@/assets/icons/stardew-valley-logo.svg";
-import ConfirmDeleteDialog from "@/components/common/ConfirmDeleteDialog.tsx";
+import ConfirmDeleteDialog from "@/components/dialogs/ConfirmDeleteDialog.tsx";
+import EditGameDialog from "@/components/dialogs/EditGameDialog.tsx";
 
 const userGames = [
     { id: 1, name: 'Fortnite', level: 'Advanced', icon: fortniteLogo },
@@ -14,6 +15,14 @@ const userGames = [
 
 export default function ProfileGameList() {
     const [gameList, setGameList] = useState(userGames);
+
+    const updateGame = (id: number, newLevel: string) => {
+        setGameList(prev =>
+            prev.map(g =>
+                g.id === id ? { ...g, level: newLevel } : g
+            )
+        );
+    };
 
     const handleDelete = (id: number) => {
         setGameList(prev => prev.filter(g => g.id !== id));
@@ -45,7 +54,7 @@ export default function ProfileGameList() {
                         </div>
 
                         <div className='flex gap-4'>
-                            <Button variant='outline'>Edit</Button>
+                            <EditGameDialog trigger={<Button variant='outline'>Edit</Button>} gameName={game.name} currentLevel={game.level} onSubmit={(newLevel) => updateGame(game.id, newLevel)} />
                             <ConfirmDeleteDialog trigger={<Button variant='outline' className='border-red-500 text-red-500 hover:bg-red-500 hover:text-white'>Delete</Button>} gameName={game.name} onConfirm={() => handleDelete(game.id)}/>
                         </div>
                     </div>
