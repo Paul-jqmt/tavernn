@@ -6,17 +6,19 @@ import fortniteLogo from "@/assets/icons/fortnite-logo.svg";
 import stardewValleyLogo from "@/assets/icons/stardew-valley-logo.svg";
 import ConfirmDeleteDialog from "@/components/dialogs/ConfirmDeleteDialog.tsx";
 import EditGameDialog from "@/components/dialogs/EditGameDialog.tsx";
+import AddGameDialog from "@/components/dialogs/AddGameDialog.tsx";
+import { capitalize } from "@/lib/utils.ts";
 
 const userGames = [
-    { id: 1, name: 'Fortnite', level: 'Advanced', icon: fortniteLogo },
-    { id: 2, name: 'Valorant', level: 'Advanced', icon: valorantLogo },
-    { id: 3, name: 'Stardew Valley', level: 'Medium', icon: stardewValleyLogo },
+    { id: '1', name: 'Fortnite', level: 'Advanced', icon: fortniteLogo },
+    { id: '2', name: 'Valorant', level: 'Advanced', icon: valorantLogo },
+    { id: '3', name: 'Stardew Valley', level: 'Medium', icon: stardewValleyLogo },
 ];
 
 export default function ProfileGameList() {
     const [gameList, setGameList] = useState(userGames);
 
-    const updateGame = (id: number, newLevel: string) => {
+    const updateGame = (id: string, newLevel: string) => {
         setGameList(prev =>
             prev.map(g =>
                 g.id === id ? { ...g, level: newLevel } : g
@@ -24,7 +26,7 @@ export default function ProfileGameList() {
         );
     };
 
-    const handleDelete = (id: number) => {
+    const handleDelete = (id: string) => {
         setGameList(prev => prev.filter(g => g.id !== id));
     };
 
@@ -32,7 +34,17 @@ export default function ProfileGameList() {
         <>
             <div className='flex justify-between items-center mb-6'>
                 <h2 className='text-2xl font-bold'>My games</h2>
-                <Button>Add game</Button>
+                <AddGameDialog
+                    onSubmit={(game, level) => {
+                        setGameList(prev => [...prev, {
+                            id: game.id,
+                            name: game.name,
+                            level,
+                            icon: game.image ?? ''
+                        }]);
+                    }}
+                    trigger={<Button>Add game</Button>}
+                />
             </div>
 
             <div className='space-y-6'>
@@ -49,7 +61,7 @@ export default function ProfileGameList() {
 
                             <div>
                                 <p className='font-bold'>{game.name}</p>
-                                <p className='font-extralight text-sm'>Level: <span className='font-medium'>{game.level}</span></p>
+                                <p className='font-extralight text-sm'>Level: <span className='font-medium'>{capitalize(game.level)}</span></p>
                             </div>
                         </div>
 
