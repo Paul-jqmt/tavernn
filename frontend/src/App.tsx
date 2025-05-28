@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage.tsx'
 import AuthenticationPage from "@/pages/AuthenticationPage.tsx";
 import ProfilePage from "@/pages/ProfilePage.tsx";
 import ClubViewPage from "@/pages/ClubViewPage.tsx";
+import UserHomePage from "@/pages/UserHomePage.tsx";
 
 function App() {
     return (
@@ -11,7 +12,7 @@ function App() {
             <Route path='/' element={<HomePage />} />
             <Route path='/auth' element={<AuthenticationPage />} />
             <Route path='/profile' element={<ProfilePage />} />
-            <Route path='/home' element={<HomePage />} />
+            <Route path='/home' element={<UserHomePage />} />
             <Route path='/club' element={<ClubViewPage />} />
         </Routes>
     )

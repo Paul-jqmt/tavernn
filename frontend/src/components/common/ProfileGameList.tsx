@@ -31,9 +31,10 @@ export default function ProfileGameList() {
     };
 
     return (
-        <>
-            <div className='flex justify-between items-center mb-6'>
+        <div className='h-full flex flex-col overflow-hidden space-y-6'>
+            <div className='flex justify-between items-center flex-none'>
                 <h2 className='text-2xl font-bold'>My games</h2>
+
                 <AddGameDialog
                     onSubmit={(game, level) => {
                         setGameList(prev => [...prev, {
@@ -47,7 +48,8 @@ export default function ProfileGameList() {
                 />
             </div>
 
-            <div className='space-y-6'>
+            {/*   LIST OF GAMES   */}
+            <div className='flex-1 overflow-y-auto hide-scrollbar space-y-6'>
                 {gameList.map((game) => (
                     <div
                         key={game.id}
@@ -72,6 +74,6 @@ export default function ProfileGameList() {
                     </div>
                 ))}
             </div>
-        </>
+        </div>
     );
 };
