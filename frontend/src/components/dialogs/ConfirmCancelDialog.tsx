@@ -11,9 +11,8 @@ import {
 import { Button } from "@/components/ui/button.tsx";
 import * as React from "react";
 
-export default function ConfirmDeleteDialog({ trigger, gameName, onConfirm, } : {
+export default function ConfirmCancelDialog({ trigger, onConfirm } : {
     trigger: React.ReactNode;
-    gameName: string;
     onConfirm: () => void;
 }) {
     return (
@@ -21,22 +20,22 @@ export default function ConfirmDeleteDialog({ trigger, gameName, onConfirm, } : 
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent className='bg-deep-purple text-white rounded-xl max-w-md'>
                 <DialogHeader>
-                    <DialogTitle>Delete {gameName}?</DialogTitle>
+                    <DialogTitle>Cancel club creation ?</DialogTitle>
                     <DialogDescription className='text-white font-extralight'>
-                        You will be able to add it later if you want
+                        If you cancel now, all unsaved information will be lost.
                     </DialogDescription>
                 </DialogHeader>
 
                 <DialogFooter className='flex justify-center gap-4 mt-4'>
 
-                    {/*   KEEP GAME BUTTON   */}
+                    {/*   KEEP CREATING BUTTON   */}
                     <DialogClose asChild>
-                        <Button variant='outline'>No, Keep it</Button>
+                        <Button variant='outline' className='border-red-500 text-red-500 hover:bg-red-500 hover:text-white'>Continue Creating</Button>
                     </DialogClose>
 
-                    {/*    CONFIRM DELETE GAME    */}
-                    <Button onClick={onConfirm} variant='destructive'>
-                        Yes, Delete it
+                    {/*   CANCEL CREATING   */}
+                    <Button onClick={onConfirm} variant='default'>
+                        Yes, Cancel
                     </Button>
                 </DialogFooter>
             </DialogContent>

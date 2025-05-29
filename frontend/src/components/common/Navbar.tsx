@@ -9,7 +9,7 @@ export default function Navbar() {
 
     const menuItems = [
         { to: '/home', label: 'Home' },
-        { to: '/club', label: 'Club' },
+        { to: '/clubs', label: 'Club' },
         { to: '/profile', label: 'Profile' },
     ];
 
@@ -50,9 +50,15 @@ export default function Navbar() {
 
                 {/*   NAV MENU   */}
                 <nav className="hidden md:flex items-center gap-18">
-                    <Link to='/home' className="text-sm font-semibold hover:underline active:text-mid-purple">Home</Link>
-                    <Link to='/club' className="text-sm font-semibold hover:underline active:text-mid-purple">Club</Link>
-                    <Link to='/profile' className="text-sm font-semibold hover:underline active:text-mid-purple">Profile</Link>
+                    { menuItems.map((item) => (
+                        <Link
+                            key={item.label}
+                            to={item.to}
+                            className='text-sm font-semibold hover:underline active:text-mid-purple'
+                        >
+                            {item.label}
+                        </Link>
+                    ))}
                 </nav>
 
                 <button onClick={() => setIsOpen(!isOpen)} className="md:hidden hover:cursor-pointer" aria-label="Toggle Menu">
