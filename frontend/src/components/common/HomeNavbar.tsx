@@ -1,6 +1,6 @@
 import {Link} from "react-router-dom";
-import {Button} from "@/components/ui/button";
-import logo from '../assets/logo.svg';
+import {Button} from "@/components/ui/button.tsx";
+import logo from '../../assets/icons/logo.svg';
 
 export default function HomeNavbar() {
     return (

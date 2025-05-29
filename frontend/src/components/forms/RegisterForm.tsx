@@ -1,11 +1,12 @@
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Checkbox} from "@/components/ui/checkbox";
-import {Form, FormField, FormLabel, FormMessage, FormItem, FormControl} from "@/components/ui/form";
+import { Input } from "@/components/ui/input.tsx";
+import { Button } from "@/components/ui/button.tsx";
+import { Checkbox} from "@/components/ui/checkbox.tsx";
+import { Loader2 } from "lucide-react"
+import {Form, FormField, FormLabel, FormMessage, FormItem, FormControl} from "@/components/ui/form.tsx";
 import {useForm} from "react-hook-form";
 import { zodResolver} from "@hookform/resolvers/zod";
 import {RegisterFormValues, registerSchema} from "@/schemas/registerSchema.ts";
-import api from "@/services/api";
+import api from "@/services/api.ts";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert.tsx";
 import {AlertCircle} from "lucide-react";
 import {useState} from "react";
@@ -148,10 +149,11 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
 
                     <Button
                         type='submit'
-                        className="w-full bg-mid-orange disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-mid-orange disabled:opacity-50 disabled:cursor-not-allowed text-lg"
                         disabled={!termsChecked || loading}
                     >
-                        {loading ? 'Registering...' : 'Signup'}
+                        {loading && <Loader2 className="animate-spin"/>}
+                        {loading ? 'Registering' : 'Signup'}
                     </Button>
                 </form>
             </Form>
