@@ -95,3 +95,4 @@ public class SecurityConfig {
         return profile.contains("dev") || profile.isEmpty();
     }
 }
+

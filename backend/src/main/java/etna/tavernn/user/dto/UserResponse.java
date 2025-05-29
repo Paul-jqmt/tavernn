@@ -16,3 +16,4 @@ public class UserResponse {
     private String profilePicture;
     private Boolean openAtInvite;
 }
+
