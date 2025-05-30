@@ -48,6 +48,11 @@ public class UserService implements UserDetailsService {
                 .map(this::toUserResponseDTO);
     }
 
+    public Optional<UserResponse> getCurrentUserDTO(String email) {
+        return userRepository.findByEmail(email)
+                .map(this::toUserResponseDTO);
+    }
+
 
     public User createUser(RegisterRequest registerRequest) {
         User user = new User();
