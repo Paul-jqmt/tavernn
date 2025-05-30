@@ -40,7 +40,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
             const response = await api.post("/api/auth/login", data);
             const { token } = response.data;
             localStorage.setItem('accessToken', token);
-            navigate('/profile');
+            navigate('/profile', { replace: true });
         } catch (error: any) {
             let errorTitle = 'Error';
             let errorMessage = 'Something went wrong';
