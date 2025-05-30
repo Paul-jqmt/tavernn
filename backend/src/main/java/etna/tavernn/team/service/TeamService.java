@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -223,5 +224,13 @@ public class TeamService {
 
     public void deleteTeamById(String id) {
         teamRepository.deleteById(id);
+    }
+
+    public List<TeamResponse> getTeamsByUserId(String userId) {
+        return teamMemberRepository
+                .findByIdUserId(userId)
+                .stream()
+                .map(tm -> teamMapper.toTeamResponse(tm.getTeam()))
+                .collect(Collectors.toList());
     }
 }
