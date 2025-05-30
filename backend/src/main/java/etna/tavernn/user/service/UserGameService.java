@@ -19,25 +19,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserGameService {
 
-    private final UserGameRepository userGameRepo;
-    private final UserRepository userRepo;
-    private final GameRepository gameRepo;
+    private final UserGameRepository userGameRepository;
+    private final UserRepository userRepository;
+    private final GameRepository gameRepository;
 
     public List<UserGameResponse> getGamesByUserId(String userId) {
-        return userGameRepo.findByIdUserId(userId).stream()
-                .map(ug -> UserGameResponse.builder()
-                        .gameId(ug.getGame().getId())
-                        .gameName(ug.getGame().getName())
-                        .gameLevel(ug.getGameLevel())
+        return userGameRepository.findByIdUserId(userId).stream()
+                .map(user_game -> UserGameResponse.builder()
+                        .gameId(user_game.getGame().getId())
+                        .gameName(user_game.getGame().getName())
+                        .gameLevel(user_game.getGameLevel())
                         .build())
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public UserGameResponse addGameToUser(String userId, UserGameRequest req) {
-        User user = userRepo.findById(userId)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        Game game = gameRepo.findById(req.getGameId())
+        Game game = gameRepository.findById(req.getGameId())
                 .orElseThrow(() -> new RuntimeException("Game not found"));
 
         UserGame.UserGameId id = new UserGame.UserGameId(userId, req.getGameId());
@@ -48,7 +48,7 @@ public class UserGameService {
                 .gameLevel(req.getGameLevel())
                 .build();
 
-        userGameRepo.save(entity);
+        userGameRepository.save(entity);
         return UserGameResponse.builder()
                 .gameId(game.getId())
                 .gameName(game.getName())
@@ -59,15 +59,15 @@ public class UserGameService {
     @Transactional
     public UserGameResponse updateGameLevel(String userId, String gameId, UserGameRequest req) {
         UserGame.UserGameId id = new UserGame.UserGameId(userId, gameId);
-        UserGame ug = userGameRepo.findById(id)
+        UserGame user_game = userGameRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("UserGame not found"));
 
-        ug.setGameLevel(req.getGameLevel());
-        userGameRepo.save(ug);
+        user_game.setGameLevel(req.getGameLevel());
+        userGameRepository.save(user_game);
 
         return UserGameResponse.builder()
                 .gameId(gameId)
-                .gameName(ug.getGame().getName())
+                .gameName(user_game.getGame().getName())
                 .gameLevel(req.getGameLevel())
                 .build();
     }
@@ -75,6 +75,6 @@ public class UserGameService {
     @Transactional
     public void removeGameFromUser(String userId, String gameId) {
         UserGame.UserGameId id = new UserGame.UserGameId(userId, gameId);
-        userGameRepo.deleteById(id);
+        userGameRepository.deleteById(id);
     }
 }
