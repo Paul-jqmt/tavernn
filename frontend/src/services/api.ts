@@ -12,11 +12,15 @@ const api: AxiosInstance = axios.create({
 
 api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        // Get token from localStorage
         const token = localStorage.getItem('accessToken');
 
         if (token) {
+            config.headers = config.headers || {};
             config.headers.Authorization = `Bearer ${token}`;
+        }
+
+        if (config.data instanceof FormData) {
+            delete config.headers['Content-Type'];
         }
         return config;
     },
