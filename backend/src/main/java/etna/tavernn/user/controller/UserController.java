@@ -1,7 +1,14 @@
 package etna.tavernn.user.controller;
 
+import etna.tavernn.club.dto.ClubResponse;
+import etna.tavernn.club.service.ClubService;
+import etna.tavernn.team.dto.TeamResponse;
+import etna.tavernn.team.service.TeamService;
+import etna.tavernn.user.dto.UserGameRequest;
+import etna.tavernn.user.dto.UserGameResponse;
 import etna.tavernn.user.dto.UserResponse;
 import etna.tavernn.user.model.User;
+import etna.tavernn.user.service.UserGameService;
 import etna.tavernn.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,6 +27,9 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final ClubService clubService;
+    private final TeamService teamService;
+    private final UserGameService userGameService;
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getAllUsers() {
@@ -41,6 +51,57 @@ public class UserController {
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
+    @GetMapping("/{id}/club")
+    public ResponseEntity<List<ClubResponse>> getUserClubs(@PathVariable("id") String userId) {
+        List<ClubResponse> clubs = clubService.getClubsByUserId(userId);
+        if (clubs.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(clubs);
+    }
+
+    @GetMapping("/{id}/teams")
+    public ResponseEntity<List<TeamResponse>> getUserTeams(@PathVariable("id") String userId) {
+        List<TeamResponse> teams = teamService.getTeamsByUserId(userId);
+        if (teams.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(teams);
+    }
+
+    @GetMapping("/{id}/games")
+    public ResponseEntity<List<UserGameResponse>> getUserGames(@PathVariable("id") String userId) {
+        List<UserGameResponse> games = userGameService.getGamesByUserId(userId);
+        if (games.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(games);
+    }
+
+    @PostMapping("/{id}/games")
+    public ResponseEntity<UserGameResponse> addGameToUser(
+            @PathVariable("id") String userId,
+            @RequestBody UserGameRequest req) {
+        UserGameResponse created = userGameService.addGameToUser(userId, req);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PutMapping("/{id}/games/{gameId}")
+    public ResponseEntity<UserGameResponse> updateUserGameLevel(
+            @PathVariable("id") String userId,
+            @PathVariable String gameId,
+            @RequestBody UserGameRequest req) {
+        UserGameResponse updated = userGameService.updateGameLevel(userId, gameId, req);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}/games/{gameId}")
+    public ResponseEntity<Void> removeUserGame(
+            @PathVariable("id") String userId,
+            @PathVariable String gameId) {
+        userGameService.removeGameFromUser(userId, gameId);
+        return ResponseEntity.noContent().build();
+    }
 
 
     @PutMapping("/{id}")

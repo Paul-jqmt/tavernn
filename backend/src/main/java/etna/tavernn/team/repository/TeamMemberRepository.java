@@ -12,4 +12,5 @@ public interface TeamMemberRepository extends JpaRepository<TeamMember, TeamMemb
     List<TeamMember> findAllByTeamId(String teamId);
 
     Optional<TeamMember> findById(TeamMember.TeamMemberId id);
+    List<TeamMember> findByIdUserId(String userId);
 }

@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -177,5 +178,13 @@ public class ClubService {
             club.setNrMembers(club.getNrMembers() - 1);
             clubRepository.save(club);
         }
+    }
+
+    public List<ClubResponse> getClubsByUserId(String userId) {
+        return clubMemberRepository
+                .findByIdUserId(userId)
+                .stream()
+                .map(cm -> clubMapper.toClubResponse(cm.getClub()))
+                .collect(Collectors.toList());
     }
 }
