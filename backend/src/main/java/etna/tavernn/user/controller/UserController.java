@@ -54,29 +54,21 @@ public class UserController {
     @GetMapping("/{id}/club")
     public ResponseEntity<List<ClubResponse>> getUserClubs(@PathVariable("id") String userId) {
         List<ClubResponse> clubs = clubService.getClubsByUserId(userId);
-        if (clubs.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
         return ResponseEntity.ok(clubs);
     }
 
     @GetMapping("/{id}/teams")
     public ResponseEntity<List<TeamResponse>> getUserTeams(@PathVariable("id") String userId) {
         List<TeamResponse> teams = teamService.getTeamsByUserId(userId);
-        if (teams.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
         return ResponseEntity.ok(teams);
     }
 
     @GetMapping("/{id}/games")
     public ResponseEntity<List<UserGameResponse>> getUserGames(@PathVariable("id") String userId) {
         List<UserGameResponse> games = userGameService.getGamesByUserId(userId);
-        if (games.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
         return ResponseEntity.ok(games);
     }
+
 
     @PostMapping("/{id}/games")
     public ResponseEntity<UserGameResponse> addGameToUser(
