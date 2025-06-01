@@ -1,6 +1,6 @@
-export type Game = {
+export interface Game {
     id: string;
     name: string;
     image?: string;
-    team_max_nr: number;
-};
+    teamMaxNr: number;
+}

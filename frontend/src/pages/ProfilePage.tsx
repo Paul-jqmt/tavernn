@@ -1,48 +1,101 @@
 import Navbar from "@/components/common/Navbar.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import ProfileSideColumn from "@/components/common/ProfileSideColumn.tsx";
-import ProfileGameList from "@/components/common/ProfileGameList.tsx";
-import { useState } from "react";
-import ProfileSettings from "@/components/common/ProfileSettings.tsx";
+import ProfileSideColumn from "@/components/common/profile/ProfileSideColumn.tsx";
+import ProfileGameList from "@/components/common/profile/ProfileGameList.tsx";
+import {useEffect, useState} from "react";
+import ProfileSettings from "@/components/common/profile/ProfileSettings.tsx";
+import {useUser} from "@/contexts/UserContext.tsx";
+import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
+import {AlertCircleIcon} from "lucide-react";
+import {useNavigate} from "react-router-dom";
 
 export default function ProfilePage(){
     const [ activeTab, setActiveTab ] = useState<'games' | 'settings'>('games');
+    const navigate = useNavigate();
+
+    const {
+        user,
+        loading: userLoading,
+        error: userError,
+        refreshUser
+    } = useUser();
+
+    useEffect(() => {
+        if (!userLoading && !user) {
+            navigate('/auth', { replace: true });
+        }
+    }, [user, userLoading, navigate]);
+
+    if (userLoading) {
+        return (
+            <>
+                <Navbar />
+                <div className="flex items-stretch min-h-screen gap-8 p-10 text-white pt-32">
+                    <div>Loading user data...</div>
+                </div>
+            </>
+        );
+    }
+
+    if (userError) {
+        return (
+            <>
+                <Navbar />
+                <div className="flex items-stretch min-h-screen gap-8 p-10 text-white pt-32">
+                    <Alert variant='destructive'>
+                        <AlertCircleIcon />
+                        <AlertTitle>Failed to load user data</AlertTitle>
+                    </Alert>
+                </div>
+            </>
+        );
+    }
+
+    // IF WE DON'T RECEIVE THE USER, WE DON'T RENDER ANYTHING
+    // AS WE'RE REDIRECTING TO THE LOGIN PAGE
+    if (!user) {
+        return null;
+    }
 
     return (
-      <>
-          <Navbar />
+        <>
+            <Navbar />
 
-          <div className="flex items-stretch max-h-screen gap-8 p-10 text-white pt-32">
+            <div className="flex items-stretch min-h-screen gap-8 p-10 text-white pt-32">
 
-              <ProfileSideColumn />
+                <ProfileSideColumn userId={user.id} />
 
-              {/*   MAIN CONTENT AREA   */}
-              <div className='flex-1 flex flex-col'>
-                  <div id='profile-sub-header' className='flex justify-between items-center mb-5'>
-                      <h1 className='text-5xl font-extrabold'>Profile</h1>
-                      <div className='flex gap-2'>
-                          {/*   GAMES BUTTON   */}
-                          <Button
-                              variant={activeTab === 'games' ? 'ghost' : 'outline'}
-                              onClick={() => setActiveTab('games')}>
-                              Games
-                          </Button>
+                {/*   MAIN CONTENT AREA   */}
+                <div className='flex-1 flex flex-col'>
+                    <div id='profile-sub-header' className='flex justify-between items-center mb-5'>
+                        <h1 className='text-5xl font-extrabold'>Profile</h1>
+                        <div className='flex gap-2'>
 
-                          {/*   SETTINGS BUTTON   */}
-                          <Button
-                              variant={activeTab === 'settings' ? 'ghost' : 'outline'}
-                              onClick={() => setActiveTab('settings')}>
-                              Settings
-                          </Button>
-                      </div>
-                  </div>
+                            {/*   GAMES BUTTON   */}
+                            <Button
+                                variant={activeTab === 'games' ? 'ghost' : 'outline'}
+                                onClick={() => setActiveTab('games')}>
+                                Games
+                            </Button>
 
-                  <div id='profile-main-frame' className='bg-deep-purple rounded-2xl w-full p-6 flex-1 overflow-hidden'>
-                      {activeTab === 'games' && <ProfileGameList />}
-                      {activeTab === 'settings' && <ProfileSettings />}
-                  </div>
-              </div>
-          </div>
-      </>
-  );
+                            {/*   SETTINGS BUTTON   */}
+                            <Button
+                                variant={activeTab === 'settings' ? 'ghost' : 'outline'}
+                                onClick={() => setActiveTab('settings')}>
+                                Settings
+                            </Button>
+                        </div>
+                    </div>
+
+                    <div id='profile-main-frame' className='bg-deep-purple rounded-2xl w-full p-6 flex-1 overflow-hidden'>
+                        {activeTab === 'games' && <ProfileGameList userId={user.id} />}
+                        {activeTab === 'settings' && <ProfileSettings
+                            userData={user}
+                            onUserDataUpdate={refreshUser}
+                        />}
+                    </div>
+                </div>
+            </div>
+        </>
+    );
 }

@@ -1,27 +1,26 @@
-import axios, {AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import axios, {AxiosError, AxiosInstance, InternalAxiosRequestConfig} from 'axios';
 
 const api: AxiosInstance = axios.create({
-    baseURL: API_URL,
+    baseURL: import.meta.env.VITE_API_URL,
     headers: {
         'Content-Type': 'application/json',
     },
     withCredentials: true
 });
 
+// REQUEST INTERCEPTOR TO ADD THE TOKEN TO THE HEADERS
 api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
         const token = localStorage.getItem('accessToken');
 
         if (token) {
-            config.headers = config.headers || {};
             config.headers.Authorization = `Bearer ${token}`;
         }
 
         if (config.data instanceof FormData) {
             delete config.headers['Content-Type'];
         }
+
         return config;
     },
     (error: AxiosError) => {
@@ -29,37 +28,15 @@ api.interceptors.request.use(
     }
 );
 
+
+// RESPONSE INTERCEPTOR TO REFRESH THE TOKEN'
 api.interceptors.response.use(
-    (response: AxiosResponse) => {
-        return response;
-    },
-    async (error: AxiosError) => {
-        const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
-
-        if (error.response?.status === 401 && !originalRequest._retry) {
-            originalRequest._retry = true;
-
-            try {
-                const refreshResponse = await axios.post(
-                    `${API_URL}/auth/refresh`,
-                    {refreshToken: localStorage.getItem('refreshToken')},
-                    {withCredentials: true}
-                );
-
-                const {accessToken} = refreshResponse.data;
-                localStorage.setItem('accessToken', accessToken);
-
-                originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-                return axios(originalRequest);
-
-            } catch (refreshError) {
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-
-                return Promise.reject(refreshError);
-            }
+    (response) => response,
+    (error) => {
+        if (error.response?.status === 401) {
+            localStorage.removeItem('accessToken');
+            window.location.href = '/auth';
         }
-
         return Promise.reject(error);
     }
 );

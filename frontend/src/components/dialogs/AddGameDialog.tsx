@@ -5,28 +5,59 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import * as React from "react";
 import type { Game } from "@/types/game.ts";
 import {useEffect} from "react";
+import {GameLevel, UserGame} from "@/types/userGame.ts";
+import api from "@/services/api.ts";
+import {userService} from "@/services/userService.ts";
+import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
+import {AlertCircleIcon} from "lucide-react";
 
 type AddGameDialogProps = {
   trigger: React.ReactNode;
-  onSubmit: (game: Game, level: string) => void;
+  onSubmit: (userGame: UserGame) => void;
+  userId: string | undefined;
 };
 
-export default function AddGameDialog({ trigger, onSubmit }: AddGameDialogProps) {
+export default function AddGameDialog({ trigger, onSubmit, userId }: AddGameDialogProps) {
   const [ games, setGames ] = React.useState<Game[]>([]);
   const [ gameId, setGameId ] = React.useState<string>('');
-  const [ level, setLevel ] = React.useState('');
+  const [ level, setLevel ] = React.useState<GameLevel | ''>('');
+
+  const [ isLoading, setIsLoading ] = React.useState(false);
+  const [ error, setError ] = React.useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/games/")
-        .then((res) => res.json())
-        .then((data) => setGames(data))
-        .catch((err) => console.error('Failed to load games:', err));
+    fetchAvailableGames();
   }, []);
 
-  const handleSubmit = () => {
-    const game = games.find((g) => g.id === gameId);
-    if (game && level) {
-      onSubmit(game, level);
+  const fetchAvailableGames = async () => {
+    try {
+      const response = await api.get(`/api/game`);
+      setGames(response.data);
+    } catch (error) {
+      console.log('Error fetching games:', error);
+      setError('Error fetching games');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!gameId || !level) return;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const newUserGame = await userService.addUserGame( userId, gameId, level );
+      onSubmit(newUserGame);
+
+      setGameId('');
+      setLevel('');
+    } catch (error) {
+      console.log('Error adding game:', error);
+      setError('Error adding game');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -41,6 +72,13 @@ export default function AddGameDialog({ trigger, onSubmit }: AddGameDialogProps)
 
           <div className='space-y-5 p-6'>
 
+            { error && (
+                <Alert variant='destructive'>
+                  <AlertCircleIcon />
+                  <AlertTitle>{error}</AlertTitle>
+                </Alert>
+            )}
+
             {/*   GAME SELECTION   */}
             <div>
               <Label className='mb-2'>Choose game:</Label>
@@ -52,13 +90,13 @@ export default function AddGameDialog({ trigger, onSubmit }: AddGameDialogProps)
                 <SelectContent>
                   {
                     games.length === 0 ? (
-                      <div className="px-3 py-2 text-sm text-muted-foreground">
-                        No games found
-                      </div>
+                        <div className="px-3 py-2 text-sm text-muted-foreground">
+                          No games found
+                        </div>
                     ) : (
-                      games.map((game) => (
-                          <SelectItem key={game.id} value={game.id}>{game.name}</SelectItem>
-                      ))
+                        games.map((game) => (
+                            <SelectItem key={game.id} value={game.id}>{game.name}</SelectItem>
+                        ))
                     )
                   }
                 </SelectContent>
@@ -68,7 +106,7 @@ export default function AddGameDialog({ trigger, onSubmit }: AddGameDialogProps)
             {/*   LEVEL SELECTION   */}
             <div>
               <Label className='mb-2'>Choose level:</Label>
-              <Select value={level} onValueChange={setLevel}>
+              <Select value={level} onValueChange={(value) => setLevel(value as GameLevel)}>
                 <SelectTrigger className='bg-white text-deep-purple w-full'>
                   <SelectValue placeholder='Level'></SelectValue>
                 </SelectTrigger>
@@ -91,7 +129,10 @@ export default function AddGameDialog({ trigger, onSubmit }: AddGameDialogProps)
               <Button
                   className='bg-light-purple text-white'
                   onClick={handleSubmit}
-                  disabled={!gameId || !level}>Add</Button>
+                  disabled={!gameId || !level || isLoading}
+              >
+                {isLoading ? 'Adding...' : 'Add'}
+              </Button>
             </DialogClose>
           </DialogFooter>
         </DialogContent>

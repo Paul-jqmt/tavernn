@@ -6,11 +6,12 @@ import {Form, FormField, FormLabel, FormMessage, FormItem, FormControl} from "@/
 import {useForm} from "react-hook-form";
 import { zodResolver} from "@hookform/resolvers/zod";
 import {RegisterFormValues, registerSchema} from "@/schemas/registerSchema.ts";
-import api from "@/services/api.ts";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert.tsx";
 import {AlertCircle} from "lucide-react";
 import {useState} from "react";
-import { useNavigate } from "react-router-dom";
+import {RegisterRequest} from "@/types/auth.ts";
+import authService from "@/services/authService.ts";
+import {useNavigate} from "react-router-dom";
 
 type AuthFormProps = {
     onSwitch: () => void;
@@ -33,23 +34,21 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
 
     const termsChecked = form.watch("terms");
 
-    const onSubmit = async (data: RegisterFormValues) => {
-        setLoading(true);
-        const { email, password } = data;
+    const handleSubmit = async (data: RegisterFormValues) => {
+        setError(null);
 
-        const payload = {
-          email, password,
-          username: 'username',
-          discord: '',
-          openAtInvite: true,
+        const registerData: RegisterRequest = {
+            email: data.email,
+            password: data.password,
+            username: data.email.split('@')[0],
+            discord: '',
         };
 
         try {
-            const response = await api.post("/api/auth/register", payload);
-            const { accessToken } = response.data;
-            localStorage.setItem('token', accessToken);
+            setLoading(true);
 
-            navigate('/profile');
+            await authService.register(registerData);
+            navigate('/profile', {replace: true});
         } catch (error: any) {
             let errorTitle = 'Error';
             let errorMessage = 'Something went wrong';
@@ -64,7 +63,6 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
             }
 
             setError({ title: errorTitle, message: errorMessage });
-            console.error('Login failed:', errorMessage);
         } finally {
             setLoading(false);
         }
@@ -75,7 +73,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
             <h1 className="text-5xl font-extrabold text-mid-orange text-center">Signup</h1>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                     {error && (
                         <Alert variant="destructive">
                             <AlertCircle className="h-4 w-4" />
@@ -139,7 +137,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
                                     <FormControl>
                                         <Checkbox className="border-2" checked={field.value} onCheckedChange={field.onChange}/>
                                     </FormControl>
-                                    <FormLabel className="font-extralight text-xs data-[error=true]:text-white">
+                                    <FormLabel className="font-extralight text-xs data-[error=true]:text-white ml-2">
                                         I have read and agreed to Tavernn's Terms of Service and Privacy Policy.
                                     </FormLabel>
                                 </div>
