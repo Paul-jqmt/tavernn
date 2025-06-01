@@ -3,15 +3,15 @@ import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
 import {useNavigate} from "react-router-dom";
 
 export function ClubCard({
-    id,
-    logoUrl,
-    name,
-    description,
-    nrTeams,
-    nrMembers,
-    maxMembers,
-    type
-} : {
+                             id,
+                             logoUrl,
+                             name,
+                             description,
+                             nrTeams,
+                             nrMembers,
+                             maxMembers,
+                             type
+                         } : {
     id: string,
     logoUrl: string | undefined,
     name: string,
@@ -27,7 +27,7 @@ export function ClubCard({
         <Card
             key={id}
             className='flex flex-row items-center justify-between hover:bg-mid-purple cursor-pointer'
-            onClick={() => navigate(`/api/club/${id}`)}
+            onClick={() => navigate(`/clubs/${id}`)}
         >
 
             {/*   LOGO AND NAME   */}

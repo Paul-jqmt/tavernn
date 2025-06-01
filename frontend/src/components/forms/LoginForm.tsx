@@ -6,9 +6,9 @@ import { Form, FormField, FormLabel, FormMessage, FormItem, FormControl } from "
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {LoginFormValues, loginSchema} from "@/schemas/loginSchema.ts";
-import api from "@/services/api.ts";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import authService from "@/services/authService.ts";
+import {useNavigate} from "react-router-dom";
 
 type AuthFormProps = {
     onSwitch: () => void;
@@ -33,20 +33,19 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
         },
     });
 
-    const onSubmit = async (data: LoginFormValues) => {
-        setLoading(true);
+    const handleSubmit = async (data: LoginFormValues) => {
+        setError(null);
 
         try {
-            const response = await api.post("/api/auth/login", data);
-            const { token } = response.data;
-            localStorage.setItem('accessToken', token);
-            navigate('/profile', { replace: true });
+            setLoading(true);
+            await authService.login(data);
+            navigate('/profile', {replace: true});
         } catch (error: any) {
             let errorTitle = 'Error';
             let errorMessage = 'Something went wrong';
 
             console.log('response: ', error);
-            if (error.response && error.response.data?.message) {
+            if (error.response?.data?.message) {
                 errorMessage = error.response.data.message;
             } else if (error.message === 'Network Error') {
                 errorTitle = 'Network Error';
@@ -67,7 +66,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
             <h1 className="text-5xl font-extrabold text-mid-orange text-center">Login</h1>
 
             <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
                     {error && (
                         <Alert variant="destructive">
                             <AlertCircle className="h-4 w-4" />
