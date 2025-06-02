@@ -3,22 +3,13 @@ import {User} from '@/types/user.ts';
 import {LoginRequest, RegisterRequest, AuthResponse} from '@/types/auth.ts';
 
 export const authService = {
-    login: async (credentials: LoginRequest): Promise<User> => {
+    login: async (credentials: LoginRequest): Promise<AuthResponse> => {
         try {
             const response = await api.post<AuthResponse>('/api/auth/login', credentials);
 
             if (response.data) {
                 localStorage.setItem('accessToken', response.data.token);
-
-                return {
-                    id: response.data.id,
-                    email: response.data.email,
-                    username: response.data.username,
-                    registrationDate: response.data.registrationDate,
-                    discord: response.data.discord || '',
-                    profilePicture: response.data.profilePicture || '',
-                    openAtInvite: response.data.openAtInvite
-                };
+                return response.data;
             }
 
             throw new Error('Login failed: No token received');
@@ -28,22 +19,13 @@ export const authService = {
         }
     },
 
-    register: async (userData: RegisterRequest): Promise<User> => {
+    register: async (userData: RegisterRequest): Promise<AuthResponse> => {
         try {
             const response = await api.post<AuthResponse>('/api/auth/register', userData);
 
             if(response.data) {
                 localStorage.setItem('accessToken', response.data.token);
-
-                return {
-                    id: response.data.id,
-                    email: response.data.email,
-                    username: response.data.username,
-                    registrationDate: response.data.registrationDate,
-                    discord: response.data.discord || '',
-                    profilePicture: response.data.profilePicture || '',
-                    openAtInvite: response.data.openAtInvite
-                };
+                return response.data;
             }
 
             throw new Error('Registration failed: No token received');

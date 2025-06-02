@@ -34,11 +34,20 @@ export const clubService = {
         return response.data;
     },
 
-    //TODO: IMPLEMENT CLUB DELETION
+    async createClub(): Promise<Club> {
+        const response = await api.post("/api/club");
+        return response.data;
+    },
 
-    //TODO: IMPLEMENT CLUB UPDATE
+    async deleteClub(clubId: string): Promise<void> {
+        await api.delete(`/api/club/${clubId}`);
+    },
 
-    //TODO: IMPLEMENT CLUB JOIN
+    async joinClub(clubId: string): Promise<void> {
+        await api.post(`/api/club/${clubId}/join`);
+    },
 
-    //TODO: IMPLEMENT CLUB LEAVE
+    async leaveClub(clubId: string): Promise<void> {
+        await api.post(`/api/club/${clubId}/leave`);
+    },
 }

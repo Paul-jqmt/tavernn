@@ -5,11 +5,11 @@ import { Club } from "@/types/club.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {useNavigate} from "react-router-dom";
-import api from "@/services/api.ts";
 import {ClubCard} from "@/components/common/club/ClubCard.tsx";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {AlertCircleIcon} from "lucide-react";
 import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
+import {clubService} from "@/services/clubService.ts";
 
 export default function ClubsDiscoverPage() {
     const [ clubs, setClubs ] = useState<Club[]>([]);
@@ -31,12 +31,12 @@ export default function ClubsDiscoverPage() {
         try {
             setIsLoading(true);
 
-            const res = await api.get('/api/club');
+            const res = await clubService.getClubs();
 
-            if (Array.isArray(res.data)) {
-                setClubs(res.data);
+            if (Array.isArray(res)) {
+                setClubs(res);
             } else {
-                console.log('Unexpected response format:', res.data);
+                console.log('Unexpected response format:', res);
                 setClubs([]);
             }
         } catch (error) {

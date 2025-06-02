@@ -9,12 +9,10 @@ import {clubService} from "@/services/clubService.ts";
 import {Team} from "@/types/team.ts";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {ClubRole} from "@/types/clubRole.ts";
+import { useParams } from "react-router-dom";
 
-type ClubViewPageProps = {
-    clubId: string;
-}
-
-export function ClubViewPage({ clubId }: ClubViewPageProps) {
+export function ClubViewPage() {
+    const { id } = useParams<{ id: string }>();
     const [club, setClub] = useState<Club>();
     const [ clubMembers, setClubMembers ] = useState<ClubMember[]>([]);
     const [ clubTeams, setClubTeams ] = useState<Team[]>([]);
@@ -30,7 +28,7 @@ export function ClubViewPage({ clubId }: ClubViewPageProps) {
 
     const handleJoinClub = async () => {
         try {
-            await api.post(`/api/club/${clubId}/join`);
+            await api.post(`/api/club/${id}/join`);
             fetchClubData();
         } catch (error) {
             console.log('Error joining club:', error);
@@ -39,7 +37,7 @@ export function ClubViewPage({ clubId }: ClubViewPageProps) {
 
     const handleLeaveClub = async () => {
         try {
-            await api.post(`/api/club/${clubId}/leave`);
+            await api.post(`/api/club/${id}/leave`);
             fetchClubData();
         } catch (error) {
             console.log('Error leaving club:', error);
@@ -54,7 +52,7 @@ export function ClubViewPage({ clubId }: ClubViewPageProps) {
 
     const handleDeleteClub = async () => {
         try {
-            await api.delete(`/api/club/${clubId}`);
+            await api.delete(`/api/club/${id}`);
             window.location.href = '/clubs';
         } catch (error) {
             console.log('Error deleting club:', error);
@@ -62,8 +60,8 @@ export function ClubViewPage({ clubId }: ClubViewPageProps) {
     };
 
     useEffect(() => {
-        fetchClubData()
-    }, [clubId]);
+        if ( id ) fetchClubData();
+    }, [id]);
 
     const determineUserRole = (): ClubRole => {
         if ( !user ) return ClubRole.NON_MEMBER;
@@ -78,16 +76,18 @@ export function ClubViewPage({ clubId }: ClubViewPageProps) {
     };
 
     const fetchClubData = async () => {
+        if ( !id ) return;
+
         try {
             setIsLoading(true);
             setError(null);
 
             const [ clubResponse, membersRespose, teamsResponse, ownerResponse, adminsResponse ] = await Promise.all([
-                clubService.getClub(clubId),
-                clubService.getClubMembers(clubId),
-                clubService.getClubTeams(clubId),
-                clubService.getClubOwner(clubId),
-                clubService.getClubAdmins(clubId)
+                clubService.getClub(id),
+                clubService.getClubMembers(id),
+                clubService.getClubTeams(id),
+                clubService.getClubOwner(id),
+                clubService.getClubAdmins(id)
             ]);
 
             setClub(clubResponse);
@@ -132,16 +132,24 @@ export function ClubViewPage({ clubId }: ClubViewPageProps) {
                                     <h2 className='font-extrabold text-5xl'>Teams</h2>
                                     <div className='flex gap-4 items-center'>
 
-                                        {/*   JOIN CLUB BUTTON   */}
-                                        {/*   TODO: IF THE CURRENT USER IS A MEMBER HIDE DE BUTTON   */}
-                                        <Button
-                                            className='bg-mid-orange hover:bg-deep-orange text-white'
-                                            onClick={handleJoinClub}
-                                        >
-                                            Join Club
-                                        </Button>
-
-                                        {/*   TODO: IF CURRENT USER IS ADMIN OF THE CLUB DO CREATE TEAM BUTTON   */}
+                                        { userRole === ClubRole.NON_MEMBER ? (
+                                            // JOIN CLUB BUTTON
+                                            <Button
+                                                className='bg-mid-orange hover:bg-deep-orange text-white'
+                                                onClick={handleJoinClub}
+                                            >
+                                                Join Club
+                                            </Button>
+                                        ) : userRole === ClubRole.ADMIN || ClubRole.OWNER ? (
+                                            <Button
+                                                className='bg-mid-orange hover:bg-deep-orange text-white'
+                                                onClick={handleCreateTeam}
+                                            >
+                                                Create Team
+                                            </Button>
+                                        ) : (
+                                            <></>
+                                        )}
                                     </div>
                                 </div>
                                 <div>
