@@ -66,6 +66,12 @@ public class TeamController {
         return ResponseEntity.ok(members);
     }
 
+    @GetMapping("/{id}/captain")
+    public ResponseEntity<TeamMemberResponse> getTeamCaptain(@PathVariable String id) {
+        TeamMemberResponse captain = teamService.getTeamCaptain(id);
+        return captain != null ? ResponseEntity.ok(captain) : ResponseEntity.notFound().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTeam(@PathVariable String id) {
         teamService.deleteTeamById(id);

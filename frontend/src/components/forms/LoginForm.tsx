@@ -115,6 +115,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
                     </Button>
                 </form>
             </Form>
+
             <p className="text-sm text-white font-light mt-4 text-center">
                 New to Tavernn? {' '}
                 <Button onClick={handleSwitch} variant='link' className="p-0 font-semibold text-mid-orange hover:cursor-pointer">

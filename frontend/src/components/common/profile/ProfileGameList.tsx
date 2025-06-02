@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button.tsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.tsx";
 import {useEffect, useState} from "react";
-import ConfirmDeleteDialog from "@/components/dialogs/ConfirmDeleteDialog.tsx";
+import ConfirmGameDeleteDialog from "@/components/dialogs/ConfirmGameDeleteDialog.tsx";
 import EditGameDialog from "@/components/dialogs/EditGameDialog.tsx";
 import AddGameDialog from "@/components/dialogs/AddGameDialog.tsx";
 import { capitalize } from "@/lib/utils.ts";
@@ -12,9 +12,10 @@ import {AlertCircleIcon} from "lucide-react";
 
 interface ProfileGameListProps {
     userId: string;
+    onGameListUpdate: () => void;
 }
 
-export default function ProfileGameList({ userId }: ProfileGameListProps) {
+export default function ProfileGameList({ userId, onGameListUpdate }: ProfileGameListProps) {
     const [gameList, setGameList] = useState<UserGame[]>([]);
     const [ isLoading, setIsLoading ] = useState<boolean>(true);
     const [ error, setError ] = useState<string | null>(null);
@@ -38,9 +39,9 @@ export default function ProfileGameList({ userId }: ProfileGameListProps) {
         }
     };
 
-    const addGame = async (userGame: UserGame) => {
+    const handleAddGame = async () => {
         try {
-            setGameList(prev => [...prev, userGame]);
+            onGameListUpdate();
         } catch (error) {
             console.log('Error adding game:', error);
             setError('Error adding game');
@@ -50,7 +51,7 @@ export default function ProfileGameList({ userId }: ProfileGameListProps) {
     const handleDelete = async (gameId: string) => {
         try {
             await userService.deleteUserGame(userId, gameId);
-            setGameList(prev => prev.filter(g => g.gameId !== gameId));
+            onGameListUpdate();
         } catch (error) {
             console.log('Error deleting game:', error);
             setError('Error deleting game');
@@ -65,8 +66,7 @@ export default function ProfileGameList({ userId }: ProfileGameListProps) {
                 {/*   POP IN WINDOW FOR ADDING A GAME   */}
                 <AddGameDialog
                     userId={userId}
-                    onSubmit={addGame}
-                    trigger={<Button>Add game</Button>}
+                    onSubmit={handleAddGame}
                 />
             </div>
 
@@ -114,7 +114,7 @@ export default function ProfileGameList({ userId }: ProfileGameListProps) {
                                 />
 
                                 {/*   POP IN WINDOW FOR DELETING A GAME   */}
-                                <ConfirmDeleteDialog
+                                <ConfirmGameDeleteDialog
                                     trigger={<Button variant='outlineDestructive'>Delete</Button>}
                                     gameName={game.gameName}
                                     onConfirm={() => handleDelete(game.gameId)}

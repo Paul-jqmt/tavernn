@@ -15,6 +15,8 @@ import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
 import {AlertCircleIcon} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 import authService from "@/services/authService.ts";
+import {useUser} from "@/contexts/UserContext.tsx";
+import DeleteAccountDialog from "@/components/dialogs/DeleteAccountDialog.tsx";
 
 interface ProfileSettingProps {
     userData: User;
@@ -26,10 +28,12 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
     const [ error, setError ] = useState<string | null>(null);
 
     const navigate = useNavigate();
+    const { clearUser } = useUser();
 
     const handleLogout = async () => {
         try {
             await authService.logout();
+            clearUser();
         } catch (error) {
             console.log('Error logging out:', error);
         } finally {
@@ -83,8 +87,10 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
                     {/*TODO: IMPLEMENT UPLOAD PROFILE PICTURE*/}
                     <div className='flex items-center gap-6'>
                         <Avatar className='w-24 h-24'>
-                            <AvatarImage src={profilePicture} alt='@picture' />
-                            <AvatarFallback>AA</AvatarFallback>
+                            <AvatarImage
+                                src={userData.profilePicture || profilePicture}
+                                alt={userData.username} />
+                            <AvatarFallback>{userData.username.slice(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
                         <div className='space-y-2'>
                             <p className='text-sm font-normalr'>Upload new picture</p>
@@ -175,7 +181,11 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
                         All personal user data will be deleted. This action is irreversible.
                     </p>
 
-                    <Button variant='destructive'>Delete Account</Button>
+                    <DeleteAccountDialog
+                        userId={userData.id}
+                        username={userData.username}
+                        onAccountDeleted={clearUser}
+                    />
                 </section>
         </div>
     );

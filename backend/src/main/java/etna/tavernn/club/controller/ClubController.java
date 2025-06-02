@@ -3,6 +3,7 @@ package etna.tavernn.club.controller;
 import etna.tavernn.club.dto.ClubMemberResponse;
 import etna.tavernn.club.dto.ClubRequest;
 import etna.tavernn.club.dto.ClubResponse;
+import etna.tavernn.team.dto.TeamResponse;
 import etna.tavernn.club.service.ClubService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -65,5 +66,29 @@ public class ClubController {
 
         clubService.leaveClub(id, userEmail);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/members")
+    public ResponseEntity<List<ClubMemberResponse>> getClubMembers(@PathVariable String id) {
+        List<ClubMemberResponse> members = clubService.getClubMembers(id);
+        return ResponseEntity.ok(members);
+    }
+
+    @GetMapping("/{id}/teams")
+    public ResponseEntity<List<TeamResponse>> getClubTeams(@PathVariable String id) {
+        List<TeamResponse> teams = clubService.getClubTeams(id);
+        return ResponseEntity.ok(teams);
+    }
+
+    @GetMapping("/{id}/owner")
+    public ResponseEntity<ClubMemberResponse> getClubOwner(@PathVariable String id) {
+        ClubMemberResponse owner = clubService.getClubOwner(id);
+        return owner != null ? ResponseEntity.ok(owner) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/admins")
+    public ResponseEntity<List<ClubMemberResponse>> getClubAdmins(@PathVariable String id) {
+        List<ClubMemberResponse> admins = clubService.getClubAdmins(id);
+        return ResponseEntity.ok(admins);
     }
 }

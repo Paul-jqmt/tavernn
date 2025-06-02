@@ -40,7 +40,6 @@ export default function ProfileSideColumn({ userId }: ProfileSideColumnProps) {
 
             setUserData(userProfile);
             setUserClub(userClub);
-            console.log(userClub);
             setUserTeams(userTeams);
         } catch (error) {
             console.log('Error fetching user data:', error);

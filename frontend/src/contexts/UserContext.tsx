@@ -7,6 +7,7 @@ type UserContextType = {
     loading: boolean;
     error: Error | null;
     refreshUser: () => Promise<void>;
+    clearUser: () => void;
 };
 
 const UserContext = createContext<UserContextType | undefined> (undefined);
@@ -38,8 +39,13 @@ export function UserProvider({ children }: { children: ReactNode }) {
         await loadUser();
     };
 
+     const clearUser = () => {
+         setUser(null);
+         setError(null);
+     };
+
     return (
-        <UserContext.Provider value={{ user, loading, error, refreshUser }}>
+        <UserContext.Provider value={{ user, loading, error, refreshUser, clearUser }}>
             {children}
         </UserContext.Provider>
     );

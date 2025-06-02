@@ -1,6 +1,3 @@
-import {Team} from "@/types/team.ts";
-import {ClubMember} from "@/types/clubMember.ts";
-
 export interface Club {
     id: string;
     name: string;
@@ -11,6 +8,4 @@ export interface Club {
     nrMembers: number;
     nrTeams: number;
     maxMembers: number;
-    teams: Team[];
-    members: ClubMember[];
 }

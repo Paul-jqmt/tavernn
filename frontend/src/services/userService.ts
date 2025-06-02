@@ -49,5 +49,9 @@ export const userService = {
 
     async deleteUserGame(userId: string | undefined, gameId: string): Promise<void> {
         await api.delete(`/api/users/${userId}/games/${gameId}`);
+    },
+
+    async deleteUser(userId: string | undefined): Promise<void> {
+        await api.delete(`/api/users/${userId}`);
     }
 }

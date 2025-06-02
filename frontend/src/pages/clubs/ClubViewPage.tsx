@@ -5,64 +5,102 @@ import api from "@/services/api.ts";
 import { ClubMember } from "@/types/clubMember.ts";
 import ClubSideColumn from "@/components/common/club/ClubSideColumn.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {useParams} from "react-router-dom";
+import {clubService} from "@/services/clubService.ts";
+import {Team} from "@/types/team.ts";
+import {useUser} from "@/contexts/UserContext.tsx";
+import {ClubRole} from "@/types/clubRole.ts";
 
-export function ClubViewPage() {
-    const { id } = useParams();
+type ClubViewPageProps = {
+    clubId: string;
+}
+
+export function ClubViewPage({ clubId }: ClubViewPageProps) {
     const [club, setClub] = useState<Club>();
+    const [ clubMembers, setClubMembers ] = useState<ClubMember[]>([]);
+    const [ clubTeams, setClubTeams ] = useState<Team[]>([]);
+    const [ clubOwner, setClubOwner ] = useState<ClubMember>();
+    const [ clubAdmins, setClubAdmins ] = useState<ClubMember[]>([]);
+
+    const [ userRole, setUserRole ] = useState<ClubRole>(ClubRole.NON_MEMBER);
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string>();
+    const [error, setError] = useState<string | null>(null);
 
-    // GET THE OWNER AND THE ADMINS OF THE CLUB
-    // const owner: ClubMember | undefined = club?.members.find(member => member.isOwner);
-    // const admins: ClubMember[] | undefined = club?.members.filter(member => member.isAdmin);
-
-    const owner : ClubMember = {
-        id: "123e4567-e89b-12d3-a456-426614174000",
-        email: "jane.doe@example.com",
-        username: "JaneDoe",
-        registrationDate: "2025-05-15T10:30:00Z",
-        discord: "JaneDoe#1234",
-        profilePicture: "https://example.com/avatars/janedoe.png",
-        openAtInvite: true,
-        isOwner: false,
-        isAdmin: true,
-    };
-
-    const admins: ClubMember[] = [];
+    const { user } = useUser();
 
     const handleJoinClub = async () => {
         try {
-            await api.post(`/api/club/${id}/join`);
+            await api.post(`/api/club/${clubId}/join`);
             fetchClubData();
         } catch (error) {
             console.log('Error joining club:', error);
         }
     }
 
-    // TODO: CHECK IF CURRENT USER IS MEMBER OF THE CLUB
-    // TODO: CHECK IF CURRENT USER IS OWNER OF THE CLUB
-    // TODO: CHECK IF CURRENT USER IS ADMIN OF THE CLUB
+    const handleLeaveClub = async () => {
+        try {
+            await api.post(`/api/club/${clubId}/leave`);
+            fetchClubData();
+        } catch (error) {
+            console.log('Error leaving club:', error);
+        }
+    }
+
+    // TODO: IMPLEMENT CREATE TEAM FUNCTIONALITY
+    const handleCreateTeam = async () => {};
+
+    // TODO: IMPLEMENT DELETE TEAM FUNCTIONALITY
+    const handleDeleteTeam = async () => {};
+
+    const handleDeleteClub = async () => {
+        try {
+            await api.delete(`/api/club/${clubId}`);
+            window.location.href = '/clubs';
+        } catch (error) {
+            console.log('Error deleting club:', error);
+        }
+    };
 
     useEffect(() => {
         fetchClubData()
-    }, [id]);
+    }, [clubId]);
+
+    const determineUserRole = (): ClubRole => {
+        if ( !user ) return ClubRole.NON_MEMBER;
+
+        const userMember = clubMembers.find(member => member.userId === user.id);
+
+        if ( !userMember ) return ClubRole.NON_MEMBER;
+        if ( userMember.isOwner ) return ClubRole.OWNER;
+        if ( userMember.isAdmin ) return ClubRole.ADMIN;
+
+        return ClubRole.MEMBER;
+    };
 
     const fetchClubData = async () => {
         try {
             setIsLoading(true);
+            setError(null);
 
-            const res = await api.get(`/api/club/${id}`);
+            const [ clubResponse, membersRespose, teamsResponse, ownerResponse, adminsResponse ] = await Promise.all([
+                clubService.getClub(clubId),
+                clubService.getClubMembers(clubId),
+                clubService.getClubTeams(clubId),
+                clubService.getClubOwner(clubId),
+                clubService.getClubAdmins(clubId)
+            ]);
 
-            if (res.status === 200) {
-                setClub(res.data);
-            } else {
-                console.log('Error fetching data:', res.data);
-                setError(res.data);
-            }
+            setClub(clubResponse);
+            setClubMembers(membersRespose);
+            setClubTeams(teamsResponse);
+            setClubOwner(ownerResponse);
+            setClubAdmins(adminsResponse);
+
+            // SETTING THE ROLE OF THE CURRENT USER
+            setUserRole(determineUserRole());
         } catch (error) {
             console.error('Failed to fetch club data:', error);
+            setError('Failed to fetch club data');
         } finally {
             setIsLoading(false);
         }
@@ -84,8 +122,8 @@ export function ClubViewPage() {
                                 logo={club.logo}
                                 name={club.name}
                                 description={club.description}
-                                owner={owner}
-                                admins={admins}
+                                owner={clubOwner}
+                                admins={clubAdmins}
                                 creationDate={club.creationDate}
                             />
 
@@ -107,8 +145,8 @@ export function ClubViewPage() {
                                     </div>
                                 </div>
                                 <div>
-                                    {club.teams && club.teams.length > 0 ? (
-                                        club.teams.map((team) => (
+                                    {clubTeams && clubTeams.length > 0 ? (
+                                        clubTeams.map((team) => (
                                             <div key={team.id}>
                                                 <p>{team.name}</p>
                                             </div>

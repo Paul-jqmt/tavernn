@@ -88,11 +88,22 @@ export default function ProfilePage(){
                     </div>
 
                     <div id='profile-main-frame' className='bg-deep-purple rounded-2xl w-full p-6 flex-1 overflow-hidden'>
-                        {activeTab === 'games' && <ProfileGameList userId={user.id} />}
-                        {activeTab === 'settings' && <ProfileSettings
-                            userData={user}
-                            onUserDataUpdate={refreshUser}
-                        />}
+
+                        {/*   USER GAME LIST TAB   */}
+                        {activeTab === 'games' && (
+                            <ProfileGameList
+                                userId={user.id}
+                                onGameListUpdate={refreshUser}
+                            />
+                        )}
+
+                        {/*   USER SETTINGS TAB   */}
+                        {activeTab === 'settings' && (
+                            <ProfileSettings
+                                userData={user}
+                                onUserDataUpdate={refreshUser}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

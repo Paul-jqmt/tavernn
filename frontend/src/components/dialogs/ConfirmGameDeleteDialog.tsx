@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button.tsx";
 import * as React from "react";
 
-export default function ConfirmDeleteDialog({ trigger, gameName, onConfirm, } : {
+export default function ConfirmGameDeleteDialog({ trigger, gameName, onConfirm, } : {
     trigger: React.ReactNode;
     gameName: string;
     onConfirm: () => void;

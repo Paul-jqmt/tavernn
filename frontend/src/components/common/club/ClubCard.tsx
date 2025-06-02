@@ -2,16 +2,8 @@ import {Card, CardDescription, CardFooter, CardHeader, CardTitle} from "@/compon
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
 import {useNavigate} from "react-router-dom";
 
-export function ClubCard({
-                             id,
-                             logoUrl,
-                             name,
-                             description,
-                             nrTeams,
-                             nrMembers,
-                             maxMembers,
-                             type
-                         } : {
+export function ClubCard({ id, logoUrl, name, description, nrTeams, nrMembers, maxMembers, type
+} : {
     id: string,
     logoUrl: string | undefined,
     name: string,
