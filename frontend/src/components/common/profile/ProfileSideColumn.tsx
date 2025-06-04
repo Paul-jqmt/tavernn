@@ -91,7 +91,7 @@ export default function ProfileSideColumn({ userId }: ProfileSideColumnProps) {
                                             className='bg-mid-purple rounded-lg px-4 py-2 flex justify-between items-center'
                                         >
                                             <p className='font-semibold text-sm'>{team.name}</p>
-                                            <p className='font-extralight text-xs'>{team.game}</p>
+                                            <p className='font-extralight text-xs'>{team.gameName}</p>
                                         </div>
                                     )
                                 )) : (

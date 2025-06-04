@@ -10,6 +10,7 @@ import {Team} from "@/types/team.ts";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {ClubRole} from "@/types/clubRole.ts";
 import { useParams } from "react-router-dom";
+import {TeamCard} from "@/components/common/TeamCard.tsx";
 
 export function ClubViewPage() {
     const { id } = useParams<{ id: string }>();
@@ -121,7 +122,6 @@ export function ClubViewPage() {
                             <ClubSideColumn
                                 logo={club.logo}
                                 name={club.name}
-                                description={club.description}
                                 owner={clubOwner}
                                 admins={clubAdmins}
                                 creationDate={club.creationDate}
@@ -133,6 +133,7 @@ export function ClubViewPage() {
                                     <div className='flex gap-4 items-center'>
 
                                         { userRole === ClubRole.NON_MEMBER ? (
+
                                             // JOIN CLUB BUTTON
                                             <Button
                                                 className='bg-mid-orange hover:bg-deep-orange text-white'
@@ -141,6 +142,8 @@ export function ClubViewPage() {
                                                 Join Club
                                             </Button>
                                         ) : userRole === ClubRole.ADMIN || ClubRole.OWNER ? (
+
+                                            // CREATE TEAM BUTTON
                                             <Button
                                                 className='bg-mid-orange hover:bg-deep-orange text-white'
                                                 onClick={handleCreateTeam}
@@ -152,12 +155,18 @@ export function ClubViewPage() {
                                         )}
                                     </div>
                                 </div>
-                                <div>
+                                <div className='flex-1 overflow-y-auto space-y-2 hide-scrollbar'>
                                     {clubTeams && clubTeams.length > 0 ? (
-                                        clubTeams.map((team) => (
-                                            <div key={team.id}>
-                                                <p>{team.name}</p>
-                                            </div>
+                                        clubTeams.map((team: Team) => (
+                                            <TeamCard
+                                                id={team.id}
+                                                name={team.name}
+                                                description={team.description}
+                                                game={team.gameName}
+                                                nrMembers={team.nrMembers}
+                                                maxMembers={10}
+                                                type={"open"}
+                                            />
                                         ))
                                     ) : (
                                         <p> No teams available.</p>

@@ -5,7 +5,7 @@ export interface Team {
     name: string;
     description?: string;
     clubId: string;
-    gameId: string;
+    gameName: string;
     admissionType: 'open' | 'closed' | 'invite_only';
     captainId: string;
     nrMembers: number;

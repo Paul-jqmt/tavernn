@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types/user.ts';
 import authService from "@/services/authService.ts";
+import {userService} from "@/services/userService.ts";
 
 type UserContextType = {
     user: User | null;
@@ -25,6 +26,20 @@ export function UserProvider({ children }: { children: ReactNode }) {
         try {
             if (authService.isAuthenticated()) {
                 const currentUser = await authService.getCurrentUser();
+
+                try {
+                    const userClub = await userService.getUserClub(currentUser.id);
+                    const userTeams = await userService.getUserTeams(currentUser.id);
+
+                    console.log(userClub);
+                    console.log(userTeams);
+
+                    currentUser.club = userClub[0] || null;
+                    currentUser.teams = userTeams || [];
+                } catch (error) {
+                    currentUser.club = null;
+                    currentUser.teams = [];
+                }
                 setUser(currentUser);
             }
         } catch (error) {

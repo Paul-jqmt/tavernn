@@ -8,7 +8,7 @@ export const authService = {
             const response = await api.post<AuthResponse>('/api/auth/login', credentials);
 
             if (response.data) {
-                localStorage.setItem('accessToken', response.data.token);
+                localStorage.setItem('token', response.data.token);
                 return response.data;
             }
 
@@ -24,9 +24,10 @@ export const authService = {
             const response = await api.post<AuthResponse>('/api/auth/register', userData);
 
             if(response.data) {
-                localStorage.setItem('accessToken', response.data.token);
-                return response.data;
+                localStorage.setItem('token', response.data.token);
             }
+
+            return response.data;
 
             throw new Error('Registration failed: No token received');
         } catch (error) {
@@ -38,10 +39,10 @@ export const authService = {
     logout: async (): Promise<void> => {
         try {
             await api.post('/auth/logout');
-            localStorage.removeItem('accessToken');
+            localStorage.removeItem('token');
         } catch (error) {
             console.log('Failed to logout:', error);
-            localStorage.removeItem('accessToken');
+            localStorage.removeItem('token');
             throw error;
         }
     },
@@ -57,7 +58,7 @@ export const authService = {
     },
 
     isAuthenticated: (): boolean => {
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem('token');
         return !!token;
     },
 
@@ -72,14 +73,14 @@ export const authService = {
     },
 
     getToken: (): string | null => {
-        return localStorage.getItem('accessToken');
+        return localStorage.getItem('token');
     },
 
     refreshToken: async (): Promise<string> => {
         try {
             const response = await api.post('/api/auth/refresh');
             const newToken = response.data.token;
-            localStorage.setItem('accessToken', newToken);
+            localStorage.setItem('token', newToken);
             return newToken;
         } catch (error) {
             console.error('Failed to refresh token:', error);

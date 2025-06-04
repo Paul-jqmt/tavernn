@@ -7,8 +7,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {LoginFormValues, loginSchema} from "@/schemas/loginSchema.ts";
 import { useState } from "react";
-import authService from "@/services/authService.ts";
 import {useNavigate} from "react-router-dom";
+import authService from "@/services/authService.ts";
+import {useUser} from "@/contexts/UserContext.tsx";
 
 type AuthFormProps = {
     onSwitch: () => void;
@@ -18,6 +19,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
     const [error, setError] = useState<{ title: string; message: string } | null>(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { refreshUser } = useUser();
 
     const handleSwitch = () => {
         setError(null);
@@ -39,7 +41,10 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
         try {
             setLoading(true);
             await authService.login(data);
+
+            await refreshUser();
             navigate('/profile', {replace: true});
+
         } catch (error: any) {
             let errorTitle = 'Error';
             let errorMessage = 'Something went wrong';

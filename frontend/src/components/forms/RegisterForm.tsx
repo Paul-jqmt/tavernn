@@ -12,6 +12,7 @@ import {useState} from "react";
 import {RegisterRequest} from "@/types/auth.ts";
 import authService from "@/services/authService.ts";
 import {useNavigate} from "react-router-dom";
+import {useUser} from "@/contexts/UserContext.tsx";
 
 type AuthFormProps = {
     onSwitch: () => void;
@@ -21,6 +22,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
     const [error, setError] = useState<{ title: string; message: string } | null>(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+    const { refreshUser } = useUser();
 
     const form = useForm<RegisterFormValues>({
         resolver: zodResolver(registerSchema),
@@ -48,6 +50,8 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
             setLoading(true);
 
             await authService.register(registerData);
+
+            await refreshUser();
             navigate('/profile', {replace: true});
         } catch (error: any) {
             let errorTitle = 'Error';

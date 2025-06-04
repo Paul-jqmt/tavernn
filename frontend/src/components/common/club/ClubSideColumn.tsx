@@ -1,17 +1,16 @@
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
 import {ClubMember} from "@/types/clubMember.ts";
+import {formatDate} from "@/lib/utils.ts";
 
 export default function ClubSideColumn({
     logo,
     name,
-    description,
     owner,
     admins,
     creationDate
 } : {
     logo: string | undefined;
     name: string;
-    description: string | null;
     owner: ClubMember | undefined;
     admins: ClubMember[] | undefined;
     creationDate: string | undefined;
@@ -25,9 +24,9 @@ export default function ClubSideColumn({
                 </Avatar>
 
                 <h2 className='text-xl font-extrabold'>{name}</h2>
-                <p>{description}</p>
             </div>
 
+            {/*   CLUB OWNER   */}
             <div>
                 <p className='text-sm mb-1 ml-4'>Owner</p>
                 <div className='bg-mid-purple rounded-lg px-4 py-2'>
@@ -35,20 +34,22 @@ export default function ClubSideColumn({
                 </div>
             </div>
 
+            {/*   CLUB ADMINS   */}
             <div>
-                <p className='text-sm mb-2 ml-4'>Teams</p>
+                <p className='text-sm mb-2 ml-4'>Admins</p>
                 <div className='flex flex-col gap-2'>
-                    {admins?.map((admin) => (
-                        <div key={admin.id} className='bg-mid-purple rounded-lg px-4 py-2 flex justify-between items-center'>
+                    {admins?.map((admin: ClubMember) => (
+                        <div key={admin.userId} className='bg-mid-purple rounded-lg px-4 py-2 flex justify-between items-center'>
                             <p className='font-semibold mb-1 text-sm'>{admin.username}</p>
                         </div>
                     ))}
                 </div>
             </div>
 
+            {/*   CREATION DATE   */}
             <div className='mt-auto text-center'>
                 <p className='text-xs font-medium'>Together since</p>
-                <p className='text-sm'>{creationDate}</p>
+                <p className='text-sm'>{formatDate(creationDate)}</p>
             </div>
         </aside>
     );

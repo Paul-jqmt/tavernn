@@ -10,11 +10,13 @@ import {useUser} from "@/contexts/UserContext.tsx";
 import {AlertCircleIcon} from "lucide-react";
 import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
 import {clubService} from "@/services/clubService.ts";
+import {userService} from "@/services/userService.ts";
 
 export default function ClubsDiscoverPage() {
     const [ clubs, setClubs ] = useState<Club[]>([]);
     const [ isLoading, setIsLoading ] = useState(true);
     const [ searchQuery, setSearchQuery ] = useState('');
+    const [ userClub, setUserClub ] = useState<Club[]>([]);
     const navigate = useNavigate();
 
     const {
@@ -24,8 +26,20 @@ export default function ClubsDiscoverPage() {
     } = useUser();
 
     useEffect(() => {
-        fetchClubs()
-    }, []);
+        fetchClubs();
+        fetchUserClubs();
+    }, [user]);
+
+    const fetchUserClubs = async () => {
+        if (!user) return;
+
+        try {
+            const userClub = await userService.getUserClub(user.id);
+            setUserClub(userClub);
+        } catch (error) {
+            setUserClub([])
+        }
+    }
 
     const fetchClubs = async () => {
         try {
@@ -103,12 +117,15 @@ export default function ClubsDiscoverPage() {
                                     {/*</Select>*/}
 
                                     {/*   CREATE CLUB BUTTON   */}
-                                    <Button
-                                        className='bg-mid-orange hover:bg-deep-orange text-white'
-                                        onClick={() => navigate('/clubs/create')}
-                                    >
-                                        Create Club
-                                    </Button>
+                                    { userClub.length === 0 && (
+                                        <Button
+                                            className='bg-light-purple hover:bg-mid-purple text-white'
+                                            onClick={() => navigate('/clubs/create')}
+                                        >
+                                            Create Club
+                                        </Button>
+                                    )}
+
                                 </div>
                             </div>
 
@@ -122,9 +139,11 @@ export default function ClubsDiscoverPage() {
                                 />
                             </div>
 
-                            <div className='bg-deep-orange text-white rounded-xl p-4'>
-                                <p className='font-light'>You haven’t joined a club yet. Choose your adventure</p>
-                            </div>
+                            { userClub.length === 0 && (
+                                <div className='bg-deep-orange text-white rounded-xl p-4'>
+                                    <p className='font-light'>You haven’t joined a club yet. Choose your adventure</p>
+                                </div>
+                            )}
 
                             {/*   EMPTY CLUBS LIST MESSAGE   */}
                             {!isLoading && filteredClubs.length === 0 && (
