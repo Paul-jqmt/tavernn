@@ -1,3 +1,6 @@
+import {Club} from "@/types/club.ts";
+import {Team} from "@/types/team.ts";
+
 export interface User {
     id: string;
     email: string;
@@ -6,4 +9,6 @@ export interface User {
     discord: string;
     profilePicture: string;
     openAtInvite: boolean;
+    club: Club | null;
+    teams: Team[];
 }

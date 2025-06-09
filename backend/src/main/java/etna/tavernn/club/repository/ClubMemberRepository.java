@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface ClubMemberRepository extends JpaRepository<ClubMember, ClubMember.ClubMemberId> {
     List<ClubMember> findByIdUserId(String userId);
+    List<ClubMember> findByIdClubId(String clubId);
 }

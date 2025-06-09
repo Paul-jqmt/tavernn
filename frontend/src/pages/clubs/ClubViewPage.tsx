@@ -1,68 +1,124 @@
 import Navbar from "@/components/common/Navbar.tsx";
 import { Club } from "@/types/club.ts";
 import { useEffect, useState } from "react";
-import api from "@/services/api.ts";
 import { ClubMember } from "@/types/clubMember.ts";
 import ClubSideColumn from "@/components/common/club/ClubSideColumn.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {useParams} from "react-router-dom";
+import {clubService} from "@/services/clubService.ts";
+import {Team} from "@/types/team.ts";
+import {useUser} from "@/contexts/UserContext.tsx";
+import {ClubRole} from "@/types/clubRole.ts";
+import { useParams } from "react-router-dom";
+import {TeamCard} from "@/components/common/TeamCard.tsx";
 
 export function ClubViewPage() {
-    const { id } = useParams();
-    const [club, setClub] = useState<Club>();
+    const { id } = useParams<{ id: string }>();
+    const { user } = useUser();
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string>();
+    const [error, setError] = useState<string | null>(null);
 
-    // GET THE OWNER AND THE ADMINS OF THE CLUB
-    // const owner: ClubMember | undefined = club?.members.find(member => member.isOwner);
-    // const admins: ClubMember[] | undefined = club?.members.filter(member => member.isAdmin);
+    const [ club, setClub ] = useState<Club>();
+    const [ clubMembers, setClubMembers ] = useState<ClubMember[]>([]);
+    const [ clubTeams, setClubTeams ] = useState<Team[]>([]);
+    const [ clubOwner, setClubOwner ] = useState<ClubMember>();
+    const [ clubAdmins, setClubAdmins ] = useState<ClubMember[]>([]);
 
-    const owner : ClubMember = {
-        id: "123e4567-e89b-12d3-a456-426614174000",
-        email: "jane.doe@example.com",
-        username: "JaneDoe",
-        registrationDate: "2025-05-15T10:30:00Z",
-        discord: "JaneDoe#1234",
-        profilePicture: "https://example.com/avatars/janedoe.png",
-        openAtInvite: true,
-        isOwner: false,
-        isAdmin: true,
-    };
-
-    const admins: ClubMember[] = [];
+    const [ userRole, setUserRole ] = useState<ClubRole>(ClubRole.NON_MEMBER);
 
     const handleJoinClub = async () => {
         try {
-            await api.post(`/api/club/${id}/join`);
-            fetchClubData();
+            await clubService.joinClub(id);
         } catch (error) {
             console.log('Error joining club:', error);
         }
     }
 
-    // TODO: CHECK IF CURRENT USER IS MEMBER OF THE CLUB
-    // TODO: CHECK IF CURRENT USER IS OWNER OF THE CLUB
-    // TODO: CHECK IF CURRENT USER IS ADMIN OF THE CLUB
+    // @ts-ignore
+    const handleLeaveClub = async () => {
+        try {
+            await clubService.leaveClub(id);
+        } catch (error) {
+            console.log('Error leaving club:', error);
+        }
+    }
+
+    const handleCreateTeam = async () => {
+        // TODO: IMPLEMENT CREATE TEAM FUNCTIONALITY
+    };
+
+    // @ts-ignore
+    const handleDeleteTeam = async () => {
+        // TODO: IMPLEMENT DELETE TEAM FUNCTIONALITY
+    };
+
+    // @ts-ignore
+    const handleDeleteClub = async () => {
+        try {
+            await clubService.deleteClub(id);
+            window.location.href = '/clubs';
+        } catch (error) {
+            console.log('Error deleting club:', error);
+        }
+    };
 
     useEffect(() => {
-        fetchClubData()
-    }, [id]);
+        if ( id )
+            fetchClubData();
+    }, [user]);
+
+    const determineUserRole = (): ClubRole => {
+        if ( !user ) return ClubRole.NON_MEMBER;
+
+        const userMember = clubMembers.find(member => member.userId === user.id);
+
+        if ( !userMember ) return ClubRole.NON_MEMBER;
+        if ( userMember.isOwner ) return ClubRole.OWNER;
+        if ( userMember.isAdmin ) return ClubRole.ADMIN;
+
+        return ClubRole.MEMBER;
+    };
 
     const fetchClubData = async () => {
+        if ( !id ) return;
+
         try {
             setIsLoading(true);
+            setError(null);
 
-            const res = await api.get(`/api/club/${id}`);
+            const [ clubResponse, membersResponse, teamsResponse, ownerResponse, adminsResponse ] = await Promise.all([
+                clubService.getClub(id),
+                clubService.getClubMembers(id),
+                clubService.getClubTeams(id),
+                clubService.getClubOwner(id),
+                clubService.getClubAdmins(id)
+            ]);
 
-            if (res.status === 200) {
-                setClub(res.data);
+            setClub(clubResponse);
+
+            if (Array.isArray(membersResponse)) {
+                console.log("response:", membersResponse);
+                setClubMembers(membersResponse);
+                console.log("members:", clubMembers);
             } else {
-                console.log('Error fetching data:', res.data);
-                setError(res.data);
+                setClubMembers([]);
             }
+
+            if(Array.isArray(teamsResponse)) {
+                setClubTeams(teamsResponse);
+            } else {
+                setClubTeams([]);
+            }
+
+            setClubOwner(ownerResponse);
+            setClubAdmins(adminsResponse);
+
+            // SETTING THE ROLE OF THE CURRENT USER
+            setUserRole(determineUserRole());
+            console.log(userRole);
         } catch (error) {
             console.error('Failed to fetch club data:', error);
+            setError('Failed to fetch club data');
         } finally {
             setIsLoading(false);
         }
@@ -83,9 +139,8 @@ export function ClubViewPage() {
                             <ClubSideColumn
                                 logo={club.logo}
                                 name={club.name}
-                                description={club.description}
-                                owner={owner}
-                                admins={admins}
+                                owner={clubOwner}
+                                admins={clubAdmins}
                                 creationDate={club.creationDate}
                             />
 
@@ -94,24 +149,40 @@ export function ClubViewPage() {
                                     <h2 className='font-extrabold text-5xl'>Teams</h2>
                                     <div className='flex gap-4 items-center'>
 
-                                        {/*   JOIN CLUB BUTTON   */}
-                                        {/*   TODO: IF THE CURRENT USER IS A MEMBER HIDE DE BUTTON   */}
-                                        <Button
-                                            className='bg-mid-orange hover:bg-deep-orange text-white'
-                                            onClick={handleJoinClub}
-                                        >
-                                            Join Club
-                                        </Button>
+                                        { userRole === ClubRole.NON_MEMBER ? (
+                                            // JOIN CLUB BUTTON
+                                            <Button
+                                                className='bg-mid-orange hover:bg-deep-orange text-white'
+                                                onClick={handleJoinClub}
+                                            >
+                                                Join Club
+                                            </Button>
+                                        ) : userRole === ClubRole.ADMIN || ClubRole.OWNER ? (
 
-                                        {/*   TODO: IF CURRENT USER IS ADMIN OF THE CLUB DO CREATE TEAM BUTTON   */}
+                                            // CREATE TEAM BUTTON
+                                            <Button
+                                                className='bg-mid-orange hover:bg-deep-orange text-white'
+                                                onClick={handleCreateTeam}
+                                            >
+                                                Create Team
+                                            </Button>
+                                        ) : (
+                                            <></>
+                                        )}
                                     </div>
                                 </div>
-                                <div>
-                                    {club.teams && club.teams.length > 0 ? (
-                                        club.teams.map((team) => (
-                                            <div key={team.id}>
-                                                <p>{team.name}</p>
-                                            </div>
+                                <div className='flex-1 overflow-y-auto space-y-2 hide-scrollbar'>
+                                    {clubTeams && clubTeams.length > 0 ? (
+                                        clubTeams.map((team: Team) => (
+                                            <TeamCard
+                                                id={team.id}
+                                                name={team.name}
+                                                description={team.description}
+                                                game={team.gameName}
+                                                nrMembers={team.nrMembers}
+                                                maxMembers={10}
+                                                type={"open"}
+                                            />
                                         ))
                                     ) : (
                                         <p> No teams available.</p>

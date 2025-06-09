@@ -5,8 +5,6 @@ import ProfileGameList from "@/components/common/profile/ProfileGameList.tsx";
 import {useEffect, useState} from "react";
 import ProfileSettings from "@/components/common/profile/ProfileSettings.tsx";
 import {useUser} from "@/contexts/UserContext.tsx";
-import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
-import {AlertCircleIcon} from "lucide-react";
 import {useNavigate} from "react-router-dom";
 
 export default function ProfilePage(){
@@ -15,45 +13,16 @@ export default function ProfilePage(){
 
     const {
         user,
-        loading: userLoading,
-        error: userError,
-        refreshUser
+        refreshUser,
     } = useUser();
 
     useEffect(() => {
-        if (!userLoading && !user) {
+        if (!user) {
             navigate('/auth', { replace: true });
         }
-    }, [user, userLoading, navigate]);
+    }, [user]);
 
-    if (userLoading) {
-        return (
-            <>
-                <Navbar />
-                <div className="flex items-stretch min-h-screen gap-8 p-10 text-white pt-32">
-                    <div>Loading user data...</div>
-                </div>
-            </>
-        );
-    }
-
-    if (userError) {
-        return (
-            <>
-                <Navbar />
-                <div className="flex items-stretch min-h-screen gap-8 p-10 text-white pt-32">
-                    <Alert variant='destructive'>
-                        <AlertCircleIcon />
-                        <AlertTitle>Failed to load user data</AlertTitle>
-                    </Alert>
-                </div>
-            </>
-        );
-    }
-
-    // IF WE DON'T RECEIVE THE USER, WE DON'T RENDER ANYTHING
-    // AS WE'RE REDIRECTING TO THE LOGIN PAGE
-    if (!user) {
+    if(!user) {
         return null;
     }
 
@@ -88,11 +57,22 @@ export default function ProfilePage(){
                     </div>
 
                     <div id='profile-main-frame' className='bg-deep-purple rounded-2xl w-full p-6 flex-1 overflow-hidden'>
-                        {activeTab === 'games' && <ProfileGameList userId={user.id} />}
-                        {activeTab === 'settings' && <ProfileSettings
-                            userData={user}
-                            onUserDataUpdate={refreshUser}
-                        />}
+
+                        {/*   USER GAME LIST TAB   */}
+                        {activeTab === 'games' && (
+                            <ProfileGameList
+                                userId={user.id}
+                                onGameListUpdate={refreshUser}
+                            />
+                        )}
+
+                        {/*   USER SETTINGS TAB   */}
+                        {activeTab === 'settings' && (
+                            <ProfileSettings
+                                userData={user}
+                                onUserDataUpdate={refreshUser}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

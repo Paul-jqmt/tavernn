@@ -3,63 +3,33 @@ import {User} from '@/types/user.ts';
 import {LoginRequest, RegisterRequest, AuthResponse} from '@/types/auth.ts';
 
 export const authService = {
-    login: async (credentials: LoginRequest): Promise<User> => {
-        try {
-            const response = await api.post<AuthResponse>('/api/auth/login', credentials);
+    login: async (credentials: LoginRequest): Promise<AuthResponse> => {
+        const response = await api.post<AuthResponse>('/api/auth/login', credentials);
 
-            if (response.data) {
-                localStorage.setItem('accessToken', response.data.token);
-
-                return {
-                    id: response.data.id,
-                    email: response.data.email,
-                    username: response.data.username,
-                    registrationDate: response.data.registrationDate,
-                    discord: response.data.discord || '',
-                    profilePicture: response.data.profilePicture || '',
-                    openAtInvite: response.data.openAtInvite
-                };
-            }
-
-            throw new Error('Login failed: No token received');
-        } catch (error) {
-            console.error('Login failed:', error);
-            throw error;
+        if (response.data) {
+            localStorage.setItem('token', response.data.token);
         }
+
+        return response.data;
     },
 
-    register: async (userData: RegisterRequest): Promise<User> => {
-        try {
-            const response = await api.post<AuthResponse>('/api/auth/register', userData);
+    register: async (userData: RegisterRequest): Promise<AuthResponse> => {
+        const response = await api.post<AuthResponse>('/api/auth/register', userData);
 
-            if(response.data) {
-                localStorage.setItem('accessToken', response.data.token);
-
-                return {
-                    id: response.data.id,
-                    email: response.data.email,
-                    username: response.data.username,
-                    registrationDate: response.data.registrationDate,
-                    discord: response.data.discord || '',
-                    profilePicture: response.data.profilePicture || '',
-                    openAtInvite: response.data.openAtInvite
-                };
-            }
-
-            throw new Error('Registration failed: No token received');
-        } catch (error) {
-            console.error('Registration failed:', error);
-            throw error;
+        if(response.data) {
+            localStorage.setItem('token', response.data.token);
         }
+
+        return response.data;
     },
 
     logout: async (): Promise<void> => {
         try {
             await api.post('/auth/logout');
-            localStorage.removeItem('accessToken');
+            localStorage.removeItem('token');
         } catch (error) {
             console.log('Failed to logout:', error);
-            localStorage.removeItem('accessToken');
+            localStorage.removeItem('token');
             throw error;
         }
     },
@@ -75,7 +45,7 @@ export const authService = {
     },
 
     isAuthenticated: (): boolean => {
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem('token');
         return !!token;
     },
 
@@ -90,14 +60,14 @@ export const authService = {
     },
 
     getToken: (): string | null => {
-        return localStorage.getItem('accessToken');
+        return localStorage.getItem('token');
     },
 
     refreshToken: async (): Promise<string> => {
         try {
             const response = await api.post('/api/auth/refresh');
             const newToken = response.data.token;
-            localStorage.setItem('accessToken', newToken);
+            localStorage.setItem('token', newToken);
             return newToken;
         } catch (error) {
             console.error('Failed to refresh token:', error);

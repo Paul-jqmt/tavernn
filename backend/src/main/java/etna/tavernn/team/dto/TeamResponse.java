@@ -18,4 +18,5 @@ public class TeamResponse {
     private String gameId;
     private String gameName;
     private Integer nrMembers;
+    private TeamMemberResponse captain;
 }

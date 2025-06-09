@@ -5,11 +5,11 @@ import { Club } from "@/types/club.ts";
 import { Button } from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {useNavigate} from "react-router-dom";
-import api from "@/services/api.ts";
 import {ClubCard} from "@/components/common/club/ClubCard.tsx";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {AlertCircleIcon} from "lucide-react";
 import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
+import {clubService} from "@/services/clubService.ts";
 
 export default function ClubsDiscoverPage() {
     const [ clubs, setClubs ] = useState<Club[]>([]);
@@ -24,19 +24,19 @@ export default function ClubsDiscoverPage() {
     } = useUser();
 
     useEffect(() => {
-        fetchClubs()
-    }, []);
+        fetchClubs();
+    }, [user]);
 
     const fetchClubs = async () => {
         try {
             setIsLoading(true);
 
-            const res = await api.get('/api/club');
+            const res = await clubService.getClubs();
 
-            if (Array.isArray(res.data)) {
-                setClubs(res.data);
+            if (Array.isArray(res)) {
+                setClubs(res);
             } else {
-                console.log('Unexpected response format:', res.data);
+                console.log('Unexpected response format:', res);
                 setClubs([]);
             }
         } catch (error) {
@@ -103,12 +103,15 @@ export default function ClubsDiscoverPage() {
                                     {/*</Select>*/}
 
                                     {/*   CREATE CLUB BUTTON   */}
-                                    <Button
-                                        className='bg-mid-orange hover:bg-deep-orange text-white'
-                                        onClick={() => navigate('/clubs/create')}
-                                    >
-                                        Create Club
-                                    </Button>
+                                    { !user.club && (
+                                        <Button
+                                            className='bg-light-purple hover:bg-mid-purple text-white'
+                                            onClick={() => navigate('/clubs/create')}
+                                        >
+                                            Create Club
+                                        </Button>
+                                    )}
+
                                 </div>
                             </div>
 
@@ -122,9 +125,12 @@ export default function ClubsDiscoverPage() {
                                 />
                             </div>
 
-                            <div className='bg-deep-orange text-white rounded-xl p-4'>
-                                <p className='font-light'>You haven’t joined a club yet. Choose your adventure</p>
-                            </div>
+                            {/*   USER HAS NO CLUB BANNER   */}
+                            { !user.club && (
+                                <div className='bg-deep-orange text-white rounded-xl p-4'>
+                                    <p className='font-light'>You haven’t joined a club yet. Choose your adventure</p>
+                                </div>
+                            )}
 
                             {/*   EMPTY CLUBS LIST MESSAGE   */}
                             {!isLoading && filteredClubs.length === 0 && (
@@ -136,6 +142,7 @@ export default function ClubsDiscoverPage() {
                                 </div>
                             )}
 
+                            {/*   LIST OF CLUBS   */}
                             { isLoading ? (
                                 <div className='text-white'>Loading clubs...</div>
                             ) : (

@@ -10,8 +10,8 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Textarea } from "@/components/ui/textarea.tsx";
 import { useNavigate } from "react-router-dom";
 import ConfirmCancelDialog from "@/components/dialogs/ConfirmCancelDialog.tsx";
-import api from "@/services/api.ts";
 import axios from "axios";
+import {clubService} from "@/services/clubService.ts";
 
 export default function CreateClubForm() {
     const navigate = useNavigate();
@@ -43,12 +43,8 @@ export default function CreateClubForm() {
                 maxMembers: 20,
             };
 
-             const res = await api.post('/api/club', requestData);
-
-             if (res.status === 201 || res.status === 200) {
-                 console.log('Club created successfully');
-                 navigate('/clubs', {replace: true});
-             }
+             const club = await clubService.createClub(requestData);
+             navigate(`/clubs/${club.id}`, {replace: true});
         } catch (error) {
             console.error('Failed to create club:', error);
 

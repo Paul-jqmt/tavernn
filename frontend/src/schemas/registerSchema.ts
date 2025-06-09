@@ -12,6 +12,9 @@ export const registerSchema = z.object({
         .min(8, 'Passwords must match'),
     terms: z
         .boolean()
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
 });
 
 export type RegisterFormValues = z.infer<typeof registerSchema>;

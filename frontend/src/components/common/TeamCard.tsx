@@ -1,14 +1,12 @@
 import {Card, CardDescription, CardFooter, CardHeader, CardTitle} from "@/components/ui/card.tsx";
-import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar.tsx";
 import {useNavigate} from "react-router-dom";
 
-export function ClubCard({ id, logoUrl, name, description, nrTeams, nrMembers, maxMembers, type
-} : {
+export function TeamCard({ id, name, description, game, nrMembers, maxMembers, type
+                         } : {
     id: string,
-    logoUrl: string | undefined,
     name: string,
-    description: string | null,
-    nrTeams: number,
+    description: string | undefined,
+    game: string;
     nrMembers: number,
     maxMembers: number,
     type: 'open' | 'closed' | 'invite_only',
@@ -24,10 +22,10 @@ export function ClubCard({ id, logoUrl, name, description, nrTeams, nrMembers, m
 
             {/*   LOGO AND NAME   */}
             <CardHeader className='flex items-center gap-4 p-0 w-1/2'>
-                <Avatar className='w-12 h-12 text-deep-purple'>
-                    <AvatarImage src={logoUrl} alt={`${name} logo`} />
-                    <AvatarFallback>{name.charAt(0)}</AvatarFallback>
-                </Avatar>
+                {/*<Avatar className='w-12 h-12 text-deep-purple'>*/}
+                {/*    <AvatarImage src={logoUrl} alt={`${name} logo`} />*/}
+                {/*    <AvatarFallback>{name.charAt(0)}</AvatarFallback>*/}
+                {/*</Avatar>*/}
 
                 <div className='space-y-1'>
                     <CardTitle className='text-base font-bold'>{name}</CardTitle>
@@ -37,9 +35,9 @@ export function ClubCard({ id, logoUrl, name, description, nrTeams, nrMembers, m
                 </div>
             </CardHeader>
 
-            {/*   TEAMS AND MEMBERS   */}
+            {/*   GAME AND MEMBERS   */}
             <div className='flex items-center gap-10 text-sm'>
-                <p>{nrTeams} Teams</p>
+                <p>{game}</p>
                 <p>{nrMembers}/{maxMembers} Members</p>
             </div>
 

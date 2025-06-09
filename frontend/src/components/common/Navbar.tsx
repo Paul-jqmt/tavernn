@@ -1,15 +1,17 @@
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import logo from "@/assets/icons/logo.svg";
 import menu from "@/assets/icons/menu.svg";
 import { useState} from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import {useUser} from "@/contexts/UserContext.tsx";
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
+    const { user } = useUser();
 
     const menuItems = [
         { to: '/home', label: 'Home' },
-        { to: '/clubs', label: 'Club' },
+        { to: (user && user.club) ? `/clubs/${user.club.id}` : '/clubs', label: 'Club' },
         { to: '/profile', label: 'Profile' },
     ];
 

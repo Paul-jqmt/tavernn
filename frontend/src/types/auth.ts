@@ -3,10 +3,6 @@ export interface AuthResponse {
     id: string;
     email: string;
     username: string;
-    registrationDate: string;
-    discord?: string;
-    profilePicture?: string;
-    openAtInvite: boolean;
 }
 
 export interface LoginRequest {

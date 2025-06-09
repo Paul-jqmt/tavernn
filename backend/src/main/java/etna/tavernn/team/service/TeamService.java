@@ -233,4 +233,20 @@ public class TeamService {
                 .map(tm -> teamMapper.toTeamResponse(tm.getTeam()))
                 .collect(Collectors.toList());
     }
+
+    public TeamMemberResponse getTeamCaptain(String teamId) {
+        return teamMemberRepository.findAllByTeamId(teamId).stream()
+                .filter(TeamMember::getIsCaptain)
+                .findFirst()
+                .map(this::mapToTeamMemberResponse)
+                .orElse(null);
+    }
+
+    private TeamMemberResponse mapToTeamMemberResponse(TeamMember member) {
+        return TeamMemberResponse.builder()
+                .userId(member.getUser().getId())
+                .username(member.getUser().getUsername())
+                .isCaptain(member.getIsCaptain())
+                .build();
+    }
 }

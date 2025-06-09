@@ -1,6 +1,7 @@
-import { User } from "@/types/user.ts";
-
-export interface ClubMember extends User {
+export interface ClubMember {
+    userId: string;
+    username: string;
+    email: string;
     isOwner: boolean;
     isAdmin: boolean;
 }

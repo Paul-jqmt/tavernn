@@ -8,6 +8,7 @@ import UserHomePage from "@/pages/UserHomePage.tsx";
 import CreateClubForm from "@/components/forms/CreateClubForm.tsx";
 import {ClubViewPage} from "@/pages/clubs/ClubViewPage.tsx";
 import {UserProvider} from "@/contexts/UserContext.tsx";
+import ProtectedRoute from "@/components/common/ProtectedRoute.tsx";
 
 function App() {
     return (
@@ -15,11 +16,31 @@ function App() {
             <Routes>
                 <Route path='/' element={<HomePage />} />
                 <Route path='/auth' element={<AuthenticationPage />} />
-                <Route path='/profile' element={<ProfilePage />} />
-                <Route path='/home' element={<UserHomePage />} />
-                <Route path='/clubs' element={<ClubsDiscoverPage />} />
-                <Route path='/clubs/create' element={<CreateClubForm />} />
-                <Route path='/clubs/:id' element={<ClubViewPage />} />
+                <Route path='/profile' element={
+                    <ProtectedRoute>
+                        <ProfilePage />
+                    </ProtectedRoute>
+                } />
+                <Route path='/home' element={
+                    <ProtectedRoute>
+                        <UserHomePage />
+                    </ProtectedRoute>
+                } />
+                <Route path='/clubs' element={
+                    <ProtectedRoute>
+                        <ClubsDiscoverPage />
+                    </ProtectedRoute>
+                } />
+                <Route path='/clubs/create' element={
+                    <ProtectedRoute>
+                        <CreateClubForm />
+                    </ProtectedRoute>
+                } />
+                <Route path='/clubs/:id' element={
+                    <ProtectedRoute>
+                        <ClubViewPage />
+                    </ProtectedRoute>
+                } />
             </Routes>
         </UserProvider>
 

@@ -1,5 +1,11 @@
-import { User } from "@/types/user.ts";
+export interface TeamMember {
+    userId: string;
+    username: string;
+    isCaptain: boolean;
+}
 
-export interface TeamMember extends User {
+export interface TeeamMemberResponse {
+    userId: string;
+    username: string;
     isCaptain: boolean;
 }

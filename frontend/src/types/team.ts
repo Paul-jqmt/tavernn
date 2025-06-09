@@ -3,8 +3,19 @@ import {TeamMember} from "@/types/teamMember.ts";
 export interface Team {
     id: string;
     name: string;
-    description: string;
-    game: string;
+    description?: string;
+    clubId: string;
+    gameName: string;
+    admissionType: 'open' | 'closed' | 'invite_only';
+    captainId: string;
     nrMembers: number;
     members: TeamMember[];
+}
+
+export interface TeamRequest {
+    name: string;
+    description: string | undefined;
+    gameId: string;
+    admissionType: string;
+    captainId: string | undefined;
 }

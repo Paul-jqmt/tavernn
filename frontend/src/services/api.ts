@@ -11,7 +11,7 @@ const api: AxiosInstance = axios.create({
 // REQUEST INTERCEPTOR TO ADD THE TOKEN TO THE HEADERS
 api.interceptors.request.use(
     (config: InternalAxiosRequestConfig) => {
-        const token = localStorage.getItem('accessToken');
+        const token = localStorage.getItem('token');
 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
@@ -30,14 +30,14 @@ api.interceptors.request.use(
 
 
 // RESPONSE INTERCEPTOR TO REFRESH THE TOKEN'
-api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem('accessToken');
-            window.location.href = '/auth';
-        }
-        return Promise.reject(error);
-    }
-);
+// api.interceptors.response.use(
+//     (response) => response,
+//     (error) => {
+//         if (error.response?.status === 401) {
+//             localStorage.removeItem('token');
+//         }
+//         return Promise.reject(error);
+//     }
+// );
+
 export default api;
