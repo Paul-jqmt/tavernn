@@ -31,9 +31,6 @@ export function UserProvider({ children }: { children: ReactNode }) {
                     const userClub = await userService.getUserClub(currentUser.id);
                     const userTeams = await userService.getUserTeams(currentUser.id);
 
-                    console.log(userClub);
-                    console.log(userTeams);
-
                     currentUser.club = userClub[0] || null;
                     currentUser.teams = userTeams || [];
                 } catch (error) {

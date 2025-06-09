@@ -4,36 +4,23 @@ import {LoginRequest, RegisterRequest, AuthResponse} from '@/types/auth.ts';
 
 export const authService = {
     login: async (credentials: LoginRequest): Promise<AuthResponse> => {
-        try {
-            const response = await api.post<AuthResponse>('/api/auth/login', credentials);
+        const response = await api.post<AuthResponse>('/api/auth/login', credentials);
 
-            if (response.data) {
-                localStorage.setItem('token', response.data.token);
-                return response.data;
-            }
-
-            throw new Error('Login failed: No token received');
-        } catch (error) {
-            console.error('Login failed:', error);
-            throw error;
+        if (response.data) {
+            localStorage.setItem('token', response.data.token);
         }
+
+        return response.data;
     },
 
     register: async (userData: RegisterRequest): Promise<AuthResponse> => {
-        try {
-            const response = await api.post<AuthResponse>('/api/auth/register', userData);
+        const response = await api.post<AuthResponse>('/api/auth/register', userData);
 
-            if(response.data) {
-                localStorage.setItem('token', response.data.token);
-            }
-
-            return response.data;
-
-            throw new Error('Registration failed: No token received');
-        } catch (error) {
-            console.error('Registration failed:', error);
-            throw error;
+        if(response.data) {
+            localStorage.setItem('token', response.data.token);
         }
+
+        return response.data;
     },
 
     logout: async (): Promise<void> => {

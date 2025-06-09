@@ -9,3 +9,10 @@ export interface Club {
     nrTeams: number;
     maxMembers: number;
 }
+
+export interface ClubRequest {
+    name: string;
+    description: string | null;
+    clubType: string;
+    maxMembers: number;
+}

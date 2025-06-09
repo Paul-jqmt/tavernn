@@ -10,13 +10,11 @@ import {useUser} from "@/contexts/UserContext.tsx";
 import {AlertCircleIcon} from "lucide-react";
 import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
 import {clubService} from "@/services/clubService.ts";
-import {userService} from "@/services/userService.ts";
 
 export default function ClubsDiscoverPage() {
     const [ clubs, setClubs ] = useState<Club[]>([]);
     const [ isLoading, setIsLoading ] = useState(true);
     const [ searchQuery, setSearchQuery ] = useState('');
-    const [ userClub, setUserClub ] = useState<Club[]>([]);
     const navigate = useNavigate();
 
     const {
@@ -27,19 +25,7 @@ export default function ClubsDiscoverPage() {
 
     useEffect(() => {
         fetchClubs();
-        fetchUserClubs();
     }, [user]);
-
-    const fetchUserClubs = async () => {
-        if (!user) return;
-
-        try {
-            const userClub = await userService.getUserClub(user.id);
-            setUserClub(userClub);
-        } catch (error) {
-            setUserClub([])
-        }
-    }
 
     const fetchClubs = async () => {
         try {
@@ -117,7 +103,7 @@ export default function ClubsDiscoverPage() {
                                     {/*</Select>*/}
 
                                     {/*   CREATE CLUB BUTTON   */}
-                                    { userClub.length === 0 && (
+                                    { !user.club && (
                                         <Button
                                             className='bg-light-purple hover:bg-mid-purple text-white'
                                             onClick={() => navigate('/clubs/create')}
@@ -139,7 +125,8 @@ export default function ClubsDiscoverPage() {
                                 />
                             </div>
 
-                            { userClub.length === 0 && (
+                            {/*   USER HAS NO CLUB BANNER   */}
+                            { !user.club && (
                                 <div className='bg-deep-orange text-white rounded-xl p-4'>
                                     <p className='font-light'>You haven’t joined a club yet. Choose your adventure</p>
                                 </div>
@@ -155,6 +142,7 @@ export default function ClubsDiscoverPage() {
                                 </div>
                             )}
 
+                            {/*   LIST OF CLUBS   */}
                             { isLoading ? (
                                 <div className='text-white'>Loading clubs...</div>
                             ) : (

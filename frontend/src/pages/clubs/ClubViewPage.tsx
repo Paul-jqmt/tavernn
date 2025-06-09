@@ -1,7 +1,6 @@
 import Navbar from "@/components/common/Navbar.tsx";
 import { Club } from "@/types/club.ts";
 import { useEffect, useState } from "react";
-import api from "@/services/api.ts";
 import { ClubMember } from "@/types/clubMember.ts";
 import ClubSideColumn from "@/components/common/club/ClubSideColumn.tsx";
 import {Button} from "@/components/ui/button.tsx";
@@ -14,7 +13,12 @@ import {TeamCard} from "@/components/common/TeamCard.tsx";
 
 export function ClubViewPage() {
     const { id } = useParams<{ id: string }>();
-    const [club, setClub] = useState<Club>();
+    const { user } = useUser();
+
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const [ club, setClub ] = useState<Club>();
     const [ clubMembers, setClubMembers ] = useState<ClubMember[]>([]);
     const [ clubTeams, setClubTeams ] = useState<Team[]>([]);
     const [ clubOwner, setClubOwner ] = useState<ClubMember>();
@@ -22,38 +26,36 @@ export function ClubViewPage() {
 
     const [ userRole, setUserRole ] = useState<ClubRole>(ClubRole.NON_MEMBER);
 
-    const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    const { user } = useUser();
-
     const handleJoinClub = async () => {
         try {
-            await api.post(`/api/club/${id}/join`);
-            fetchClubData();
+            await clubService.joinClub(id);
         } catch (error) {
             console.log('Error joining club:', error);
         }
     }
 
+    // @ts-ignore
     const handleLeaveClub = async () => {
         try {
-            await api.post(`/api/club/${id}/leave`);
-            fetchClubData();
+            await clubService.leaveClub(id);
         } catch (error) {
             console.log('Error leaving club:', error);
         }
     }
 
-    // TODO: IMPLEMENT CREATE TEAM FUNCTIONALITY
-    const handleCreateTeam = async () => {};
+    const handleCreateTeam = async () => {
+        // TODO: IMPLEMENT CREATE TEAM FUNCTIONALITY
+    };
 
-    // TODO: IMPLEMENT DELETE TEAM FUNCTIONALITY
-    const handleDeleteTeam = async () => {};
+    // @ts-ignore
+    const handleDeleteTeam = async () => {
+        // TODO: IMPLEMENT DELETE TEAM FUNCTIONALITY
+    };
 
+    // @ts-ignore
     const handleDeleteClub = async () => {
         try {
-            await api.delete(`/api/club/${id}`);
+            await clubService.deleteClub(id);
             window.location.href = '/clubs';
         } catch (error) {
             console.log('Error deleting club:', error);
@@ -61,8 +63,9 @@ export function ClubViewPage() {
     };
 
     useEffect(() => {
-        if ( id ) fetchClubData();
-    }, [id]);
+        if ( id )
+            fetchClubData();
+    }, [user]);
 
     const determineUserRole = (): ClubRole => {
         if ( !user ) return ClubRole.NON_MEMBER;
@@ -83,7 +86,7 @@ export function ClubViewPage() {
             setIsLoading(true);
             setError(null);
 
-            const [ clubResponse, membersRespose, teamsResponse, ownerResponse, adminsResponse ] = await Promise.all([
+            const [ clubResponse, membersResponse, teamsResponse, ownerResponse, adminsResponse ] = await Promise.all([
                 clubService.getClub(id),
                 clubService.getClubMembers(id),
                 clubService.getClubTeams(id),
@@ -92,13 +95,27 @@ export function ClubViewPage() {
             ]);
 
             setClub(clubResponse);
-            setClubMembers(membersRespose);
-            setClubTeams(teamsResponse);
+
+            if (Array.isArray(membersResponse)) {
+                console.log("response:", membersResponse);
+                setClubMembers(membersResponse);
+                console.log("members:", clubMembers);
+            } else {
+                setClubMembers([]);
+            }
+
+            if(Array.isArray(teamsResponse)) {
+                setClubTeams(teamsResponse);
+            } else {
+                setClubTeams([]);
+            }
+
             setClubOwner(ownerResponse);
             setClubAdmins(adminsResponse);
 
             // SETTING THE ROLE OF THE CURRENT USER
             setUserRole(determineUserRole());
+            console.log(userRole);
         } catch (error) {
             console.error('Failed to fetch club data:', error);
             setError('Failed to fetch club data');
@@ -133,7 +150,6 @@ export function ClubViewPage() {
                                     <div className='flex gap-4 items-center'>
 
                                         { userRole === ClubRole.NON_MEMBER ? (
-
                                             // JOIN CLUB BUTTON
                                             <Button
                                                 className='bg-mid-orange hover:bg-deep-orange text-white'

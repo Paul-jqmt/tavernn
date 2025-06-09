@@ -29,19 +29,17 @@ export function CreateTeamForm() {
             const requestData = {
                 name: data.teamName,
                 gameId: data.gameId,
-                description: data.description,
                 admissionType: data.admissionType,
                 becomeCaptain: data.becomeCaptain,
+                description: data.description,
                 captainId: data.captainId,
             };
 
             const response = await teamService.createTeam(requestData, clubId);
 
-            if(response) {
-                navigate(`/team/${response.id}`, {replace: true});
-            }
+            navigate(`/team/${response.id}`, {replace: true});
         } catch (error) {
-            setError(error.message);
+            console.log(error);
         }
     }
 

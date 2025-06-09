@@ -11,3 +11,11 @@ export interface Team {
     nrMembers: number;
     members: TeamMember[];
 }
+
+export interface TeamRequest {
+    name: string;
+    description: string | undefined;
+    gameId: string;
+    admissionType: string;
+    captainId: string | undefined;
+}
