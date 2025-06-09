@@ -16,7 +16,7 @@ interface ProfileGameListProps {
 }
 
 export default function ProfileGameList({ userId, onGameListUpdate }: ProfileGameListProps) {
-    const [gameList, setGameList] = useState<UserGame[]>([]);
+    const [ gameList, setGameList ] = useState<UserGame[]>([]);
     const [ isLoading, setIsLoading ] = useState<boolean>(true);
     const [ error, setError ] = useState<string | null>(null);
 
@@ -61,7 +61,7 @@ export default function ProfileGameList({ userId, onGameListUpdate }: ProfileGam
     return (
         <div className='h-full flex flex-col overflow-hidden space-y-6'>
             <div className='flex justify-between items-center flex-none'>
-                <h2 className='text-2xl font-bold'>My games</h2>
+                <h2 className='text-xl font-bold'>My games</h2>
 
                 {/*   POP IN WINDOW FOR ADDING A GAME   */}
                 <AddGameDialog

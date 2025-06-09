@@ -50,7 +50,7 @@ export default function ProfileSideColumn({ userId }: ProfileSideColumnProps) {
     };
 
     return(
-        <aside id='profile-view-column' className='w-full max-w-2xs bg-deep-purple rounded-2xl p-6 flex flex-col gap-6'>
+        <aside id='profile-view-column' className='w-full max-w-2xs bg-deep-purple rounded-2xl px-4 py-6 flex flex-col gap-6'>
             { isLoading ? (
                 <p>Loading...</p>
             ) : userData ? (

@@ -42,7 +42,7 @@ export default function Navbar() {
 
     return (
         <header className="fixed w-full top-0 left-0 z-50 bg-transparent text-white">
-            <div className="px-10 py-10 backdrop-blur-md flex items-center justify-between max-w-7x1 mx-auto">
+            <div className="px-10 py-6 backdrop-blur-md flex items-center justify-between max-w-7x1 mx-auto">
 
                 {/*   LOGO   */}
                 <Link to="/" className={"flex items-center gap-3"}>
@@ -56,7 +56,7 @@ export default function Navbar() {
                         <Link
                             key={item.label}
                             to={item.to}
-                            className='text-sm font-semibold hover:underline active:text-mid-purple'
+                            className='font-semibold hover:underline active:text-mid-purple'
                         >
                             {item.label}
                         </Link>

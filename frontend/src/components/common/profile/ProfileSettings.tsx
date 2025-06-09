@@ -55,14 +55,14 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
     }
 
     return (
-        <div className='space-y-8 h-full hide-scrollbar overflow-y-auto'>
+        <div className='space-y-6 h-full hide-scrollbar overflow-y-auto'>
 
             {/*   GENERAL   */}
-                <section className='space-y-4'>
-                    <h2 className='font-semibold text-2xl'>General</h2>
+                <section className='space-y-2'>
+                    <h2 className='settings-title'>General</h2>
                     <div className='flex items-center justify-between'>
                         <div>
-                            <p className='font-semibold text-base mb-2'>Open at receiving invites</p>
+                            <p className='font-medium text-base mb-2'>Open at receiving invites</p>
                             <p className='text-sm font-extralight'>Other club admins will be able to send you invites to join their club</p>
                         </div>
 
@@ -80,8 +80,8 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
                 <Separator />
 
                 {/*   PROFILE PICTURE   */}
-                <section className='space-y-4'>
-                    <h2 className='font-semibold text-2xl'>Profile picture</h2>
+                <section className='space-y-2'>
+                    <h2 className='settings-title'>Profile picture</h2>
                     <p className='text-xs font-extralight'>The ideal image size is 192 × 192 pixels. The maximum file size allowed is 200 KiB.</p>
 
                     {/*TODO: IMPLEMENT UPLOAD PROFILE PICTURE*/}
@@ -106,7 +106,7 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
 
                 {/*   ACCOUNT   */}
                 <section className='space-y-4'>
-                    <h2 className='font-semibold text-2xl'>Account</h2>
+                    <h2 className='settings-title'>Account</h2>
 
                     {/*   USER EMAIL EDIT   */}
                     {/*TODO: IMPLEMENT CHANGE USER EMAIL*/}
@@ -174,10 +174,10 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
                 <Separator />
 
                 {/*   DELETE ACCOUNT   */}
-                <section className='space-y-4'>
-                    <h2 className='font-semibold text-2xl'>Delete account</h2>
-                    <p className='text-sm font-extralight'>
-                        When deleting your account, certain content will be displayed under the label of "Ghost User".
+                <section className='space-y-2'>
+                    <h2 className='settings-title'>Delete account</h2>
+                    <p className='text-sm font-extralight pb-4'>
+                        When deleting your account, certain content will be displayed under the label of "Ghost User".<br/>
                         All personal user data will be deleted. This action is irreversible.
                     </p>
 

@@ -55,7 +55,7 @@ export default function ClubsDiscoverPage() {
         <>
             <Navbar />
 
-            <main className="flex items-stretch min-h-screen gap-8 p-10 text-white pt-32">
+            <main className="flex items-stretch min-h-screen gap-4 text-white">
 
                 {userLoading ? (
                     <div>Loading user data...</div>
@@ -75,7 +75,7 @@ export default function ClubsDiscoverPage() {
 
                         <div className='flex-1 flex flex-col space-y-4'>
                             <div className='flex justify-between items-center mb-6'>
-                                <h1 className='font-extrabold text-5xl'>Discover Clubs</h1>
+                                <h1 className='font-extrabold text-3xl'>Discover Clubs</h1>
                                 <div className='flex gap-4 items-center'>
 
                                     {/*   FILTER BUTTON   */}

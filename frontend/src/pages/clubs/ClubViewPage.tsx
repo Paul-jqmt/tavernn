@@ -128,7 +128,7 @@ export function ClubViewPage() {
         <>
             <Navbar/>
 
-            <main className="flex items-stretch min-h-screen gap-8 p-10 text-white pt-32">
+            <main className="flex items-stretch min-h-screen gap-4 text-white">
                 {isLoading ? (
                     <div className='text-white'>Loading club information...</div>
                 ) : error ? (
@@ -146,7 +146,7 @@ export function ClubViewPage() {
 
                             <div className='flex-1 flex flex-col space-y-4'>
                                 <div className='flex justify-between items-center mb-6'>
-                                    <h2 className='font-extrabold text-5xl'>Teams</h2>
+                                    <h2 className='font-extrabold text-3xl'>Teams</h2>
                                     <div className='flex gap-4 items-center'>
 
                                         { userRole === ClubRole.NON_MEMBER ? (

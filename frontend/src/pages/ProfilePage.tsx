@@ -8,7 +8,7 @@ import {useUser} from "@/contexts/UserContext.tsx";
 import {useNavigate} from "react-router-dom";
 
 export default function ProfilePage(){
-    const [ activeTab, setActiveTab ] = useState<'games' | 'settings'>('games');
+    const [ activeTab, setActiveTab ] = useState<'games' | 'settings' | 'notifications'>('games');
     const navigate = useNavigate();
 
     const {
@@ -30,26 +30,33 @@ export default function ProfilePage(){
         <>
             <Navbar />
 
-            <div className="flex items-stretch min-h-screen gap-8 p-10 text-white pt-32">
+            <main className="flex items-stretch min-h-screen gap-4 text-white">
 
                 <ProfileSideColumn userId={user.id} />
 
                 {/*   MAIN CONTENT AREA   */}
                 <div className='flex-1 flex flex-col'>
-                    <div id='profile-sub-header' className='flex justify-between items-center mb-5'>
-                        <h1 className='text-5xl font-extrabold'>Profile</h1>
-                        <div className='flex gap-2'>
+                    <div id='profile-sub-header' className='flex justify-between items-center mb-3'>
+                        <h1 className='text-3xl font-extrabold'>Profile</h1>
+                        <div className='flex gap-3'>
+
+                            {/*   NOTIFICATIONS BUTTON    */}
+                            <Button
+                                variant={activeTab === 'notifications' ? 'ghost' : 'secondary'}
+                                onClick={() => setActiveTab('notifications')}>
+                                Notifications
+                            </Button>
 
                             {/*   GAMES BUTTON   */}
                             <Button
-                                variant={activeTab === 'games' ? 'ghost' : 'outline'}
+                                variant={activeTab === 'games' ? 'ghost' : 'secondary'}
                                 onClick={() => setActiveTab('games')}>
                                 Games
                             </Button>
 
                             {/*   SETTINGS BUTTON   */}
                             <Button
-                                variant={activeTab === 'settings' ? 'ghost' : 'outline'}
+                                variant={activeTab === 'settings' ? 'ghost' : 'secondary'}
                                 onClick={() => setActiveTab('settings')}>
                                 Settings
                             </Button>
@@ -75,7 +82,7 @@ export default function ProfilePage(){
                         )}
                     </div>
                 </div>
-            </div>
+            </main>
         </>
     );
 }
