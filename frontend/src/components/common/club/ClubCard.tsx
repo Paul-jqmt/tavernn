@@ -18,7 +18,7 @@ export function ClubCard({ id, logoUrl, name, description, nrTeams, nrMembers, m
     return (
         <Card
             key={id}
-            className='flex flex-row items-center justify-between hover:bg-mid-purple cursor-pointer'
+            className='flex flex-row items-center justify-between hover:bg-secondary cursor-pointer'
             onClick={() => navigate(`/clubs/${id}`)}
         >
 

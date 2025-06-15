@@ -5,9 +5,16 @@ export default function UserHomePage() {
     return (
         <>
             <Navbar />
-            <div className="min-h-screen px-10 pt-20 text-white">
 
-            </div>
+            <main className="flex items-stretch min-h-screen gap-4">
+                <aside className='bg-muted w-full max-w-xs rounded-2xl px-4 py-6 flex flex-col'>
+
+                </aside>
+
+                <div className='flex-1 flex flex-col'>
+                    <h2 className='page-title'>Latest News</h2>
+                </div>
+            </main>
         </>
     )
 }

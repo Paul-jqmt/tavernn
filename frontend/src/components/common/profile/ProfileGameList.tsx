@@ -59,11 +59,11 @@ export default function ProfileGameList({ userId, onGameListUpdate }: ProfileGam
     };
 
     return (
-        <div className='h-full flex flex-col overflow-hidden space-y-6'>
+        <div className='h-full flex flex-col overflow-hidden space-y-4'>
             <div className='flex justify-between items-center flex-none'>
-                <h2 className='text-xl font-bold'>My games</h2>
+                <h3 className='page-subtitle'>My games</h3>
 
-                {/*   POP IN WINDOW FOR ADDING A GAME   */}
+                {/*   ADD A GAME   */}
                 <AddGameDialog
                     userId={userId}
                     onSubmit={handleAddGame}
@@ -83,7 +83,7 @@ export default function ProfileGameList({ userId, onGameListUpdate }: ProfileGam
                     {gameList.map((game) => (
                         <div
                             key={game.gameId}
-                            className='flex items-center justify-between bg-deep-purple rounded-xl'
+                            className='flex items-center justify-between'
                         >
                             <div className='flex items-center gap-4'>
                                 <Avatar className='w-8 h-8'>
@@ -97,9 +97,10 @@ export default function ProfileGameList({ userId, onGameListUpdate }: ProfileGam
                                 </div>
                             </div>
 
+                            {/*   GAME OPTION BUTTONS   */}
                             <div className='flex gap-4'>
 
-                                {/*   POP IN WINDOW FOR EDITING A GAME   */}
+                                {/*   EDIT A GAME   */}
                                 <EditGameDialog
                                     trigger={<Button variant='outline'>Edit</Button>}
                                     userId={userId}
@@ -113,7 +114,7 @@ export default function ProfileGameList({ userId, onGameListUpdate }: ProfileGam
                                     }}
                                 />
 
-                                {/*   POP IN WINDOW FOR DELETING A GAME   */}
+                                {/*   DELETE A GAME   */}
                                 <ConfirmGameDeleteDialog
                                     trigger={<Button variant='outlineDestructive'>Delete</Button>}
                                     gameName={game.gameName}

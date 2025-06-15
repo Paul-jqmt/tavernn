@@ -81,13 +81,13 @@ export default function AddGameDialog({ onSubmit, userId }: AddGameDialogProps) 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button>Add game</Button>
+                <Button className='bg-foreground text-white'>Add game</Button>
             </DialogTrigger>
 
-            <DialogContent className='bg-deep-purple text-white rounded-xl max-w-md'>
+            <DialogContent className='rounded-xl max-w-md text-foreground'>
                 <DialogHeader>
                     <DialogTitle>Add game</DialogTitle>
-                    <DialogDescription className='text-white font-extralight'>Add a game to your profile</DialogDescription>
+                    <DialogDescription className='text-foreground font-extralight'>Add a game to your profile</DialogDescription>
                 </DialogHeader>
 
                 <div className='space-y-5 p-6'>
@@ -103,7 +103,7 @@ export default function AddGameDialog({ onSubmit, userId }: AddGameDialogProps) 
                     <div>
                         <Label className='mb-2'>Choose game:</Label>
                         <Select value={gameId} onValueChange={setGameId}>
-                            <SelectTrigger className='bg-white text-deep-purple w-full'>
+                            <SelectTrigger className='w-full text-foreground'>
                                 <SelectValue placeholder='Game'></SelectValue>
                             </SelectTrigger>
 
@@ -131,7 +131,7 @@ export default function AddGameDialog({ onSubmit, userId }: AddGameDialogProps) 
                     <div>
                         <Label className='mb-2'>Choose level:</Label>
                         <Select value={level} onValueChange={(value) => setLevel(value as GameLevel)}>
-                            <SelectTrigger className='bg-white text-deep-purple w-full'>
+                            <SelectTrigger className='w-full'>
                                 <SelectValue placeholder='Level'></SelectValue>
                             </SelectTrigger>
 
@@ -151,7 +151,7 @@ export default function AddGameDialog({ onSubmit, userId }: AddGameDialogProps) 
                     </DialogClose>
                     <DialogClose asChild>
                         <Button
-                            className='bg-light-purple text-white'
+                            className='bg-foreground text-white'
                             onClick={handleSubmit}
                             disabled={!gameId || !level || isLoading}
                         >

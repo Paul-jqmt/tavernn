@@ -26,6 +26,9 @@ export default function EditEmailDialog({ currentEmail, userData, onEmailUpdate 
     const [ isLoading, setIsLoading ] = useState<boolean>(false);
 
     const handleSubmit = async () => {
+
+        //TODO: IMPLEMENT CHANGE USER EMAIL
+
         try {
             setIsLoading(true);
             setError(null);

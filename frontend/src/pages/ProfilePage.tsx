@@ -6,6 +6,7 @@ import {useEffect, useState} from "react";
 import ProfileSettings from "@/components/common/profile/ProfileSettings.tsx";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {useNavigate} from "react-router-dom";
+import ProfileNotifications from "@/components/common/profile/ProfileNotifications.tsx";
 
 export default function ProfilePage(){
     const [ activeTab, setActiveTab ] = useState<'games' | 'settings' | 'notifications'>('games');
@@ -30,14 +31,16 @@ export default function ProfilePage(){
         <>
             <Navbar />
 
-            <main className="flex items-stretch min-h-screen gap-4 text-white">
+            <main className="flex items-stretch min-h-screen gap-4">
 
                 <ProfileSideColumn userId={user.id} />
 
                 {/*   MAIN CONTENT AREA   */}
                 <div className='flex-1 flex flex-col'>
                     <div id='profile-sub-header' className='flex justify-between items-center mb-3'>
-                        <h1 className='text-3xl font-extrabold'>Profile</h1>
+                        <h2 className='page-title'>Profile</h2>
+
+                        {/*   PROFILE SECTION BUTTONS   */}
                         <div className='flex gap-3'>
 
                             {/*   NOTIFICATIONS BUTTON    */}
@@ -63,7 +66,13 @@ export default function ProfilePage(){
                         </div>
                     </div>
 
-                    <div id='profile-main-frame' className='bg-deep-purple rounded-2xl w-full p-6 flex-1 overflow-hidden'>
+                    {/*   PROFILE SECTIONS DISPLAY   */}
+                    <div id='profile-main-frame' className='bg-primary rounded-2xl w-full p-4 flex-1 overflow-hidden'>
+
+                        {/*   USER NOTIFICATIONS TAB   */}
+                        {activeTab === 'notifications' && (
+                            <ProfileNotifications />
+                        )}
 
                         {/*   USER GAME LIST TAB   */}
                         {activeTab === 'games' && (

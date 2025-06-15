@@ -10,17 +10,17 @@ const buttonVariants = cva(
         variants: {
             variant: {
                 default:
-                    "bg-light-purple text-primary-foreground hover:bg-mid-purple active:bg-deep-purple",
-                destructive:
-                    "bg-red-500 text-white hover:bg-white hover:text-red-500 active:bg-deep-purple dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+                    "bg-primary text-primary-foreground hover:bg-secondary active:bg-background",
                 outline:
-                    "border-white bg-transparent border-2 hover:bg-white hover:text-mid-purple hover:border-white active:bg-deep-purple dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+                    "border-2 border-primary-foreground text-primary-foreground bg-transparent hover:bg-primary-foreground hover:text-white active:bg-white dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+                destructive:
+                    "bg-destructive text-white hover:bg-white hover:text-destructive active:bg-deep-purple dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
                 outlineDestructive:
-                    "border-destructive text-destructive hover:bg-destructive hover:text-white bg-transparent border-3 hover:text-mid-purple hover:border-white active:bg-deep-purple dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+                    "border-2 border-destructive text-destructive bg-transparent hover:bg-destructive hover:text-white hover:border-destructive active:bg-white dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
                 secondary:
-                    "bg-transparent text-white hover:bg-mid-purple",
+                    "bg-transparent text-primary-foreground hover:bg-muted",
                 ghost:
-                    "bg-deep-purple hover:cursor-auto",
+                    "bg-card hover:cursor-auto",
                 link: "text-primary underline-offset-4 hover:underline",
             },
             size: {

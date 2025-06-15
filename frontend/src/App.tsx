@@ -9,34 +9,59 @@ import CreateClubForm from "@/components/forms/CreateClubForm.tsx";
 import {ClubViewPage} from "@/pages/clubs/ClubViewPage.tsx";
 import {UserProvider} from "@/contexts/UserContext.tsx";
 import ProtectedRoute from "@/components/common/ProtectedRoute.tsx";
+import {ClubDiscoverDetailsPage} from "@/pages/clubs/ClubDiscoverDetailsPage.tsx";
 
 function App() {
     return (
         <UserProvider>
             <Routes>
-                <Route path='/' element={<HomePage />} />
-                <Route path='/auth' element={<AuthenticationPage />} />
-                <Route path='/profile' element={
-                    <ProtectedRoute>
-                        <ProfilePage />
-                    </ProtectedRoute>
-                } />
+                {/*   HOME PAGE WHEN UNAUTHENTICATED   */}
+                <Route path='/' element={
+                    <HomePage />}
+                />
+
+                {/*   HOME PAGE WHEN AUTHENTICATED   */}
                 <Route path='/home' element={
                     <ProtectedRoute>
                         <UserHomePage />
                     </ProtectedRoute>
                 } />
+
+                {/*   AUTHENTICATION PAGE   */}
+                <Route path='/auth' element={
+                    <AuthenticationPage />}
+                />
+
+                {/*   PROFILE PAGE OF AUTHENTICATED USER   */}
+                <Route path='/profile' element={
+                    <ProtectedRoute>
+                        <ProfilePage />
+                    </ProtectedRoute>
+                } />
+
+                {/*   PAGE WITH ALL THE CLUBS   */}
                 <Route path='/clubs' element={
                     <ProtectedRoute>
                         <ClubsDiscoverPage />
                     </ProtectedRoute>
                 } />
+
+                {/*   PAGE TO CREATE A CLUB   */}
                 <Route path='/clubs/create' element={
                     <ProtectedRoute>
                         <CreateClubForm />
                     </ProtectedRoute>
                 } />
+
+                {/*   PAGE WITH CLUB DETAILS*/}
                 <Route path='/clubs/:id' element={
+                    <ProtectedRoute>
+                        <ClubDiscoverDetailsPage />
+                    </ProtectedRoute>
+                } />
+
+                {/*   PAGE WITH USER'S CLUB   */}
+                <Route path='/myclub' element={
                     <ProtectedRoute>
                         <ClubViewPage />
                     </ProtectedRoute>

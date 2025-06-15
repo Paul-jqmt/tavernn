@@ -6,7 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 body {
-    @apply bg-gradient-to-br from-[#7678ed] to-[#2d2769];
+    @apply bg-background text-foreground;
 }
 
 @theme inline {
@@ -17,6 +17,7 @@ body {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
     --color-card: var(--card);
+    --color-card-2: var(--card-2);
     --color-card-foreground: var(--card-foreground);
     --color-popover: var(--popover);
     --color-popover-foreground: var(--popover-foreground);
@@ -61,17 +62,18 @@ body {
 
 :root {
     --radius: 0.625rem;
-    --background: #2d2769;
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: #f27103;
-    --primary-foreground: #eeeeee;
-    --secondary: oklch(0.97 0 0);
+    --background: oklch(0.967 0 89.876);
+    --foreground: oklch(0.321 0.111 282.243);
+    --card: oklch(0.888 0 89.876);
+    --card-2: oklch(0.682 0.136 281.719);
+    --card-foreground: oklch(0.321 0.111 282.243);
+    --popover: oklch(0.967 0 89.876);
+    --popover-foreground: oklch(0.321 0.111 282.243);
+    --primary: oklch(0.776 0.099 283.197);
+    --primary-foreground: oklch(0.321 0.111 282.243);
+    --secondary: oklch(0.682 0.136 281.719);
     --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
+    --muted: oklch(0.888 0 89.876);
     --muted-foreground: oklch(0.556 0 0);
     --deep-purple: #2d2769;
     --mid-purple: #3d348b;
@@ -79,11 +81,13 @@ body {
     --deep-orange: #f35b04;
     --mid-orange: #f27103;
     --light-orange: #f4a001;
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: #fb2c36;
+    --align: #f27103;
+    --accent: #f27103;
+    --accent-foreground: oklch(1 0 89.876);
+    --destructive: oklch(0.638 0.237 25.436);
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
+    --ring: oklch(0.691 0.184 49.385);
     --chart-1: oklch(0.646 0.222 41.116);
     --chart-2: oklch(0.6 0.118 184.704);
     --chart-3: oklch(0.398 0.07 227.392);
@@ -100,9 +104,9 @@ body {
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
+    --background: oklch(0.321 0.111 282.243);
     --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
+    --card: oklch(0.388 0.139 282.445);
     --card-foreground: oklch(0.985 0 0);
     --popover: oklch(0.205 0 0);
     --popover-foreground: oklch(0.985 0 0);
@@ -150,10 +154,19 @@ body {
 
     body {
         font-family: 'Geologica', sans-serif;
+        @apply bg-background text-foreground;
     }
 
     main {
         padding: 88px 40px 16px 40px;
+    }
+
+    .page-title {
+        @apply font-extrabold text-3xl;
+    }
+
+    .page-subtitle {
+        @apply font-bold text-xl;
     }
 
     .hide-scrollbar::-webkit-scrollbar {

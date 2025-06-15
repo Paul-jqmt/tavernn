@@ -30,6 +30,14 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
     const navigate = useNavigate();
     const { clearUser } = useUser();
 
+    const uploadPicture = () => {
+        // TODO: IMPLEMENT UPLOAD NEW PICTURE
+    }
+
+    const removePitcure = () => {
+        // TODO: IMPLEMENT REMOVE PROFILE PICTURE
+    }
+
     const handleLogout = async () => {
         try {
             await authService.logout();
@@ -59,7 +67,7 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
 
             {/*   GENERAL   */}
                 <section className='space-y-2'>
-                    <h2 className='settings-title'>General</h2>
+                    <p className='settings-title'>General</p>
                     <div className='flex items-center justify-between'>
                         <div>
                             <p className='font-medium text-base mb-2'>Open at receiving invites</p>
@@ -81,10 +89,9 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
 
                 {/*   PROFILE PICTURE   */}
                 <section className='space-y-2'>
-                    <h2 className='settings-title'>Profile picture</h2>
+                    <p className='settings-title'>Profile picture</p>
                     <p className='text-xs font-extralight'>The ideal image size is 192 × 192 pixels. The maximum file size allowed is 200 KiB.</p>
 
-                    {/*TODO: IMPLEMENT UPLOAD PROFILE PICTURE*/}
                     <div className='flex items-center gap-6'>
                         <Avatar className='w-24 h-24'>
                             <AvatarImage
@@ -95,8 +102,20 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
                         <div className='space-y-2'>
                             <p className='text-sm font-normalr'>Upload new picture</p>
                             <div className='flex gap-3'>
-                                <Input type='file' onChange={(e) => console.log(e.target.files)} />
-                                <Button variant='destructive'>Remove picture</Button>
+
+                                {/*   UPLOAD FILE BUTTON   */}
+                                <Input
+                                    type='file'
+                                    onChange={uploadPicture}
+                                />
+
+                                {/*   REMOVE PICTURE BUTTON   */}
+                                <Button
+                                    variant='destructive'
+                                    onClick={removePitcure}
+                                >
+                                    Remove picture
+                                </Button>
                             </div>
                         </div>
                     </div>
@@ -106,10 +125,9 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
 
                 {/*   ACCOUNT   */}
                 <section className='space-y-4'>
-                    <h2 className='settings-title'>Account</h2>
+                    <p className='settings-title'>Account</p>
 
                     {/*   USER EMAIL EDIT   */}
-                    {/*TODO: IMPLEMENT CHANGE USER EMAIL*/}
                     <div className='space-y-1'>
                         <Label>Email</Label>
                         <div className='flex gap-4'>
@@ -159,7 +177,7 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
 
                         {/*   CHANGE PASSWORD BUTTON  */}
                         {/*TODO: IMPLEMENT CHANGE PASSWORD*/}
-                        <Button>Change password</Button>
+                        <Button className='bg-foreground text-white'>Change password</Button>
 
                         {/*   LOG OUT BUTTON  */}
                         <Button
@@ -175,7 +193,7 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
 
                 {/*   DELETE ACCOUNT   */}
                 <section className='space-y-2'>
-                    <h2 className='settings-title'>Delete account</h2>
+                    <p className='settings-title'>Delete account</p>
                     <p className='text-sm font-extralight pb-4'>
                         When deleting your account, certain content will be displayed under the label of "Ghost User".<br/>
                         All personal user data will be deleted. This action is irreversible.

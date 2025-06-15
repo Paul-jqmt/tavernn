@@ -42,10 +42,10 @@ export default function EditGameDialog({trigger, userId, gameId, gameName, curre
     return (
         <Dialog>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
-            <DialogContent className='bg-deep-purple text-white rounded-xl max-w-mld'>
+            <DialogContent className='text-foreground rounded-xl max-w-mld'>
                 <DialogHeader>
                     <DialogTitle>Edit game</DialogTitle>
-                    <DialogDescription className='text-white font-extralight'>Edit the level of your game</DialogDescription>
+                    <DialogDescription className='text-foreground font-extralight'>Edit the level of your game</DialogDescription>
                 </DialogHeader>
 
                 { error && (
@@ -90,7 +90,7 @@ export default function EditGameDialog({trigger, userId, gameId, gameName, curre
                     {/*   UPDATE BUTTON   */}
                     <DialogClose asChild>
                         <Button
-                            className='bg-light-purple'
+                            className='bg-foreground text-white'
                             onClick={handleSubmit}
                             disabled={isLoading || level === currentLevel}
                         >

@@ -56,10 +56,10 @@ export default function EditDiscordDialog({ currentDiscord, userData, onDiscordU
                 <Button variant='outline'>Edit</Button>
             </DialogTrigger>
 
-            <DialogContent className='text-white'>
+            <DialogContent className='text-foreground'>
                 <DialogHeader>
                     <DialogTitle>Update your Discord tag</DialogTitle>
-                    <DialogDescription className='text-white font-extralight'>This will be visible on your profile so others can find you on Discord.</DialogDescription>
+                    <DialogDescription className='text-foreground font-extralight'>This will be visible on your profile so others can find you on Discord.</DialogDescription>
                 </DialogHeader>
 
                 <div className='space-y-4 mt-4'>

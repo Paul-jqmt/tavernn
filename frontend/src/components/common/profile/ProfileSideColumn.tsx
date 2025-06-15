@@ -50,13 +50,14 @@ export default function ProfileSideColumn({ userId }: ProfileSideColumnProps) {
     };
 
     return(
-        <aside id='profile-view-column' className='w-full max-w-2xs bg-deep-purple rounded-2xl px-4 py-6 flex flex-col gap-6'>
+        <aside id='profile-view-column' className='w-full max-w-2xs bg-card rounded-2xl px-4 py-6 flex flex-col gap-6'>
             { isLoading ? (
                 <p>Loading...</p>
             ) : userData ? (
                 <>
-                    <div className='flex flex-col items-center text-center'>
-                        <Avatar id='profile-picture' className='mb-2 w-35 h-35'>
+                    <div className='flex flex-col items-center text-center gap-2'>
+                        {/*   PROFILE PICTURE   */}
+                        <Avatar id='profile-picture' className='w-35 h-35'>
                             <AvatarImage
                                 src={userData.profilePicture || profilePic}
                                 alt={userData.username}
@@ -71,7 +72,7 @@ export default function ProfileSideColumn({ userId }: ProfileSideColumnProps) {
                     {/*   USER CLUB   */}
                     <div>
                         <p className='text-sm mb-1 ml-4'>Club</p>
-                        <div className='bg-mid-purple rounded-lg px-4 py-2'>
+                        <div className='bg-secondary rounded-lg px-4 py-2'>
                             {userClub.length > 0 ? (
                                 <p className='font-semibold'>{userClub[0].name}</p>
                             ) : (
@@ -88,14 +89,14 @@ export default function ProfileSideColumn({ userId }: ProfileSideColumnProps) {
                                 userTeams.map((team: Team) => (
                                         <div
                                             key={team.id}
-                                            className='bg-mid-purple rounded-lg px-4 py-2 flex justify-between items-center'
+                                            className='bg-secondary rounded-lg px-4 py-2 flex justify-between items-center'
                                         >
                                             <p className='font-semibold text-sm'>{team.name}</p>
                                             <p className='font-extralight text-xs'>{team.gameName}</p>
                                         </div>
                                     )
                                 )) : (
-                                <div className='bg-mid-purple rounded-lg px-4 py-2'>
+                                <div className='bg-secondary rounded-lg px-4 py-2'>
                                     <p className='font-semibold text-sm'>No teams yet</p>
                                 </div>
                             )}

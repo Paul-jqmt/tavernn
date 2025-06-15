@@ -56,10 +56,10 @@ export default function EditUsernameDialog({ currentUsername, userData, onUserna
                 <Button variant='outline'>Edit</Button>
             </DialogTrigger>
 
-            <DialogContent className='text-white'>
+            <DialogContent className='text-foreground'>
                 <DialogHeader>
                     <DialogTitle>Update your display name</DialogTitle>
-                    <DialogDescription className='text-white font-extralight'>Usernames must be unique and can include letters, numbers, and underscores.</DialogDescription>
+                    <DialogDescription className='text-foreground font-extralight'>Usernames must be unique and can include letters, numbers, and underscores.</DialogDescription>
                 </DialogHeader>
 
                 <div className='space-y-4 mt-4'>

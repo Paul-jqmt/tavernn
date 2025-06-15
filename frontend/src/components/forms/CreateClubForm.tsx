@@ -84,7 +84,7 @@ export default function CreateClubForm() {
             <div className='bg-deep-purple rounded-2xl py-8 px-12 space-y-6'>
                 {error && (
                     <div className='bg-red-500 text-white rounded-xl py-4 px-6'>
-                        <h2 className='text-sm'>{error.title}</h2>
+                        <p className='text-sm'>{error.title}</p>
                         <p className='text-xs font-extralight'>{error.message}</p>
                     </div>
                 )}

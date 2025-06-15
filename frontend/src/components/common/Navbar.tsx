@@ -4,6 +4,7 @@ import menu from "@/assets/icons/menu.svg";
 import { useState} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {useUser} from "@/contexts/UserContext.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -11,7 +12,7 @@ export default function Navbar() {
 
     const menuItems = [
         { to: '/home', label: 'Home' },
-        { to: (user && user.club) ? `/clubs/${user.club.id}` : '/clubs', label: 'Club' },
+        { to: (user && user.club) ? `/myclub` : '/clubs', label: (user && user.club) ? 'Club' : 'Clubs' },
         { to: '/profile', label: 'Profile' },
     ];
 
@@ -41,7 +42,7 @@ export default function Navbar() {
     }
 
     return (
-        <header className="fixed w-full top-0 left-0 z-50 bg-transparent text-white">
+        <header className="fixed w-full top-0 left-0 z-50 bg-transparent text-foreground">
             <div className="px-10 py-6 backdrop-blur-md flex items-center justify-between max-w-7x1 mx-auto">
 
                 {/*   LOGO   */}
@@ -51,15 +52,18 @@ export default function Navbar() {
                 </Link>
 
                 {/*   NAV MENU   */}
-                <nav className="hidden md:flex items-center gap-18">
+                <nav className="hidden md:flex items-center gap-10">
                     { menuItems.map((item) => (
-                        <Link
+                        <Button
                             key={item.label}
-                            to={item.to}
-                            className='font-semibold hover:underline active:text-mid-purple'
-                        >
-                            {item.label}
-                        </Link>
+                            variant='secondary'>
+                            <Link
+                                to={item.to}
+                                className='font-semibold text-sm'
+                            >
+                                {item.label}
+                            </Link>
+                        </Button>
                     ))}
                 </nav>
 
@@ -75,7 +79,7 @@ export default function Navbar() {
                         animate='visible'
                         exit='hidden'
                         variants={menuVariants}
-                        className='md:hidden text-white px-10 flex flex-col items-end text-right space-y-10'
+                        className='md:hidden px-10 flex flex-col items-end text-right space-y-10'
                     >
                         {menuItems.map((menuItem) => (
                             <motion.div key={menuItem.to} variants={itemVariants}>

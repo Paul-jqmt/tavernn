@@ -16,32 +16,30 @@ export default function ClubSideColumn({
     creationDate: string | undefined;
 }) {
     return (
-        <aside id='club-view-column' className='w-full max-w-2xs bg-deep-purple rounded-2xl p-6 flex flex-col gap-6'>
-            <div className='flex flex-col items-center text-center'>
-                <Avatar id='club-picture' className='mb-2 w-35 h-35'>
+        <aside id='club-view-column' className='w-full max-w-2xs bg-card rounded-2xl px-4 py-6 flex flex-col gap-6'>
+
+            {/*   CLUB LOGO   */}
+            <div className='flex flex-col items-center text-center gap-2'>
+                <Avatar id='club-picture' className='w-35 h-35'>
                     <AvatarImage src={logo} alt={`${name} logo`} />
                     <AvatarFallback>{name?.charAt(0)}</AvatarFallback>
                 </Avatar>
 
-                <h2 className='text-xl font-extrabold'>{name}</h2>
+                <h3>{name}</h3>
             </div>
 
             {/*   CLUB OWNER   */}
-            <div>
-                <p className='text-sm mb-1 ml-4'>Owner</p>
-                <div className='bg-mid-purple rounded-lg px-4 py-2'>
-                    <p className='font-semibold'>{owner?.username}</p>
-                </div>
+            <div className='px-4 py-2 bg-card-2 rounded-lg'>
+                <p className='text-sm mb-2'>Owner</p>
+                <p className='font-semibold'>{owner?.username}</p>
             </div>
 
             {/*   CLUB ADMINS   */}
-            <div>
-                <p className='text-sm mb-2 ml-4'>Admins</p>
+            <div className='px-4 py-2 bg-card-2 rounded-lg'>
+                <p className='text-sm mb-2'>Admins</p>
                 <div className='flex flex-col gap-2'>
                     {admins?.map((admin: ClubMember) => (
-                        <div key={admin.userId} className='bg-mid-purple rounded-lg px-4 py-2 flex justify-between items-center'>
-                            <p className='font-semibold mb-1 text-sm'>{admin.username}</p>
-                        </div>
+                        <p key={admin.userId} className='font-semibold mb-1 text-sm'>{admin.username}</p>
                     ))}
                 </div>
             </div>

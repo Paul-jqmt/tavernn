@@ -19,10 +19,10 @@ export default function ConfirmGameDeleteDialog({ trigger, gameName, onConfirm, 
     return (
         <Dialog>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
-            <DialogContent className='bg-deep-purple text-white rounded-xl max-w-md'>
+            <DialogContent className='text-foreground rounded-xl max-w-md'>
                 <DialogHeader>
                     <DialogTitle>Delete {gameName}?</DialogTitle>
-                    <DialogDescription className='text-white font-extralight'>
+                    <DialogDescription className='text-foreground font-extralight'>
                         You will be able to add it later if you want
                     </DialogDescription>
                 </DialogHeader>
