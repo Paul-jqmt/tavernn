@@ -104,6 +104,7 @@ export function ClubDiscoverDetailsPage() {
                                         {/*   BACK BUTTON   */}
                                         <Button
                                             variant='default'
+                                            className='bg-muted hover:bg-primary active:bg-white'
                                             onClick={() => navigate(-1)}
                                         >
                                             <ArrowLeft className='h-5 w-5' /> Back
@@ -113,10 +114,7 @@ export function ClubDiscoverDetailsPage() {
                                     </div>
 
                                     {/*   JOIN CLUB BUTTON   */}
-                                    <Button
-                                        className='bg-mid-orange hover:bg-deep-orange text-white'
-                                        onClick={handleJoinClub}
-                                    >
+                                    <Button onClick={handleJoinClub}>
                                         Join Club
                                     </Button>
                                 </div>

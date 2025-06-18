@@ -74,7 +74,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
 
     return (
         <div className="space-y-10 w-full max-w-md px-10">
-            <h1 className="text-5xl font-extrabold text-mid-orange text-center">Signup</h1>
+            <h1 className="text-5xl font-extrabold text-white text-center">Signup</h1>
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
@@ -96,7 +96,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
                                 <FormControl>
                                     <Input type="email" placeholder="example@mail.com" {...field} />
                                 </FormControl>
-                                <FormMessage className='text-white' />
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -111,7 +111,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
                                 <FormControl>
                                     <Input type='password' placeholder='Enter password' {...field}/>
                                 </FormControl>
-                                <FormMessage className='text-white' />
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -126,7 +126,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
                                 <FormControl>
                                     <Input type='password' placeholder='Enter password again' {...field}/>
                                 </FormControl>
-                                <FormMessage className='text-white'/>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -151,7 +151,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
 
                     <Button
                         type='submit'
-                        className="w-full bg-mid-orange disabled:opacity-50 disabled:cursor-not-allowed text-lg"
+                        className="w-full disabled:opacity-50 disabled:cursor-not-allowed text-lg"
                         disabled={!termsChecked || loading}
                     >
                         {loading && <Loader2 className="animate-spin"/>}
@@ -161,7 +161,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
             </Form>
             <p className="text-sm mt-6 text-white text-center font-light">
                 Already have an account?{" "}
-                <button onClick={onSwitch} className="font-semibold text-mid-orange hover:underline hover:cursor-pointer">
+                <button onClick={onSwitch} className="font-semibold text-primary hover:underline hover:cursor-pointer">
                     Sign in to join your team.
                 </button>
             </p>

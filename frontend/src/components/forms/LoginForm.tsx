@@ -68,7 +68,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
 
     return (
         <div className="space-y-10 w-full max-w-md px-10">
-            <h1 className="text-5xl font-extrabold text-mid-orange text-center">Login</h1>
+            <h1 className="text-5xl font-extrabold text-white text-center">Login</h1>
 
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
@@ -90,7 +90,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
                                 <FormControl>
                                     <Input type="email" placeholder="example@mail.com" {...field} />
                                 </FormControl>
-                                <FormMessage className= 'text-white'/>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -105,15 +105,16 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
                                 <FormControl>
                                     <Input type='password' placeholder='Enter your password' {...field}/>
                                 </FormControl>
-                                <FormMessage className='text-white'/>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
 
+                    {/*   LOGIN BUTTON  */}
                     <Button
                         type='submit'
                         disabled={loading}
-                        className="w-full bg-mid-orange disabled:opacity-50 disabled:cursor-not-allowed text-lg font-semibold"
+                        className="w-full mt-2 disabled:opacity-50 disabled:cursor-not-allowed text-lg font-semibold"
                     >
                         {loading && <Loader2 className="animate-spin"/>}
                         {loading ? 'Logging in' : 'Login'}
@@ -121,9 +122,10 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
                 </form>
             </Form>
 
+            {/*   REDIRECT TO REGISTER BUTTON   */}
             <p className="text-sm text-white font-light mt-4 text-center">
                 New to Tavernn? {' '}
-                <Button onClick={handleSwitch} variant='link' className="p-0 font-semibold text-mid-orange hover:cursor-pointer">
+                <Button onClick={handleSwitch} variant='link' className="p-0 font-semibold text-primary hover:cursor-pointer">
                     Sign up to new adventures.
                 </Button>
             </p>

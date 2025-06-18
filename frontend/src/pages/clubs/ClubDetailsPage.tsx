@@ -10,7 +10,7 @@ import {ClubRole} from "@/types/clubRole.ts";
 import {useNavigate} from "react-router-dom";
 import {TeamCard} from "@/components/common/TeamCard.tsx";
 
-export function ClubViewPage() {
+export function ClubDetailsPage() {
     const { user } = useUser();
 
     const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -51,20 +51,28 @@ export function ClubViewPage() {
     };
 
     useEffect(() => {
-        if ( user?.club?.id )
+        if (user?.club?.id) {
             fetchClubData();
-    }, [user]);
+        }
+    }, [user?.club?.id]);
+
+    useEffect(() => {
+        if ( user && clubMembers.length > 0 ) {
+            const role = determineUserRole();
+            setUserRole(role);
+        }
+    }, [clubMembers, user]);
 
     const determineUserRole = (): ClubRole => {
-        // if ( !user ) return ClubRole.NON_MEMBER;
-        //
-        // const userMember = clubMembers.find(member => member.userId === user.id);
-        //
-        // if ( !userMember ) return ClubRole.NON_MEMBER;
-        // if ( userMember.isOwner ) return ClubRole.OWNER;
-        // if ( userMember.isAdmin ) return ClubRole.ADMIN;
+        if ( !user ) return ClubRole.NON_MEMBER;
 
-        return ClubRole.OWNER;
+        const userMember = clubMembers.find(member => member.userId === user.id);
+
+        if ( !userMember ) return ClubRole.NON_MEMBER;
+        if ( userMember.isOwner ) return ClubRole.OWNER;
+        if ( userMember.isAdmin ) return ClubRole.ADMIN;
+
+        return ClubRole.MEMBER;
     };
 
     const fetchClubData = async () => {
@@ -86,16 +94,11 @@ export function ClubViewPage() {
 
             if (Array.isArray(membersResponse)) {
                 setClubMembers(membersResponse);
-                const role = determineUserRole();
-                setUserRole(role);
-                console.log('User role set to:', role);
             } else {
                 setClubMembers([]);
-                setUserRole(ClubRole.NON_MEMBER);
             }
 
-
-            if(Array.isArray(teamsResponse)) {
+            if (Array.isArray(teamsResponse)) {
                 setClubTeams(teamsResponse);
             } else {
                 setClubTeams([]);
@@ -131,8 +134,8 @@ export function ClubViewPage() {
                                 {/*   CREATE TEAM BUTTON   */}
                                 { (userRole === ClubRole.ADMIN || userRole === ClubRole.OWNER) && (
                                     <Button
-                                        className='bg-foreground text-white'
-                                        onClick={handleCreateTeam}
+                                        variant='default'
+                                        onClick={() => navigate('/teams/create')}
                                     >
                                         Create Team
                                     </Button>

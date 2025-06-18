@@ -17,8 +17,6 @@ type AddGameDialogProps = {
 
 export default function AddGameDialog({ onSubmit, userId }: AddGameDialogProps) {
     const [ games, setGames ] = useState<Game[]>([]);
-    // @ts-ignore
-    const [ userGames, setUserGames ] = useState<UserGame[]>([]);
     const [ gameId, setGameId ] = useState<string>('');
     const [ level, setLevel ] = useState<GameLevel | ''>('');
 
@@ -34,7 +32,7 @@ export default function AddGameDialog({ onSubmit, userId }: AddGameDialogProps) 
             setIsLoading(true);
             setError(null);
 
-            // FETCH THE GAMES LIST AND THE USER GAMES LIST
+            // FETCH THE GAMES LIST AND THE USER'S GAMES LIST
             const [ gamesResponse, userGamesResponse ] = await Promise.all([
                 api.get(`/api/game`),
                 userService.getUserGames(userId)
@@ -47,7 +45,6 @@ export default function AddGameDialog({ onSubmit, userId }: AddGameDialogProps) 
             const availableGames = games.filter(game => !userGameIds.has(game.id));
 
             setGames(availableGames);
-            setUserGames(userGamesResponse);
         } catch (error) {
             console.log('Error fetching games:', error);
             setError('Error fetching games');
@@ -81,7 +78,7 @@ export default function AddGameDialog({ onSubmit, userId }: AddGameDialogProps) 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className='bg-foreground text-white'>Add game</Button>
+                <Button variant='outline'>Add game</Button>
             </DialogTrigger>
 
             <DialogContent className='rounded-xl max-w-md text-foreground'>
@@ -146,12 +143,16 @@ export default function AddGameDialog({ onSubmit, userId }: AddGameDialogProps) 
                 </div>
 
                 <DialogFooter className='flex justify-center gap-4 mt-6'>
+
+                    {/*   CANCEL BUTTON   */}
                     <DialogClose asChild>
-                        <Button variant='destructive'>Cancel</Button>
+                        <Button variant='outlineDestructive'>Cancel</Button>
                     </DialogClose>
+
+                    {/*   ADD BUTTON   */}
                     <DialogClose asChild>
                         <Button
-                            className='bg-foreground text-white'
+                            variant='outline'
                             onClick={handleSubmit}
                             disabled={!gameId || !level || isLoading}
                         >

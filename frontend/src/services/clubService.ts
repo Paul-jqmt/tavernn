@@ -19,7 +19,7 @@ export const clubService = {
         return response.data;
     },
 
-    async getClubTeams(clubId: string): Promise<Team[]> {
+    async getClubTeams(clubId: string | undefined): Promise<Team[]> {
         const response = await api.get(`/api/club/${clubId}/teams`);
         return response.data;
     },

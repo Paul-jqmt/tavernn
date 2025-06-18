@@ -1,15 +1,15 @@
 import Navbar from "@/components/common/Navbar.tsx";
 import ProfileSideColumn from "@/components/common/profile/ProfileSideColumn.tsx";
-import { useEffect, useState } from "react";
-import { Club } from "@/types/club.ts";
-import { Button } from "@/components/ui/button.tsx";
+import {useEffect, useState} from "react";
+import {Club} from "@/types/club.ts";
+import {Button} from "@/components/ui/button.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {useNavigate} from "react-router-dom";
 import {ClubCard} from "@/components/common/club/ClubCard.tsx";
 import {useUser} from "@/contexts/UserContext.tsx";
-import {AlertCircleIcon} from "lucide-react";
-import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
 import {clubService} from "@/services/clubService.ts";
+import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
+import InformationBanner from "@/components/common/InformationBanner.tsx";
 
 export default function ClubsDiscoverPage() {
     const [ clubs, setClubs ] = useState<Club[]>([]);
@@ -60,21 +60,15 @@ export default function ClubsDiscoverPage() {
                 {userLoading ? (
                     <div>Loading user data...</div>
                 ) : userError ? (
-                    <Alert variant='destructive'>
-                        <AlertCircleIcon />
-                        <AlertTitle>Failed to load user data</AlertTitle>
-                    </Alert>
+                    <ErrorAlert message='Failed to load user data. Please try again later.' />
                 ) : (!user) ? (
-                    <Alert variant='destructive'>
-                        <AlertCircleIcon />
-                        <AlertTitle>Please log in to view your profile</AlertTitle>
-                    </Alert>
+                    <ErrorAlert message='Please log in to continue.' />
                 ) : (
                     <>
-                        <ProfileSideColumn userId={user.id} />
+                        <ProfileSideColumn user={user} />
 
                         <div className='flex-1 flex flex-col space-y-4'>
-                            <div className='flex justify-between items-center mb-6'>
+                            <div className='flex justify-between items-center mb-4'>
                                 <h2 className='page-title'>Discover Clubs</h2>
                                 <div className='flex gap-4 items-center'>
 
@@ -105,7 +99,7 @@ export default function ClubsDiscoverPage() {
                                     {/*   CREATE CLUB BUTTON   */}
                                     { !user.club && (
                                         <Button
-                                            className='bg-light-purple hover:bg-mid-purple text-white'
+                                            variant='default'
                                             onClick={() => navigate('/clubs/create')}
                                         >
                                             Create Club
@@ -127,14 +121,12 @@ export default function ClubsDiscoverPage() {
 
                             {/*   USER HAS NO CLUB BANNER   */}
                             { !user.club && (
-                                <div className='bg-deep-orange text-white rounded-xl p-4'>
-                                    <p className='font-light'>You haven’t joined a club yet. Choose your adventure</p>
-                                </div>
+                                <InformationBanner message='You haven’t joined a club yet. Choose your adventure' />
                             )}
 
-                            {/*   EMPTY CLUBS LIST MESSAGE   */}
+                            {/*   MESSAGE IF CLUB LIST IS EMPTY   */}
                             {!isLoading && filteredClubs.length === 0 && (
-                                <div className='text-center text-white'>
+                                <div className='text-center'>
                                     <p className='text-xl font-bold'>No clubs found</p>
                                     <p className="text-sm opacity-70">
                                         {searchQuery ? 'Try different search terms' : 'Be the first to create a club!'}
@@ -144,7 +136,7 @@ export default function ClubsDiscoverPage() {
 
                             {/*   LIST OF CLUBS   */}
                             { isLoading ? (
-                                <div className='text-white'>Loading clubs...</div>
+                                <p>Loading clubs...</p>
                             ) : (
                                 <div className='flex-1 overflow-y-auto space-y-2 hide-scrollbar'>
                                     {filteredClubs.map((club: Club) => (

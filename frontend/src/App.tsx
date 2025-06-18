@@ -6,10 +6,12 @@ import ProfilePage from "@/pages/ProfilePage.tsx";
 import ClubsDiscoverPage from "@/pages/clubs/ClubDiscoverPage.tsx";
 import UserHomePage from "@/pages/UserHomePage.tsx";
 import CreateClubForm from "@/components/forms/CreateClubForm.tsx";
-import {ClubViewPage} from "@/pages/clubs/ClubViewPage.tsx";
+import {ClubDetailsPage} from "@/pages/clubs/ClubDetailsPage.tsx";
 import {UserProvider} from "@/contexts/UserContext.tsx";
 import ProtectedRoute from "@/components/common/ProtectedRoute.tsx";
 import {ClubDiscoverDetailsPage} from "@/pages/clubs/ClubDiscoverDetailsPage.tsx";
+import ProfileSettingsPage from "@/pages/ProfileSettingsPage.tsx";
+import {CreateTeamForm} from "@/components/forms/CreateTeamForm.tsx";
 
 function App() {
     return (
@@ -39,6 +41,13 @@ function App() {
                     </ProtectedRoute>
                 } />
 
+                {/*   PROFILE SETTINGS   */}
+                <Route path='/profile/settings' element={
+                    <ProtectedRoute>
+                        <ProfileSettingsPage />
+                    </ProtectedRoute>
+                } />
+
                 {/*   PAGE WITH ALL THE CLUBS   */}
                 <Route path='/clubs' element={
                     <ProtectedRoute>
@@ -53,17 +62,23 @@ function App() {
                     </ProtectedRoute>
                 } />
 
-                {/*   PAGE WITH CLUB DETAILS*/}
+                {/*   PAGE WITH CLUB DETAILS   */}
                 <Route path='/clubs/:id' element={
                     <ProtectedRoute>
                         <ClubDiscoverDetailsPage />
                     </ProtectedRoute>
                 } />
 
-                {/*   PAGE WITH USER'S CLUB   */}
+                {/*   PAGE WITH THE CLUB OF THE CURRENT USER   */}
                 <Route path='/myclub' element={
                     <ProtectedRoute>
-                        <ClubViewPage />
+                        <ClubDetailsPage />
+                    </ProtectedRoute>
+                } />
+
+                <Route path='/teams/create' element={
+                    <ProtectedRoute>
+                        <CreateTeamForm />
                     </ProtectedRoute>
                 } />
             </Routes>

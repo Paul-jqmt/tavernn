@@ -5,6 +5,7 @@ import { useState} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {Button} from "@/components/ui/button.tsx";
+import { Bell } from 'lucide-react';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -52,7 +53,7 @@ export default function Navbar() {
                 </Link>
 
                 {/*   NAV MENU   */}
-                <nav className="hidden md:flex items-center gap-10">
+                <nav className="hidden md:flex items-center gap-8">
                     { menuItems.map((item) => (
                         <Button
                             key={item.label}
@@ -65,6 +66,10 @@ export default function Navbar() {
                             </Link>
                         </Button>
                     ))}
+
+                    <Button variant='secondary' size='icon'>
+                        <Bell className="h-5 w-5" />
+                    </Button>
                 </nav>
 
                 <button onClick={() => setIsOpen(!isOpen)} className="md:hidden hover:cursor-pointer" aria-label="Toggle Menu">

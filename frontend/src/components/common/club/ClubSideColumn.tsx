@@ -16,7 +16,7 @@ export default function ClubSideColumn({
     creationDate: string | undefined;
 }) {
     return (
-        <aside id='club-view-column' className='w-full max-w-2xs bg-card rounded-2xl px-4 py-6 flex flex-col gap-6'>
+        <aside id='club-view-column' className='w-full max-w-2xs bg-aside rounded-2xl px-4 py-6 flex flex-col gap-6'>
 
             {/*   CLUB LOGO   */}
             <div className='flex flex-col items-center text-center gap-2'>

@@ -9,6 +9,7 @@ import { UserGame } from "@/types/userGame.ts";
 import {userService} from "@/services/userService.ts";
 import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
 import {AlertCircleIcon} from "lucide-react";
+import { PenLine, Trash2 } from 'lucide-react';
 
 interface ProfileGameListProps {
     userId: string;
@@ -60,14 +61,18 @@ export default function ProfileGameList({ userId, onGameListUpdate }: ProfileGam
 
     return (
         <div className='h-full flex flex-col overflow-hidden space-y-4'>
-            <div className='flex justify-between items-center flex-none'>
+            <div className='space-y-2'>
                 <h3 className='page-subtitle'>My games</h3>
 
+                <p className='text-sm font-light'>These games will be displayed on your profile for other players to see and can be useful in club and teams membership applications. </p>
+
                 {/*   ADD A GAME   */}
-                <AddGameDialog
-                    userId={userId}
-                    onSubmit={handleAddGame}
-                />
+                <div className='flex justify-end'>
+                    <AddGameDialog
+                        userId={userId}
+                        onSubmit={handleAddGame}
+                    />
+                </div>
             </div>
 
             {/*   LIST OF GAMES   */}
@@ -102,7 +107,11 @@ export default function ProfileGameList({ userId, onGameListUpdate }: ProfileGam
 
                                 {/*   EDIT A GAME   */}
                                 <EditGameDialog
-                                    trigger={<Button variant='outline'>Edit</Button>}
+                                    trigger={
+                                        <Button variant='secondary'>
+                                            <PenLine className='h-5 w-5'/> Edit
+                                        </Button>
+                                    }
                                     userId={userId}
                                     gameId={game.gameId}
                                     gameName={game.gameName}
@@ -116,7 +125,11 @@ export default function ProfileGameList({ userId, onGameListUpdate }: ProfileGam
 
                                 {/*   DELETE A GAME   */}
                                 <ConfirmGameDeleteDialog
-                                    trigger={<Button variant='outlineDestructive'>Delete</Button>}
+                                    trigger={
+                                        <Button variant='secondary'>
+                                            <Trash2 className='text-destructive h-6 w-6'/>
+                                        </Button>
+                                    }
                                     gameName={game.gameName}
                                     onConfirm={() => handleDelete(game.gameId)}
                                 />

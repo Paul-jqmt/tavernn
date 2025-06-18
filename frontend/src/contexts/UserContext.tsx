@@ -20,12 +20,12 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         loadUser();
-    }, []);
+    }, [user]);
 
     const loadUser = async () => {
         try {
             if (authService.isAuthenticated()) {
-                const currentUser = await authService.getCurrentUser();
+                const currentUser: User = await authService.getCurrentUser();
 
                 try {
                     const userClub = await userService.getUserClub(currentUser.id);
