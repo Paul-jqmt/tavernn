@@ -141,7 +141,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
                                     <FormControl>
                                         <Checkbox className="border-2" checked={field.value} onCheckedChange={field.onChange}/>
                                     </FormControl>
-                                    <FormLabel className="font-extralight text-xs data-[error=true]:text-white ml-2">
+                                    <FormLabel className="font-extralight text-white text-xs data-[error=true]:text-white ml-2">
                                         I have read and agreed to Tavernn's Terms of Service and Privacy Policy.
                                     </FormLabel>
                                 </div>

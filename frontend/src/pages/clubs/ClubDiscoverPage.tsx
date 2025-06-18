@@ -25,7 +25,7 @@ export default function ClubsDiscoverPage() {
 
     useEffect(() => {
         fetchClubs();
-    }, [user]);
+    }, []);
 
     const fetchClubs = async () => {
         try {
