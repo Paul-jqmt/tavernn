@@ -12,6 +12,7 @@ import ProtectedRoute from "@/components/common/ProtectedRoute.tsx";
 import {ClubDiscoverDetailsPage} from "@/pages/clubs/ClubDiscoverDetailsPage.tsx";
 import ProfileSettingsPage from "@/pages/ProfileSettingsPage.tsx";
 import {CreateTeamForm} from "@/components/forms/CreateTeamForm.tsx";
+import PublicRoute from "@/components/common/PublicRoute.tsx";
 
 function App() {
     return (
@@ -19,8 +20,10 @@ function App() {
             <Routes>
                 {/*   HOME PAGE WHEN UNAUTHENTICATED   */}
                 <Route path='/' element={
-                    <HomePage />}
-                />
+                    <PublicRoute>
+                        <HomePage />
+                    </PublicRoute>
+                } />
 
                 {/*   HOME PAGE WHEN AUTHENTICATED   */}
                 <Route path='/home' element={
@@ -31,7 +34,11 @@ function App() {
 
                 {/*   AUTHENTICATION PAGE   */}
                 <Route path='/auth' element={
-                    <AuthenticationPage />}
+                    <PublicRoute>
+                        <AuthenticationPage />
+                    </PublicRoute>
+                    }
+
                 />
 
                 {/*   PROFILE PAGE OF AUTHENTICATED USER   */}

@@ -20,7 +20,7 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         loadUser();
-    }, [user]);
+    }, []);
 
     const loadUser = async () => {
         try {
