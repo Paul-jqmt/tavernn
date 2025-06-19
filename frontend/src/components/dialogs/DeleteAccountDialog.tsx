@@ -2,7 +2,7 @@ import {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {userService} from "@/services/userService.ts";
 import {
-    Dialog,
+    Dialog, DialogClose,
     DialogContent,
     DialogDescription, DialogFooter,
     DialogHeader,
@@ -30,7 +30,7 @@ export default function DeleteAccountDialog({ userId, username, onAccountDeleted
 
     const handleDelete = async () => {
         if (confirmation !== username) {
-            setError('Username confirmary does not match.');
+            setError('Username does not match.');
             return;
         }
 
@@ -57,16 +57,16 @@ export default function DeleteAccountDialog({ userId, username, onAccountDeleted
                 <Button variant='destructive'>Delete Account</Button>
             </DialogTrigger>
 
-            <DialogContent className='bg-deep-purple text-white'>
+            <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Delete your account</DialogTitle>
-                    <DialogDescription className='text-white font-extralight'>
+                    <DialogDescription className='font-extralight'>
                         This action is permanent and cannot be undone.
                         All your data, including your profile and settings will be deleted.
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className='space-y-4 py-4'>
+                <div className='space-y-4'>
                     {error && (
                         <Alert variant="destructive">
                             <AlertCircleIcon />
@@ -74,28 +74,28 @@ export default function DeleteAccountDialog({ userId, username, onAccountDeleted
                         </Alert>
                     )}
 
-                    <div className='space-y-2'>
-                        <Label>Type your username to confirm</Label>
-                        <Input
-                            className='text-deep-purple'
-                            value={confirmation}
-                            placeholder='Enter your username'
-                            onChange={(e) => {
-                                setConfirmation(e.target.value);
-                                setError(null);
-                            }}
-                        />
-                    </div>
+                    <Label className='text-sm'>Type your username to confirm</Label>
+
+                    <Input
+                        className='mt-2'
+                        value={confirmation}
+                        placeholder='Enter your username'
+                        onChange={(e) => {
+                            setConfirmation(e.target.value);
+                            setError(null);
+                        }}
+                    />
                 </div>
 
                 <DialogFooter className='flex justify-center gap-4 sm:justify-center'>
-                    <Button
-                        variant='outline'
-                        onClick={() => setIsOpen(false)}
-                        disabled={isLoading}
-                    >
-                        Cancel
-                    </Button>
+                    <DialogClose asChild>
+                        <Button
+                            variant='outline'
+                            disabled={isLoading}
+                        >
+                            Cancel
+                        </Button>
+                    </DialogClose>
 
                     <Button
                         variant='destructive'

@@ -1,19 +1,21 @@
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import logo from "@/assets/icons/logo.svg";
 import menu from "@/assets/icons/menu.svg";
-import { useState} from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import {useState} from "react";
+import {AnimatePresence, motion} from "framer-motion";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import { Bell } from 'lucide-react';
+import NotificationPanel from "@/components/dialogs/NotificationPanel.tsx";
 
 export default function Navbar() {
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const { user } = useUser();
 
     const menuItems = [
         { to: '/home', label: 'Home' },
-        { to: (user && user.club) ? `/myclub` : '/clubs', label: (user && user.club) ? 'Club' : 'Clubs' },
+        { to: user?.club ? '/myclub' : '/clubs', label: user?.club ? 'My Club' : 'Clubs' },
         { to: '/profile', label: 'Profile' },
     ];
 
@@ -57,19 +59,14 @@ export default function Navbar() {
                     { menuItems.map((item) => (
                         <Button
                             key={item.label}
-                            variant='secondary'>
-                            <Link
-                                to={item.to}
-                                className='font-semibold text-sm'
-                            >
-                                {item.label}
-                            </Link>
+                            variant='secondary'
+                            onClick={() => navigate(item.to, {replace: true})}
+                        >
+                            { item.label }
                         </Button>
                     ))}
 
-                    <Button variant='secondary' size='icon'>
-                        <Bell className="h-5 w-5" />
-                    </Button>
+                    <NotificationPanel isOpen={isNotificationOpen} onOpenChange={setIsNotificationOpen} />
                 </nav>
 
                 <button onClick={() => setIsOpen(!isOpen)} className="md:hidden hover:cursor-pointer" aria-label="Toggle Menu">

@@ -16,6 +16,7 @@ export default function ProfileSideColumn({ user }: ProfileSideColumnProps) {
             { user ? (
             <>
                 <div className='flex flex-col items-center text-center gap-2'>
+
                     {/*   PROFILE PICTURE   */}
                     <Avatar id='profile-picture' className='w-35 h-35'>
                         <AvatarImage
@@ -29,7 +30,7 @@ export default function ProfileSideColumn({ user }: ProfileSideColumnProps) {
                     <p id='profile-discord' className='text-sm font-medium'>@{user.discord || 'discord'}</p>
                 </div>
 
-                {/*   USER CLUB   */}
+                {/*   USER'S CLUB   */}
                 <div>
                     <p className='text-sm px-4 py-2'>Club</p>
                     <div className='bg-card text-card-foreground rounded-lg px-4 py-2 text-sm font-semibold'>
@@ -41,7 +42,7 @@ export default function ProfileSideColumn({ user }: ProfileSideColumnProps) {
                     </div>
                 </div>
 
-                {/*   USER TEAMS   */}
+                {/*   USER'S TEAMS   */}
                 <div>
                     <p className='text-sm px-4 py-2'>Teams</p>
                     <div id='profile-teams-list' className='flex flex-col gap-2'>

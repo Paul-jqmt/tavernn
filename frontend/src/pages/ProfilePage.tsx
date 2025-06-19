@@ -16,7 +16,7 @@ export default function ProfilePage(){
 
     useEffect(() => {
         if (!user) {
-            window.location.href = '/auth';
+            navigate('/auth', {replace: true });
         }
     }, [user]);
 

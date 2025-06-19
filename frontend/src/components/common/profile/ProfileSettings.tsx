@@ -10,7 +10,6 @@ import EditEmailDialog from "@/components/dialogs/EditEmailDialog.tsx";
 import EditUsernameDialog from "@/components/dialogs/EditUsernameDialog.tsx";
 import EditDiscordDialog from "@/components/dialogs/EditDiscordDialog.tsx";
 import {useNavigate} from "react-router-dom";
-import authService from "@/services/authService.ts";
 import {useUser} from "@/contexts/UserContext.tsx";
 import DeleteAccountDialog from "@/components/dialogs/DeleteAccountDialog.tsx";
 
@@ -33,9 +32,9 @@ export default function ProfileSettings({ userData, onUserDataUpdate }: ProfileS
         // TODO: IMPLEMENT REMOVE PROFILE PICTURE
     }
 
-    const handleLogout = async () => {
+    const handleLogout = () => {
         try {
-            await authService.logout();
+            localStorage.removeItem('token');
             clearUser();
         } catch (error) {
             console.log('Error logging out:', error);

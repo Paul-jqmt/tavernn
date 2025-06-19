@@ -14,6 +14,7 @@ import axios from "axios";
 import {clubService} from "@/services/clubService.ts";
 import {AlertCircleIcon} from "lucide-react";
 import {Alert, AlertDescription, AlertTitle} from "@/components/ui/alert.tsx";
+import CharacterCounter from "@/components/common/CharacterCounter.tsx";
 
 export default function CreateClubForm() {
     const navigate = useNavigate();
@@ -45,8 +46,8 @@ export default function CreateClubForm() {
                 maxMembers: 20,
             };
 
-             const club = await clubService.createClub(requestData);
-             navigate(`/clubs/${club.id}`, {replace: true});
+             clubService.createClub(requestData);
+             navigate(`/myclub`, {replace: true});
         } catch (error) {
             console.log('Failed to create club:', error);
 
@@ -78,12 +79,12 @@ export default function CreateClubForm() {
     }
 
     return (
-        <main className='min-h-screen flex flex-col justify-center px-6 max-w-5xl mx-auto space-y-6'>
-            <h1 className='text-3xl md:text-5xl font-extrabold'>
+        <div className='min-h-screen flex flex-col justify-center max-w-5xl mx-auto space-y-2'>
+            <h1 className='text-3xl font-extrabold'>
                 Create your <span className='text-accent'>Club</span>
             </h1>
 
-            <div className='bg-muted rounded-2xl py-8 px-12 space-y-6'>
+            <div className='bg-muted rounded-2xl py-4 px-6 space-y-6'>
                 {error && (
                     <Alert variant='destructive'>
                         <AlertCircleIcon />
@@ -111,11 +112,7 @@ export default function CreateClubForm() {
                                             {...field} />
                                     </FormControl>
 
-                                    {/*   CHARACTER COUNTER   */}
-                                    <p className='text-xs font-extralight'>
-                                        {field.value?.length || 0} / 20
-                                    </p>
-
+                                    <CharacterCounter currentNr={field.value.length || 0} maxNr={20} />
                                     <FormMessage />
                                 </FormItem>
                             )}
@@ -131,7 +128,7 @@ export default function CreateClubForm() {
 
                                     <FormControl>
                                         <Select value={field.value} onValueChange={field.onChange}>
-                                            <SelectTrigger className='w-36'>
+                                            <SelectTrigger className='w-1/3'>
                                                 <SelectValue placeholder='Select' />
                                             </SelectTrigger>
 
@@ -174,6 +171,7 @@ export default function CreateClubForm() {
                                             />
                                         </FormControl>
 
+                                        {/*   REMOVE PICTURE BUTTON   */}
                                         <Button variant='destructive' onClick={() => {
                                             setLogoPreview(undefined)
                                             form.setValue('logo', null)}}>
@@ -201,31 +199,29 @@ export default function CreateClubForm() {
                                         />
                                     </FormControl>
 
-                                    {/*   CHARACTER COUNTER   */}
-                                    <p className='text-xs font-extralight'>
-                                        {field.value?.length || 0} / 200
-                                    </p>
-
+                                    <CharacterCounter currentNr={field.value?.length || 0} maxNr={200} />
                                     <FormMessage />
                                 </FormItem>
                             )}
                         />
 
                         {/*   FORM BUTTONS   */}
-                        <div className='flex justify-end gap-4 mt-10'>
+                        <div className='flex justify-center gap-4 mt-10'>
 
                             {/*   CANCEL BUTTON   */}
                             <ConfirmCancelDialog
-                                trigger={ <Button variant='outlineDestructive'>Cancel</Button> }
+                                trigger={
+                                    <Button variant='outlineDestructive' className='w-1/4'>Cancel</Button>
+                                }
                                 onConfirm={() => handleCancel()}
                             />
 
                             {/*   CREATE CLUB BUTTON   */}
-                            <Button type='submit'>Create Club</Button>
+                            <Button type='submit' variant='outline' className='w-1/4'>Create Club</Button>
                         </div>
                     </form>
                 </Form>
             </div>
-        </main>
+        </div>
     );
 }

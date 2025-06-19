@@ -92,7 +92,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
                         name="email"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel className='text-white'>Email</FormLabel>
                                 <FormControl>
                                     <Input type="email" placeholder="example@mail.com" {...field} />
                                 </FormControl>
@@ -107,7 +107,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
                         name='password'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Password</FormLabel>
+                                <FormLabel className='text-white'>Password</FormLabel>
                                 <FormControl>
                                     <Input type='password' placeholder='Enter password' {...field}/>
                                 </FormControl>
@@ -122,7 +122,7 @@ export default function RegisterForm({ onSwitch }: AuthFormProps) {
                         name='confirmPassword'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Confirm Password</FormLabel>
+                                <FormLabel className='text-white'>Confirm Password</FormLabel>
                                 <FormControl>
                                     <Input type='password' placeholder='Enter password again' {...field}/>
                                 </FormControl>

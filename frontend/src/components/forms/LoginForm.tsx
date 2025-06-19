@@ -86,7 +86,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
                         name="email"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Email</FormLabel>
+                                <FormLabel className='text-white'>Email</FormLabel>
                                 <FormControl>
                                     <Input type="email" placeholder="example@mail.com" {...field} />
                                 </FormControl>
@@ -101,7 +101,7 @@ export default function LoginForm({ onSwitch }: AuthFormProps) {
                         name='password'
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Password</FormLabel>
+                                <FormLabel className='text-white'>Password</FormLabel>
                                 <FormControl>
                                     <Input type='password' placeholder='Enter your password' {...field}/>
                                 </FormControl>

@@ -1,15 +1,13 @@
 import Navbar from "@/components/common/Navbar.tsx";
-import { Club } from "@/types/club.ts";
-import { useEffect, useState } from "react";
-import { ClubMember } from "@/types/clubMember.ts";
+import {Club} from "@/types/club.ts";
+import {useEffect, useState} from "react";
 import ClubSideColumn from "@/components/common/club/ClubSideColumn.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {clubService} from "@/services/clubService.ts";
 import {Team} from "@/types/team.ts";
 import {useNavigate, useParams} from "react-router-dom";
 import {TeamCard} from "@/components/common/TeamCard.tsx";
-import {AlertCircleIcon, ArrowLeft} from "lucide-react";
-import {Alert, AlertTitle} from "@/components/ui/alert.tsx";
+import {ArrowLeft} from "lucide-react";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
 
 export function ClubDiscoverDetailsPage() {
@@ -20,10 +18,6 @@ export function ClubDiscoverDetailsPage() {
     const navigate = useNavigate();
 
     const [ club, setClub ] = useState<Club>();
-    const [ clubMembers, setClubMembers ] = useState<ClubMember[]>([]);
-    const [ clubTeams, setClubTeams ] = useState<Team[]>([]);
-    const [ clubOwner, setClubOwner ] = useState<ClubMember>();
-    const [ clubAdmins, setClubAdmins ] = useState<ClubMember[]>([]);
 
     const handleJoinClub = async () => {
         try {
@@ -49,26 +43,11 @@ export function ClubDiscoverDetailsPage() {
                 clubService.getClub(id),
                 clubService.getClubMembers(id),
                 clubService.getClubTeams(id),
-                clubService.getClubOwner(id),
-                clubService.getClubAdmins(id)
             ]);
 
             setClub(clubResponse);
 
-            if (Array.isArray(membersResponse)) {
-                setClubMembers(membersResponse);
-            } else {
-                setClubMembers([]);
-            }
 
-            if(Array.isArray(teamsResponse)) {
-                setClubTeams(teamsResponse);
-            } else {
-                setClubTeams([]);
-            }
-
-            setClubOwner(ownerResponse);
-            setClubAdmins(adminsResponse);
         } catch (error) {
             console.error('Failed to fetch club data:', error);
             setError('Failed to fetch club data');
@@ -89,13 +68,7 @@ export function ClubDiscoverDetailsPage() {
                 ) : club ?
                     (
                         <>
-                            <ClubSideColumn
-                                logo={club.logo}
-                                name={club.name}
-                                owner={clubOwner}
-                                admins={clubAdmins}
-                                creationDate={club.creationDate}
-                            />
+                            <ClubSideColumn club={club} />
 
                             <div className='flex-1 flex flex-col space-y-4'>
                                 <div className='flex justify-between items-center'>
@@ -121,13 +94,13 @@ export function ClubDiscoverDetailsPage() {
 
                                 {/*   CLUB TEAMS LIST   */}
                                 <div className='flex-1 overflow-y-auto space-y-2 hide-scrollbar'>
-                                    {clubTeams && clubTeams.length > 0 ? (
-                                        clubTeams.map((team: Team) => (
+                                    {club.teams && club.teams.length > 0 ? (
+                                        club.teams.map((team: Team) => (
                                             <TeamCard
                                                 id={team.id}
                                                 name={team.name}
                                                 description={team.description}
-                                                game={team.gameName}
+                                                game={team.gameId}
                                                 nrMembers={team.nrMembers}
                                                 maxMembers={10}
                                                 type={"open"}
