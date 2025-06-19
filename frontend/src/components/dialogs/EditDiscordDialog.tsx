@@ -68,7 +68,6 @@ export default function EditDiscordDialog({ currentDiscord, userData, onDiscordU
                     <div className='space-y-2'>
                         <Label>Discord username</Label>
                         <Input
-                            className='text-deep-purple'
                             type='text'
                             value={newDiscord}
                             placeholder='Enter a valid Discord tag'

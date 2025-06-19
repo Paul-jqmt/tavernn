@@ -25,7 +25,7 @@ export function ClubCard({ id, logoUrl, name, description, nrTeams, nrMembers, m
             <CardHeader className='flex items-center gap-4 p-0 w-1/2'>
 
                 {/*   LOGO   */}
-                <Avatar className='w-12 h-12 text-deep-purple'>
+                <Avatar className='w-12 h-12'>
                     <AvatarImage src={logoUrl} alt={`${name} logo`} />
                     <AvatarFallback>{name.charAt(0)}</AvatarFallback>
                 </Avatar>
