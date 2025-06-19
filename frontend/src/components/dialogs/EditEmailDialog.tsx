@@ -79,7 +79,6 @@ export default function EditEmailDialog({ currentEmail, userData, onEmailUpdate 
                     <div className='space-y-2'>
                         <Label>Email</Label>
                         <Input
-                            className='text-deep-purple'
                             type='email'
                             value={newEmail}
                             placeholder='New email'

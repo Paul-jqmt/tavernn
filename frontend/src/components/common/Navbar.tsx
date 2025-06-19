@@ -88,7 +88,7 @@ export default function Navbar() {
                                 <Link
                                     to={menuItem.to}
                                     onClick={() => setIsOpen(false)}
-                                    className='text-sm font-semibold hover:underline active:text-mid-purple'>
+                                    className='text-sm font-semibold hover:underline'>
                                     {menuItem.label}
                                 </Link>
                             </motion.div>

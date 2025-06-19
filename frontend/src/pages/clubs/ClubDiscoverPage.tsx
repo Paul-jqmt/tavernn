@@ -115,7 +115,7 @@ export default function ClubsDiscoverPage() {
                                     type='search'
                                     placeholder='Search clubs...'
                                     onChange={(e) => setSearchQuery(e.target.value)}
-                                    className='max-w-md text-deep-purple hover:cursor-text'
+                                    className='max-w-md hover:cursor-text'
                                 />
                             </div>
 

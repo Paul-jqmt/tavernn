@@ -16,17 +16,12 @@ export function TeamCard({ id, name, description, game, nrMembers, maxMembers, t
     return (
         <Card
             key={id}
-            className='flex flex-row items-center justify-between hover:bg-mid-purple cursor-pointer'
+            className='flex flex-row items-center justify-between hover:bg-primary cursor-pointer'
             onClick={() => navigate(`/clubs/${id}`)}
         >
 
             {/*   LOGO AND NAME   */}
             <CardHeader className='flex items-center gap-4 p-0 w-1/2'>
-                {/*<Avatar className='w-12 h-12 text-deep-purple'>*/}
-                {/*    <AvatarImage src={logoUrl} alt={`${name} logo`} />*/}
-                {/*    <AvatarFallback>{name.charAt(0)}</AvatarFallback>*/}
-                {/*</Avatar>*/}
-
                 <div className='space-y-1'>
                     <CardTitle className='text-base font-bold'>{name}</CardTitle>
                     {description && (
@@ -42,7 +37,7 @@ export function TeamCard({ id, name, description, game, nrMembers, maxMembers, t
             </div>
 
             {/*   ADMISSION TYPE   */}
-            <CardFooter className='py-2 px-4 bg-white text-deep-purple rounded-md text-sm'>
+            <CardFooter className='py-2 px-4 bg-white text-primary rounded-md text-sm'>
                 {type === "open"
                     ? "Open"
                     : type === "closed"

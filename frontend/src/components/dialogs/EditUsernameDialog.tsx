@@ -68,7 +68,6 @@ export default function EditUsernameDialog({ currentUsername, userData, onUserna
                     <div className='space-y-2'>
                         <Label>New username</Label>
                         <Input
-                            className='text-deep-purple'
                             type='text'
                             value={newUsername}
                             placeholder='Enter your new username'
