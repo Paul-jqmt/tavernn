@@ -6,10 +6,13 @@ import ProfilePage from "@/pages/ProfilePage.tsx";
 import ClubsDiscoverPage from "@/pages/clubs/ClubDiscoverPage.tsx";
 import UserHomePage from "@/pages/UserHomePage.tsx";
 import CreateClubForm from "@/components/forms/CreateClubForm.tsx";
-import {ClubViewPage} from "@/pages/clubs/ClubViewPage.tsx";
+import {ClubDetailsPage} from "@/pages/clubs/ClubDetailsPage.tsx";
 import {UserProvider} from "@/contexts/UserContext.tsx";
 import ProtectedRoute from "@/components/common/ProtectedRoute.tsx";
 import {ClubDiscoverDetailsPage} from "@/pages/clubs/ClubDiscoverDetailsPage.tsx";
+import ProfileSettingsPage from "@/pages/ProfileSettingsPage.tsx";
+import {CreateTeamForm} from "@/components/forms/CreateTeamForm.tsx";
+import PublicRoute from "@/components/common/PublicRoute.tsx";
 
 function App() {
     return (
@@ -17,8 +20,10 @@ function App() {
             <Routes>
                 {/*   HOME PAGE WHEN UNAUTHENTICATED   */}
                 <Route path='/' element={
-                    <HomePage />}
-                />
+                    <PublicRoute>
+                        <HomePage />
+                    </PublicRoute>
+                } />
 
                 {/*   HOME PAGE WHEN AUTHENTICATED   */}
                 <Route path='/home' element={
@@ -29,13 +34,24 @@ function App() {
 
                 {/*   AUTHENTICATION PAGE   */}
                 <Route path='/auth' element={
-                    <AuthenticationPage />}
+                    <PublicRoute>
+                        <AuthenticationPage />
+                    </PublicRoute>
+                    }
+
                 />
 
                 {/*   PROFILE PAGE OF AUTHENTICATED USER   */}
                 <Route path='/profile' element={
                     <ProtectedRoute>
                         <ProfilePage />
+                    </ProtectedRoute>
+                } />
+
+                {/*   PROFILE SETTINGS   */}
+                <Route path='/profile/settings' element={
+                    <ProtectedRoute>
+                        <ProfileSettingsPage />
                     </ProtectedRoute>
                 } />
 
@@ -53,17 +69,23 @@ function App() {
                     </ProtectedRoute>
                 } />
 
-                {/*   PAGE WITH CLUB DETAILS*/}
+                {/*   PAGE WITH CLUB DETAILS   */}
                 <Route path='/clubs/:id' element={
                     <ProtectedRoute>
                         <ClubDiscoverDetailsPage />
                     </ProtectedRoute>
                 } />
 
-                {/*   PAGE WITH USER'S CLUB   */}
+                {/*   PAGE WITH THE CLUB OF THE CURRENT USER   */}
                 <Route path='/myclub' element={
                     <ProtectedRoute>
-                        <ClubViewPage />
+                        <ClubDetailsPage />
+                    </ProtectedRoute>
+                } />
+
+                <Route path='/teams/create' element={
+                    <ProtectedRoute>
+                        <CreateTeamForm />
                     </ProtectedRoute>
                 } />
             </Routes>

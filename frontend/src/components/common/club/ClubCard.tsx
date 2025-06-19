@@ -22,13 +22,15 @@ export function ClubCard({ id, logoUrl, name, description, nrTeams, nrMembers, m
             onClick={() => navigate(`/clubs/${id}`)}
         >
 
-            {/*   LOGO AND NAME   */}
             <CardHeader className='flex items-center gap-4 p-0 w-1/2'>
+
+                {/*   LOGO   */}
                 <Avatar className='w-12 h-12 text-deep-purple'>
                     <AvatarImage src={logoUrl} alt={`${name} logo`} />
                     <AvatarFallback>{name.charAt(0)}</AvatarFallback>
                 </Avatar>
 
+                {/*   CLUB NAME AND DESCRIPTION   */}
                 <div className='space-y-1'>
                     <CardTitle className='text-base font-bold'>{name}</CardTitle>
                     {description && (
@@ -37,19 +39,23 @@ export function ClubCard({ id, logoUrl, name, description, nrTeams, nrMembers, m
                 </div>
             </CardHeader>
 
-            {/*   TEAMS AND MEMBERS   */}
-            <div className='flex items-center gap-10 text-sm'>
-                <p>{nrTeams} Teams</p>
-                <p>{nrMembers}/{maxMembers} Members</p>
-            </div>
+            <CardFooter className='flex w-1/2 items-center justify-between text-sm'>
 
-            {/*   ADMISSION TYPE   */}
-            <CardFooter className='py-2 px-4 bg-white text-deep-purple rounded-md text-sm'>
-                {type === "open"
-                    ? "Open"
-                    : type === "closed"
-                        ? "Closed"
-                        : "Application"}
+                {/*   NUMBER OF TEAMS   */}
+                <p>{nrTeams} Teams</p>
+
+                {/*   NUMBER OF MEMBERS  */}
+                <p>{nrMembers}/{maxMembers} Members</p>
+
+                {/*   ADMISSION TYPE   */}
+                <div className='py-2 px-4 bg-white rounded-md text-sm'>
+                    {type === "open"
+                        ? "Open"
+                        : type === "closed"
+                            ? "Closed"
+                            : "Application"}
+                </div>
+
             </CardFooter>
         </Card>
     );

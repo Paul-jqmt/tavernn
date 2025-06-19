@@ -9,8 +9,8 @@ export default function HomeNavbar() {
     ];
 
     return (
-        <header className="fixed w-full top-0 left-0 z-50 backdrop-blur-md bg-transparent text-foreground">
-            <div className="px-10 py-10 flex items-center justify-between max-w-7x1 mx-auto">
+        <header className="fixed w-full top-0 left-0 z-50 bg-background text-foreground">
+            <div className="px-10 py-6 flex items-center justify-between max-w-7x1 mx-auto">
                 {/*   LOGO   */}
                 <Link to="/" className={"flex items-center gap-3"}>
                     <img src={logo} alt="Tavernn Logo" className="h-10 w-10 object-contain"/>
