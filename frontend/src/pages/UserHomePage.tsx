@@ -4,7 +4,7 @@ import {useNavigate} from "react-router-dom";
 import ProfileSideColumn from "@/components/common/profile/ProfileSideColumn.tsx";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {useEffect} from "react";
-import {Button} from "@/components/ui/button.tsx";
+import SubheaderButton from "@/components/common/SubheaderButton.tsx";
 
 export default function UserHomePage() {
     const navigate = useNavigate();
@@ -33,23 +33,19 @@ export default function UserHomePage() {
                     <h2 className='page-title'>Latest News</h2>
 
                     <div className='flex gap-4'>
-                        <Button
-                            variant='default'
-                            className='w-xs bg-foreground text-white hover:bg-secondary active:bg-primary'
-                            onClick={() => navigate('/clubs')}
-                        >
-                            Discover Clubs
-                            <ArrowRight className='h-5 w-5' />
-                        </Button>
 
-                        <Button
-                            variant='default'
-                            className='w-xs bg-foreground text-white hover:bg-secondary active:bg-primary'
-                            onClick={() => {}}
-                        >
-                            Write a Post
-                            <Pen className='h-5 w-5' />
-                        </Button>
+                        {/*   BUTTON TO GO TO DISCOVER CLUBS PAGE*/}
+                        <SubheaderButton
+                            buttonText='Discover Clubs'
+                            buttonIcon={<ArrowRight className='h-5 w-5' />}
+                            onClick={() => navigate('/clubs')}
+                        />
+
+                        {/*   BUTTON TO WRITE A PUBLIC POST   */}
+                        <SubheaderButton
+                            buttonText='Write a post'
+                            buttonIcon={<Pen className='h-5 w-5' />}
+                        />
                     </div>
 
                 </div>

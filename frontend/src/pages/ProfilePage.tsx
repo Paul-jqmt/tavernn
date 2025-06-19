@@ -5,6 +5,8 @@ import ProfileGameList from "@/components/common/profile/ProfileGameList.tsx";
 import {useEffect} from "react";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {useNavigate} from "react-router-dom";
+import SubheaderButton from "@/components/common/SubheaderButton.tsx";
+import {Gamepad2} from "lucide-react";
 
 export default function ProfilePage(){
     const navigate = useNavigate();
@@ -47,6 +49,16 @@ export default function ProfilePage(){
                             onClick={() => navigate('/profile/settings')}>
                             Settings
                         </Button>
+                    </div>
+
+                    <SubheaderButton
+                        buttonText='My games'
+                        buttonIcon={<Gamepad2 className='w-5 h-5'/>}
+                    />
+
+                    {/**/}
+                    <div>
+
                     </div>
 
                     {/*   PROFILE PAGE USER GAME LIST   */}

@@ -1,6 +1,9 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import {Button} from "@/components/ui/button.tsx";
 import {Bell, X} from "lucide-react";
+import {UserNotification} from "@/types/userNotification.ts";
+import {useEffect, useState} from "react";
+import NotificationCard from "@/components/common/NotificationCard.tsx";
 
 interface NotificationPanelProps {
     isOpen: boolean;
@@ -8,6 +11,28 @@ interface NotificationPanelProps {
 }
 
 export default function NotificationPanel({ isOpen, onOpenChange }: NotificationPanelProps ) {
+    const [ notificationsList, setNotificationsList ] = useState<UserNotification[]>([]);
+
+    useEffect(() => {
+        fetchNotifications();
+    }, []);
+
+    const fetchNotifications = () => {
+        const list : UserNotification[] = [
+            { id: '1', title: 'Welcome to Tavernn', content: 'Explore clubs, create your own, and join others.', date: '2021-09-20T12:00:00.000Z', seen: false },
+            { id: '2', title: 'New tournament announced', content: 'Are your young lings ready?', date: '2021-09-20T12:00:00.000Z', seen: false },
+            { id: '3', title: 'Have something to announce?', content: 'Are your young lings ready?', date: '2021-09-20T12:00:00.000Z', seen: false },
+            { id: '4', title: 'New faces in Tavernn', content: 'Are your young lings ready?', date: '2021-09-20T12:00:00.000Z', seen: false },
+        ]
+
+        setNotificationsList(list);
+    }
+
+    const handleDeleteNotification = (id: string) => {
+        setNotificationsList(prev => prev.filter(notification => notification.id !== id));
+    };
+
+
     return (
         <Dialog.Root open={isOpen} onOpenChange={onOpenChange}>
 
@@ -38,9 +63,21 @@ export default function NotificationPanel({ isOpen, onOpenChange }: Notification
                             </Dialog.Close>
                         </div>
 
+                        {/*   LIST OF NOTIFICATIONS  */}
                         <div className="space-y-4">
-                            <p className='text-sm'>Your notifications will appear here</p>
+                            {notificationsList.length > 0 ? (
+                                notificationsList.map(notification => (
+                                    <NotificationCard
+                                        key={notification.id}
+                                        notification={notification}
+                                        onDelete={handleDeleteNotification}
+                                    />
+                                ))
+                            ) : (
+                                <p className='text-sm'>Your notifications will appear here</p>
+                            )}
                         </div>
+
                     </div>
                 </Dialog.Content>
             </Dialog.Portal>
