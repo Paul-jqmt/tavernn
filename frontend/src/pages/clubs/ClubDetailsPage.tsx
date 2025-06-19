@@ -1,7 +1,7 @@
 import Navbar from "@/components/common/Navbar.tsx";
-import { Club } from "@/types/club.ts";
-import { useEffect, useState } from "react";
-import { ClubMember } from "@/types/clubMember.ts";
+import {Club} from "@/types/club.ts";
+import {useEffect, useState} from "react";
+import {ClubMember} from "@/types/clubMember.ts";
 import {Button} from "@/components/ui/button.tsx";
 import {clubService} from "@/services/clubService.ts";
 import {Team} from "@/types/team.ts";
@@ -126,7 +126,7 @@ export function ClubDetailsPage() {
                 ) : club ? (
                     <div className='flex-1 flex flex-col space-y-4'>
                         <div className='flex justify-between items-center'>
-                            <h2 className='page-title'>Teams</h2>
+                            <h2 className='page-title'>{club.name}</h2>
 
                             <div className='flex gap-4 items-center'>
 
@@ -144,14 +144,16 @@ export function ClubDetailsPage() {
                             </div>
                         </div>
 
+                        <h3 className='sub-title'>Teams</h3>
                         <div className='flex-1 overflow-y-auto space-y-2 hide-scrollbar'>
                             {clubTeams && clubTeams.length > 0 ? (
                                 clubTeams.map((team: Team) => (
                                     <TeamCard
+                                        key={team.id}
                                         id={team.id}
                                         name={team.name}
                                         description={team.description}
-                                        game={team.gameName}
+                                        game={team.gameId}
                                         nrMembers={team.nrMembers}
                                         maxMembers={10}
                                         type={"open"}

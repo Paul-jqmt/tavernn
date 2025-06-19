@@ -18,10 +18,10 @@ export default function ConfirmCancelDialog({ trigger, onConfirm } : {
     return (
         <Dialog>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
-            <DialogContent className='bg-deep-purple text-white rounded-xl max-w-md'>
+            <DialogContent className='rounded-xl max-w-md'>
                 <DialogHeader>
                     <DialogTitle>Cancel club creation ?</DialogTitle>
-                    <DialogDescription className='text-white font-extralight'>
+                    <DialogDescription className='font-extralight'>
                         If you cancel now, all unsaved information will be lost.
                     </DialogDescription>
                 </DialogHeader>
@@ -30,11 +30,11 @@ export default function ConfirmCancelDialog({ trigger, onConfirm } : {
 
                     {/*   KEEP CREATING BUTTON   */}
                     <DialogClose asChild>
-                        <Button variant='outline' className='border-red-500 text-red-500 hover:bg-red-500 hover:text-white'>Continue Creating</Button>
+                        <Button variant='default'>Continue Creating</Button>
                     </DialogClose>
 
                     {/*   CANCEL CREATING   */}
-                    <Button onClick={onConfirm} variant='default'>
+                    <Button onClick={onConfirm} variant='destructive'>
                         Yes, Cancel
                     </Button>
                 </DialogFooter>

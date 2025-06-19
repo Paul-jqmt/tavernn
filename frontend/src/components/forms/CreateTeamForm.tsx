@@ -11,19 +11,23 @@ import {AlertCircleIcon} from "lucide-react";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Game} from "@/types/game.ts";
-import api from "@/services/api.ts";
 import {clubService} from "@/services/clubService.ts";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import CharacterCounter from "@/components/common/CharacterCounter.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
+import {gameService} from "@/services/gameService.ts";
+import {CaptainCombobox} from "@/components/forms/CaptainComboboxProps.tsx";
+import ConfirmCancelDialog from "@/components/dialogs/ConfirmCancelDialog.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 export function CreateTeamForm() {
     const { user } = useUser();
     const navigate = useNavigate();
 
-    const [ owner, setOwner ] = useState<ClubMember[]>([])
+    const [ clubMembers, setClubMembers ] = useState<ClubMember[]>([]);
+
     const [ error, setError ] = useState<string | null>(null);
     const [ games, setGames ] = useState<Game[]>([]);
 
@@ -40,7 +44,8 @@ export function CreateTeamForm() {
     });
 
     useEffect(() => {
-        fetchGames()
+        fetchGames();
+        fetchClubMembers();
     }, [user]);
 
     const fetchGames = async () => {
@@ -48,14 +53,14 @@ export function CreateTeamForm() {
 
         try {
             const [ gamesResponse, teamsResponse ] = await Promise.all([
-                api.get('/api/games'),
-                clubService.getClubTeams(user.club.id)
+                gameService.getGames(),
+                clubService.getClubTeams(user.club.id),
             ]);
 
-            setGames(gamesResponse.data);
+            const gList : Game[] = gamesResponse;
 
-            const teamGames = new Set( teamsResponse.map(team => team.gameId));
-            const availableGames : Game[] = games.filter(game => !teamGames.has(game.id));
+            const clubGames = new Set(teamsResponse.map(team => team.gameId));
+            const availableGames = gList.filter(game => !clubGames.has(game.id));
 
             setGames(availableGames);
         } catch (error) {
@@ -64,19 +69,31 @@ export function CreateTeamForm() {
         }
     }
 
+    const fetchClubMembers = async () => {
+        if (!user?.club?.id) return;
+
+        try {
+            const members = await clubService.getClubMembers(user.club.id);
+            setClubMembers(members);
+        } catch (error) {
+            console.log('Failed to fetch club members:', error);
+            setError('Failed to fetch club members');
+        }
+    };
+
+
     async function handleSubmit(data: CreateTeamValues) {
         try {
             const requestData = {
                 name: data.teamName,
                 gameId: data.gameId,
                 admissionType: data.admissionType,
-                becomeCaptain: data.becomeCaptain,
                 description: data.description,
-                captainId: data.captainId,
+                captainId: data.becomeCaptain ? user?.id : data.captainId,
             };
 
-            const response = await teamService.createTeam(requestData, user?.club?.id);
-            navigate(`/team/${response.id}`, {replace: true});
+            await teamService.createTeam(requestData, user?.club?.id);
+            navigate(-1);
         } catch (error) {
             console.log('Failed to create club:', error);
 
@@ -115,105 +132,196 @@ export function CreateTeamForm() {
                 <p className='text-sm font-extralight'>Fields marked with * are mandatory.</p>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleSubmit)} className='space-y-6'>
+                    <form onSubmit={form.handleSubmit(handleSubmit)}>
 
-                        {/*   LEFT COLUMN   */}
-                        <div className='w-1/2 space-y-4'>
-                            <FormField
-                                name='teamName'
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Team Name*</FormLabel>
+                        {/*   FORM CONTENT   */}
+                        <div className='space-y-6 flex gap-8'>
 
-                                        <FormControl>
-                                            <Input
-                                                placeholder='Enter the name of the team'
-                                                maxLength={20}
-                                                {...field}
-                                            />
-                                        </FormControl>
+                            {/*   LEFT COLUMN   */}
+                            <div className='w-1/2 space-y-4'>
+                                <FormField
+                                    name='teamName'
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Team Name*</FormLabel>
 
-                                        <CharacterCounter currentNr={field.value?.length || 0} maxNr={20} />
-                                        <FormMessage />
-                                    </FormItem>
+                                            <FormControl>
+                                                <Input
+                                                    placeholder='Enter the name of the team'
+                                                    maxLength={20}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+
+                                            <CharacterCounter currentNr={field.value?.length || 0} maxNr={20} />
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                {/*   TEAM GAME SELECTION   */}
+                                <FormField
+                                    name='gameId'
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className='flex items-center gap-2'>
+                                            <FormLabel>Choose the game:</FormLabel>
+
+                                            <FormControl>
+                                                <Select value={field.value} onValueChange={field.onChange}>
+                                                    <SelectTrigger className='w-2/3'>
+                                                        <SelectValue placeholder='Game' />
+                                                    </SelectTrigger>
+
+                                                    <SelectContent>
+                                                        { games.length === 0 ? (
+                                                            <div className="px-3 py-2 text-sm text-muted-foreground">
+                                                                No games
+                                                            </div>
+                                                        ) : (
+                                                            games.map((game) => (
+                                                                <SelectItem key={game.id} value={game.id}>
+                                                                    {game.name}
+                                                                </SelectItem>
+                                                            ))
+                                                        )}
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    name='description'
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Description</FormLabel>
+
+                                            <FormControl>
+                                                <Textarea
+                                                    className='resize-none h-20 overflow-y-auto'
+                                                    placeholder='A short description about the team...'
+                                                    rows={2}
+                                                    maxLength={100}
+                                                    {...field}
+                                                />
+                                            </FormControl>
+
+                                            <CharacterCounter currentNr={field.value?.length || 0} maxNr={100} />
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            {/*   RIGHT COLUMN   */}
+                            <div className='w-1/2 space-y-4'>
+
+                                {/*   BECOME TEAM CAPTAIN CHECKBOX   */}
+                                <FormField
+                                    name='becomeCaptain'
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className='flex items-center justify-between'>
+                                            <div>
+                                                <FormLabel>Become Team Captain ?</FormLabel>
+                                                <p className='text-xs font-light mt-2'>If you do not wish to become the team captain you will have to select someone else.</p>
+                                            </div>
+
+
+                                            <FormControl>
+                                                <Checkbox
+                                                    className='border-2 w-5 h-5'
+                                                    checked={field.value}
+                                                    onCheckedChange={(checked) => {
+                                                        field.onChange(checked);
+                                                        if (checked) {
+                                                            form.setValue('captainId', '');
+                                                        }
+                                                    }}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                {/*   TEAM CAPTAIN SELECTION   */}
+                                { !form.watch('becomeCaptain') && (
+                                    <FormField
+                                        name='captainId'
+                                        control={form.control}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Team Captain*</FormLabel>
+                                                <FormControl>
+                                                    <CaptainCombobox
+                                                        members={clubMembers}
+                                                        value={field.value}
+                                                        onChange={field.onChange}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
                                 )}
-                            />
 
-                            {/*   TEAM GAME SELECTION   */}
-                            <FormField
-                                name='gameId'
-                                control={form.control}
-                                render={({ field }) => (
-                                    <FormItem className='flex items-center gap-2'>
-                                        <FormLabel>Choose the game:</FormLabel>
+                                {/*   TEAM ADMISSION TYPE   */}
+                                <FormField
+                                    name='admissionType'
+                                    control={form.control}
+                                    render={({ field }) => (
+                                        <FormItem className='flex items-center space-x-2 w-2/3'>
+                                            <FormLabel>Admission type *</FormLabel>
 
-                                        <FormControl>
-                                            <Select value={field.value} onValueChange={field.onChange}>
-                                                <SelectTrigger className='w-2/3'>
-                                                    <SelectValue placeholder='Game' />
-                                                </SelectTrigger>
+                                            <FormControl>
+                                                <Select value={field.value} onValueChange={field.onChange}>
+                                                    <SelectTrigger className='w-1/3'>
+                                                        <SelectValue placeholder='Select' />
+                                                    </SelectTrigger>
 
-                                                <SelectContent>
-                                                    { games.length === 0 ? (
-                                                        <div className="px-3 py-2 text-sm text-muted-foreground">
-                                                            No games
-                                                        </div>
-                                                    ) : (
-                                                        games.map((game) => (
-                                                            <SelectItem key={game.id} value={game.id}>
-                                                                {game.name}
-                                                            </SelectItem>
-                                                        ))
-                                                    )}
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                    </FormItem>
-                                )}
-                            />
+                                                    <SelectContent>
+                                                        <SelectItem value='open'>Open</SelectItem>
+                                                        <SelectItem value='closed'>Closed</SelectItem>
+                                                        <SelectItem value='invite_only'>Application</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                            <FormField
-                                name='description'
-                                control={form.control}
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Description</FormLabel>
-
-                                        <FormControl>
-                                            <Textarea
-                                                className='resize-none h-20 overflow-y-auto'
-                                                placeholder='A short description about the team...'
-                                                rows={2}
-                                                maxLength={100}
-                                                {...field}
-                                            />
-                                        </FormControl>
-
-                                        <CharacterCounter currentNr={field.value?.length || 0} maxNr={100} />
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            </div>
                         </div>
 
-                        {/*   RIGHT COLUMN   */}
-                        <div className='w-1/2'>
-                            <FormField
-                                name='becomeCaptain'
-                                control={form.control}
-                                render={({ field }) => (
-                                    <FormItem className='flex items-center justify-between'>
-                                        <FormLabel>Become Team Captain ?</FormLabel>
+                        {/*   FORM BUTTONS   */}
+                        <div className='flex justify-center gap-4'>
 
-                                        <div>
-                                            <FormControl>
-                                                <Checkbox className='border-2 w-5 h-5' checked={field.value} onCheckedChange={field.onChange}></Checkbox>
-                                            </FormControl>
-                                        </div>
-
-                                    </FormItem>
-                                )}
+                            {/*   CANCEL BUTTON   */}
+                            <ConfirmCancelDialog
+                                trigger={
+                                    <Button
+                                        variant='outlineDestructive'
+                                        className='w-1/4'>
+                                        Cancel
+                                    </Button>
+                                }
+                                onConfirm={() => handleCancel()}
                             />
+
+                            {/*   CREATE CLUB BUTTON   */}
+                            <Button
+                                type='submit'
+                                variant='outline'
+                                onClick={() => form.handleSubmit(handleSubmit)}
+                                className='w-1/4'>
+                                Create Team
+                            </Button>
                         </div>
                     </form>
                 </Form>
