@@ -9,6 +9,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {TeamCard} from "@/components/common/TeamCard.tsx";
 import {ArrowLeft} from "lucide-react";
 import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
+import {ClubMember} from "@/types/clubMember.ts";
 
 export function ClubDiscoverDetailsPage() {
     const { id } = useParams<{ id: string }>();
@@ -18,10 +19,17 @@ export function ClubDiscoverDetailsPage() {
     const navigate = useNavigate();
 
     const [ club, setClub ] = useState<Club>();
+    const [ clubMembers, setClubMembers ] = useState<ClubMember[]>([]);
+    const [ clubTeams, setClubTeams ] = useState<Team[]>([]);
+    const [ clubOwner, setClubOwner ] = useState<ClubMember>();
+    const [ clubAdmins, setClubAdmins ] = useState<ClubMember[]>([]);
 
     const handleJoinClub = async () => {
+        if ( !id ) return;
+
         try {
             await clubService.joinClub(id);
+            await fetchClubData();
         } catch (error) {
             console.log('Error joining club:', error);
         }
@@ -32,6 +40,18 @@ export function ClubDiscoverDetailsPage() {
             fetchClubData();
     }, [id]);
 
+    useEffect(() => {
+        if (club && clubMembers.length > 0) {
+            const owner = clubMembers.find(member => member.isOwner);
+            if(owner) {
+                setClubOwner(owner);
+            }
+
+            const admins = clubMembers.filter(member => member.isAdmin && member.userId !== owner?.userId);
+            setClubAdmins(admins);
+        }
+    }, [clubMembers, club]);
+
     const fetchClubData = async () => {
         if ( !id ) return;
 
@@ -39,7 +59,7 @@ export function ClubDiscoverDetailsPage() {
             setIsLoading(true);
             setError(null);
 
-            const [ clubResponse, membersResponse, teamsResponse, ownerResponse, adminsResponse ] = await Promise.all([
+            const [ clubResponse, membersResponse, teamsResponse ] = await Promise.all([
                 clubService.getClub(id),
                 clubService.getClubMembers(id),
                 clubService.getClubTeams(id),
@@ -47,7 +67,17 @@ export function ClubDiscoverDetailsPage() {
 
             setClub(clubResponse);
 
+            if (Array.isArray(membersResponse)) {
+                setClubMembers(membersResponse);
+            } else {
+                setClubMembers([]);
+            }
 
+            if (Array.isArray(teamsResponse)) {
+                setClubTeams(teamsResponse);
+            } else {
+                setClubTeams([]);
+            }
         } catch (error) {
             console.error('Failed to fetch club data:', error);
             setError('Failed to fetch club data');
@@ -68,7 +98,7 @@ export function ClubDiscoverDetailsPage() {
                 ) : club ?
                     (
                         <>
-                            <ClubSideColumn club={club} />
+                            <ClubSideColumn club={club} clubOwner={clubOwner} clubAdmins={clubAdmins} />
 
                             <div className='flex-1 flex flex-col space-y-4'>
                                 <div className='flex justify-between items-center'>
@@ -83,7 +113,8 @@ export function ClubDiscoverDetailsPage() {
                                             <ArrowLeft className='h-5 w-5' /> Back
                                         </Button>
 
-                                        <h2 className='page-title'>Teams</h2>
+                                        {/*   CLUB NAME   */}
+                                        <h2 className='page-title'>{club.name}</h2>
                                     </div>
 
                                     {/*   JOIN CLUB BUTTON   */}
@@ -93,22 +124,33 @@ export function ClubDiscoverDetailsPage() {
                                 </div>
 
                                 {/*   CLUB TEAMS LIST   */}
-                                <div className='flex-1 overflow-y-auto space-y-2 hide-scrollbar'>
-                                    {club.teams && club.teams.length > 0 ? (
-                                        club.teams.map((team: Team) => (
-                                            <TeamCard
-                                                id={team.id}
-                                                name={team.name}
-                                                description={team.description}
-                                                game={team.gameId}
-                                                nrMembers={team.nrMembers}
-                                                maxMembers={10}
-                                                type={"open"}
-                                            />
-                                        ))
-                                    ) : (
-                                        <p> No teams available.</p>
-                                    )}
+                                <div className='space-y-4'>
+                                    <h3 className='text-xl font-semibold'>Teams</h3>
+
+                                    <div className='flex-1 overflow-y-auto space-y-2 hide-scrollbar'>
+                                        { clubTeams && clubTeams.length > 0 ? (
+                                            clubTeams.map((team: Team) => (
+                                                <TeamCard
+                                                    key={team.id}
+                                                    id={team.id}
+                                                    name={team.name}
+                                                    description={team.description}
+                                                    game={team.gameId}
+                                                    nrMembers={team.nrMembers}
+                                                    maxMembers={10}
+                                                    type={"open"}
+                                                />
+                                            ))
+                                        ) : (
+                                            <div className='flex flex-col items-center justify-center p-4 bg-muted rounded-lg text-center'>
+                                                <p className='text-lg font-medium mb-2'>No Teams Yet</p>
+                                                <p className='text-sm text-muted-foreground font-light'>
+                                                    This club hasn't created any teams yet.
+                                                </p>
+                                            </div>
+                                        )}
+
+                                    </div>
                                 </div>
                             </div>
                         </>

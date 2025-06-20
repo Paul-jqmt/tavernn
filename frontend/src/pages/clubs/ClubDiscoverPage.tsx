@@ -47,9 +47,14 @@ export default function ClubsDiscoverPage() {
     };
 
     const filteredClubs = Array.isArray(clubs)
-        ? clubs.filter((club: Club) =>
-            club.name.toLowerCase().includes(searchQuery.toLowerCase()))
+        ? clubs.filter((club: Club) => {
+            if (user?.club?.id === club.id) {
+                return false;
+            }
+            return club.name.toLowerCase().includes(searchQuery.toLowerCase());
+        })
         : [];
+
 
     return (
         <>
@@ -127,7 +132,7 @@ export default function ClubsDiscoverPage() {
                             {/*   MESSAGE IF CLUB LIST IS EMPTY   */}
                             {!isLoading && filteredClubs.length === 0 && (
                                 <div className='text-center'>
-                                    <p className='text-xl font-bold'>No clubs found</p>
+                                    <p className='text-xl font-bold'>No other clubs found</p>
                                     <p className="text-sm opacity-70">
                                         {searchQuery ? 'Try different search terms' : 'Be the first to create a club!'}
                                     </p>

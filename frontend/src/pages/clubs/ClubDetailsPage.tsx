@@ -8,7 +8,11 @@ import {Team} from "@/types/team.ts";
 import {useUser} from "@/contexts/UserContext.tsx";
 import {ClubRole} from "@/types/clubRole.ts";
 import {useNavigate} from "react-router-dom";
-import {TeamCard} from "@/components/common/TeamCard.tsx";
+import {Separator} from "@/components/ui/separator.tsx";
+import {ErrorAlert} from "@/components/common/ErrorAlert.tsx";
+import ClubTeamsSidePanel from "@/components/common/ClubTeamsSidePanel.tsx";
+import SubheaderButton from "@/components/common/SubheaderButton.tsx";
+import {Crown, Gamepad2, MessageSquareText, Plus} from "lucide-react";
 
 export function ClubDetailsPage() {
     const { user } = useUser();
@@ -58,6 +62,14 @@ export function ClubDetailsPage() {
 
     useEffect(() => {
         if ( user && clubMembers.length > 0 ) {
+            const owner = clubMembers.find(member => member.isOwner);
+            if(owner) {
+                setClubOwner(owner);
+            }
+
+            const admins = clubMembers.filter(member => member.isAdmin);
+            setClubAdmins(admins);
+
             const role = determineUserRole();
             setUserRole(role);
         }
@@ -82,12 +94,10 @@ export function ClubDetailsPage() {
             setIsLoading(true);
             setError(null);
 
-            const [ clubResponse, membersResponse, teamsResponse, ownerResponse, adminsResponse ] = await Promise.all([
+            const [ clubResponse, membersResponse, teamsResponse ] = await Promise.all([
                 clubService.getClub(user.club.id),
                 clubService.getClubMembers(user.club.id),
                 clubService.getClubTeams(user.club.id),
-                clubService.getClubOwner(user.club.id),
-                clubService.getClubAdmins(user.club.id)
             ]);
 
             setClub(clubResponse);
@@ -103,9 +113,6 @@ export function ClubDetailsPage() {
             } else {
                 setClubTeams([]);
             }
-
-            setClubOwner(ownerResponse);
-            setClubAdmins(adminsResponse);
         } catch (error) {
             console.error('Failed to fetch club data:', error);
             setError('Failed to fetch club data');
@@ -118,52 +125,68 @@ export function ClubDetailsPage() {
         <>
             <Navbar />
 
-            <main className="flex items-stretch min-h-screen gap-4">
+            <main className="min-h-screen flex items-stretch gap-4">
                 {isLoading ? (
                     <div>Loading club information...</div>
                 ) : error ? (
-                    <div className='text-destructive'>{error}</div>
+                    <ErrorAlert message='Please log in to continue.' />
                 ) : club ? (
-                    <div className='flex-1 flex flex-col space-y-4'>
-                        <div className='flex justify-between items-center'>
-                            <h2 className='page-title'>{club.name}</h2>
+                    <>
+                        <ClubTeamsSidePanel teams={clubTeams} userRole={userRole} />
 
-                            <div className='flex gap-4 items-center'>
+                        <div className='flex-1 flex flex-col space-y-4'>
+                            <div className='flex justify-between items-center'>
+                                <div className='space-y-2'>
 
+                                    <div className='space-y-2'>
 
-                                {/*   CREATE TEAM BUTTON   */}
-                                { (userRole === ClubRole.ADMIN || userRole === ClubRole.OWNER) && (
-                                    <Button
-                                        variant='default'
-                                        onClick={() => navigate('/teams/create')}
-                                    >
-                                        Create Team
-                                    </Button>
-                                )}
+                                        {/*   CLUB NAME   */}
+                                        <h2 className='page-title'>{club.name}</h2>
 
+                                        {/* CLUB OWNER */}
+                                        <div className='flex items-center gap-2 text-sm'>
+                                            <Crown className='w-4 h-4' />
+                                            <p>{clubOwner?.username}</p>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                {/*   BUTTON TO EDIT THE CLUB   */}
+                                <div className='flex items-center'>
+                                    { (userRole === ClubRole.OWNER) && (
+                                        <Button
+                                            className='bg-muted hover:bg-primary active:bg-white'
+                                            variant='secondary'
+                                            onClick={() => {}}
+                                        >
+                                            Settings
+                                        </Button>
+                                    )}
+                                </div>
                             </div>
-                        </div>
 
-                        <h3 className='sub-title'>Teams</h3>
-                        <div className='flex-1 overflow-y-auto space-y-2 hide-scrollbar'>
-                            {clubTeams && clubTeams.length > 0 ? (
-                                clubTeams.map((team: Team) => (
-                                    <TeamCard
-                                        key={team.id}
-                                        id={team.id}
-                                        name={team.name}
-                                        description={team.description}
-                                        game={team.gameId}
-                                        nrMembers={team.nrMembers}
-                                        maxMembers={10}
-                                        type={"open"}
+                            <Separator />
+
+                            <div className='flex flex-row gap-4'>
+                                <SubheaderButton
+                                    buttonText='Create Post'
+                                    buttonIcon={<MessageSquareText className='w-5 h-5'/>}
+                                    onClick={() => {}}
+                                />
+
+                                { (userRole === ClubRole.OWNER || userRole === ClubRole.ADMIN) && (
+                                    <SubheaderButton
+                                        buttonText='Add Team'
+                                        buttonIcon={<Plus className='w-5 h-5' />}
+                                        onClick={() => navigate('/teams/create')}
                                     />
-                                ))
-                            ) : (
-                                <p> No teams available.</p>
-                            )}
+                                )}
+                            </div>
+
                         </div>
-                    </div>) : null}
+                    </>
+                ) : null}
             </main>
         </>
     );

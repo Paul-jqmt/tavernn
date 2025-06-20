@@ -11,10 +11,10 @@ export interface Club {
     nrMembers: number;
     nrTeams: number;
     maxMembers: number;
-    owner: ClubMember;
-    admins: ClubMember[];
-    members: ClubMember[];
-    teams: Team[];
+    owner: ClubMember | undefined;
+    admins: ClubMember[] | [];
+    members: ClubMember[] | [];
+    teams: Team[] | [];
 }
 
 export interface ClubRequest {

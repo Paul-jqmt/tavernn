@@ -11,12 +11,7 @@ export default function ProfilePostList() {
     }, [user]);
 
     const fetchUserPosts = ()=> {
-        const postList : PublicPost[] = [
-            { id: '0', title: "Test", content: "Test content", date: "2021-01-01" },
-            { id: '1', title: "Test2", content: "Test content2", date: "2021-01-02" },
-        ]
 
-        setPosts(postList);
     }
 
     return (

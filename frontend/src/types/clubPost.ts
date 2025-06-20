@@ -1,6 +1,6 @@
-export interface PublicPost {
+export interface ClubPost {
     id: string;
-    userId: string;
+    clubId: string;
     title: string;
     content: string;
     date: string;
